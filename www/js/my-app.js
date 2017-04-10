@@ -11,9 +11,25 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 
+var imageUrl = "http://zotime.ddns.net/pd/upload/image2.jpg";
 // Handle Cordova Device Ready Event
-$$(document).on('deviceready', function() {
+$$(document).on('deviceready', function () {
     console.log("Device is ready!");
+    loadImage(
+    imageUrl,
+    function (img) {
+        if(img.type === "error") {
+            console.log("Error loading image " + imageUrl);
+        } else {
+            $$("#extraImage").append(img);
+        }
+    },
+    {
+        maxWidth: 150,
+        maxHeight:150,
+        orientation: 6
+    }
+);
 });
 
 
@@ -41,3 +57,45 @@ $$(document).on('pageInit', '.page[data-page="about"]', function (e) {
     // Following code will be executed for page with data-page attribute equal to "about"
     myApp.alert('Here comes About page');
 })
+
+function getImage() {
+    navigator.camera.getPicture(uploadPhoto, function (message) {
+        alert('get picture failed: '+message);
+    }, {
+        quality: 100,
+        destinationType: navigator.camera.DestinationType.FILE_URI,
+        sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
+        correctOrientation: true
+    });
+}
+
+function uploadPhoto(imageURI) {
+    console.log("SUCCESS!")
+    var options = new FileUploadOptions();
+    options.fileKey = "file";
+    options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+    options.mimeType = "image/jpeg";
+    console.log(options.fileName);
+    var params = new Object();
+    params.value1 = "test";
+    params.value2 = "param";
+    options.params = params;
+    options.chunkedMode = false;
+
+    var ft = new FileTransfer();
+    ft.onprogress = function(progressEvent) {
+        if (progressEvent.lengthComputable) {
+            //loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+            myApp.setProgressbar(".progressbar",(progressEvent.loaded / progressEvent.total)*100);
+            //alert(progressEvent.loaded / progressEvent.total)
+        } else {
+            //loadingStatus.increment();
+            alert("DONE")
+        }
+    };
+    ft.upload(imageURI, "http://zotime.ddns.net/pd/photoUpload.php", function (result) {
+        console.log(JSON.stringify(result));
+    }, function (error) {
+        console.log(JSON.stringify(error));
+    }, options);
+}

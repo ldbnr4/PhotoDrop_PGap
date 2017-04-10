@@ -81,6 +81,12 @@
                     <div class="page-content">
                         <div class="content-block">
                             <button onclick="getImage()">Upload a Photo</button>
+                            <div class="progressbar" data-progress="0">
+                                <span></span>
+                            </div>
+                            <img id="productPic" src="http://zotime.ddns.net/pd/upload/1804061828.jpg" width="100" height="100">
+                            <div id="extraImage"></div>
+                            <div id="browser_fi"></div>
                             <p>Page content goes here</p>
                             <!-- Link to another page -->
                             <a href="about.html">About app</a>
@@ -101,38 +107,8 @@
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+    <script type="text/javascript" src="lib/load-image.all.min.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>
-    <script type="text/javascript">
-        function getImage() {
-            navigator.camera.getPicture(uploadPhoto, function (message) {
-                alert('get picture failed');
-            }, {
-                quality: 100,
-                destinationType: navigator.camera.DestinationType.FILE_URI,
-                sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
-            });
-        }
-
-        function uploadPhoto(imageURI) {
-            var options = new FileUploadOptions();
-            options.fileKey = "file";
-            options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-            options.mimeType = "image/jpeg";
-            console.log(options.fileName);
-            var params = new Object();
-            params.value1 = "test";
-            params.value2 = "param";
-            options.params = params;
-            options.chunkedMode = false;
-
-            var ft = new FileTransfer();
-            ft.upload(imageURI, "http://zotime.ddns.net/pd/photoUpload.php", function (result) {
-                console.log(JSON.stringify(result));
-            }, function (error) {
-                console.log(JSON.stringify(error));
-            }, options);
-        }
-    </script>
 </body>
 
 </html>
