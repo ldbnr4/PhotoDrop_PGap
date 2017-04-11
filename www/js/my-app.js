@@ -48,6 +48,7 @@ $$(document).on('pageInit', '.page[data-page="about"]', function (e) {
 function getImage() {
     navigator.camera.getPicture(uploadPhoto, function (message) {
         alert('get picture failed: ' + message);
+        console.log(message)
     }, {
         quality: 100,
         destinationType: navigator.camera.DestinationType.FILE_URI,
@@ -59,6 +60,7 @@ function getImage() {
 function takeImage() {
     navigator.camera.getPicture(uploadPhoto, function (message) {
         alert('get picture failed: ' + message);
+        console.log(message)
     }, {
         quality: 100,
         destinationType: navigator.camera.DestinationType.FILE_URI,
