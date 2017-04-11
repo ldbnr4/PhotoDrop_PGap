@@ -257,7 +257,7 @@ function uploadPhoto(imageURI) {
     options.fileName = options.fileName.split("?")[0]
     alert(options.fileName);
     var params = new Object();
-    params.album = ALBUM;
+    params.album = ALBUM.toString();
     alert(ALBUM)
     params.value2 = "param";
     options.params = params;
