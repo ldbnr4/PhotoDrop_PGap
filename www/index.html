@@ -41,6 +41,7 @@
     <link rel="stylesheet" href="lib/framework7/css/framework7.material.min.css">
     <link rel="stylesheet" href="lib/framework7/css/framework7.material.colors.min.css">
 
+
     <link rel="stylesheet" href="css/styles.css">
     <link href="css\material-icons.css" rel="stylesheet">
 </head>
@@ -59,26 +60,27 @@
     </div>
 
     <!-- Views -->
-    <div class="views">
+    <div class="views theme-teal">
         <!-- Your main view, should have "view-main" class -->
         <div class="view view-main">
             <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
             <!--<div class="pages navbar-through toolbar-through">-->
             <div class="pages">
                 <!-- Page, "data-page" contains page name -->
-                <div data-page="index" class="page navbar-fixed">
+                <div data-page="index" class="page">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner">
-                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="center sliding">Awesome App</div>
-                            <div class="right">
+                        <div class="navbar-inner navbar-fixed">
+                            <div class="left">
                                 <!--
                           Right link contains only icon - additional "icon-only" class
                           Additional "open-panel" class tells app to open panel when we click on this link
                         -->
                                 <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
                             </div>
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="left sliding">Awesome App</div>
+
                         </div>
                     </div>
                     <!-- Speed Dial Wrap -->
@@ -111,18 +113,24 @@
                     <div class="page-content list-block" id="inner-body" style="min-height:100px;">
                         <div class="content-block">
                             <div id="extraImage"></div>
-                            <p>Page content goes here</p>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-input">
+                                        <input type="text" placeholder="Select an album" readonly id="picker-device">
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Link to another page -->
-                            <a href="about.html">About app</a>
+                            <!--<a href="about.html">About app</a>-->
                             <button onclick="iGotTheSauce()">More Sauce!</button>
                             <button class="pb-standalone-dark">UPGRADE</button>
                         </div>
                         <!--<div class="row" id="photoUploads0" style="min-height:100px; padding:5px">-->
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script type="text/javascript" src="cordova.js"></script>
