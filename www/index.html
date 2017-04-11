@@ -16,11 +16,11 @@
         script-src 'self'
             http://connect.facebook.net/en_US/sdk.js 
             'unsafe-inline' 'unsafe-eval'; 
-        frame-src 'self' 
+        frame-src * 
              http://staticxx.facebook.com/connect/
              https://www.facebook.com/ 'unsafe-inline' 'unsafe-eval';
         connect-src 'self' ws: 'unsafe-inline' 'unsafe-eval' ">
-        
+
     <!-- Required meta tags-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
@@ -36,10 +36,13 @@
         http://www.idangero.us/framework7/tutorials/maintain-both-ios-and-material-themes-in-single-app.html
      -->
 
-    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
-    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
+    <!--<link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
+    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">-->
+    <link rel="stylesheet" href="lib/framework7/css/framework7.material.min.css">
+    <link rel="stylesheet" href="lib/framework7/css/framework7.material.colors.min.css">
 
     <link rel="stylesheet" href="css/styles.css">
+    <link href="css\material-icons.css" rel="stylesheet">
 </head>
 
 <body>
@@ -59,47 +62,64 @@
     <div class="views">
         <!-- Your main view, should have "view-main" class -->
         <div class="view view-main">
-            <!-- Top Navbar-->
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                    <div class="center sliding">Awesome App</div>
-                    <div class="right">
-                        <!--
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <!--<div class="pages navbar-through toolbar-through">-->
+            <div class="pages">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page navbar-fixed">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <div class="navbar-inner">
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="center sliding">Awesome App</div>
+                            <div class="right">
+                                <!--
                           Right link contains only icon - additional "icon-only" class
                           Additional "open-panel" class tells app to open panel when we click on this link
                         -->
-                        <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                    </div>
-                </div>
-            </div>
-            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
-            <div class="pages navbar-through toolbar-through">
-                <!-- Page, "data-page" contains page name -->
-                <div data-page="index" class="page">
-                    <!-- Scrollable page content -->
-                    <div class="page-content">
-                        <div class="content-block">
-                            <button onclick="getImage()">Upload a Photo</button>
-                            <div class="progressbar" data-progress="0">
-                                <span></span>
+                                <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
                             </div>
-                            <img id="productPic" src="http://zotime.ddns.net/pd/upload/1804061828.jpg" width="100" height="100">
+                        </div>
+                    </div>
+                    <!-- Speed Dial Wrap -->
+                    <div class="speed-dial">
+                        <!-- FAB inside will open Speed Dial actions -->
+                        <a href="#" class="floating-button">
+                            <!-- First icon is visible when Speed Dial actions are closed -->
+                            <i class="icon icon-plus"></i>
+                            <!-- Second icon is visible when Speed Dial actions are opened -->
+                            <i class="icon icon-close"></i>
+                        </a>
+                        <!-- Speed Dial Actions -->
+                        <div class="speed-dial-buttons">
+                            <!-- First Speed Dial button -->
+                            <a href="#" class="close-speed-dial" onclick="getImage()">
+                                <i class="material-icons">collections</i>
+                            </a>
+                            <!-- Second Speed Dial button -->
+                            <a href="#" class="close-speed-dial" onclick="takeImage()">
+                                <i class="material-icons">photo_camera</i>
+                            </a>
+                            <!-- Third Speed Dial button -->
+                            <a href="#" class="close-speed-dial" onclick="">
+                                <i class="material-icons">videocam</i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- End -->
+                    <!-- Scrollable page content -->
+                    <div class="page-content list-block" id="inner-body" style="min-height:100px;">
+                        <div class="content-block">
                             <div id="extraImage"></div>
-                            <div id="browser_fi"></div>
                             <p>Page content goes here</p>
                             <!-- Link to another page -->
                             <a href="about.html">About app</a>
+                            <button onclick="iGotTheSauce()">More Sauce!</button>
+                            <button class="pb-standalone-dark">UPGRADE</button>
+                        </div>
+                        <!--<div class="row" id="photoUploads0" style="min-height:100px; padding:5px">-->
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- Bottom Toolbar-->
-            <div class="toolbar">
-                <div class="toolbar-inner">
-                    <!-- Toolbar links -->
-                    <a href="#" class="link">Link 1</a>
-                    <a href="#" class="link">Link 2</a>
                 </div>
             </div>
         </div>
@@ -108,7 +128,7 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
     <script type="text/javascript" src="lib/load-image.all.min.js"></script>
-    <script type="text/javascript" src="js/my-app.js"></script>
+    <script type="text/javascript" src="js/my-app-p.js"></script>
 </body>
 
 </html>

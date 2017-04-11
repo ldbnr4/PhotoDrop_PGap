@@ -8,28 +8,15 @@ var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
     // Because we want to use dynamic navbar, we need to enable it for this view:
-    dynamicNavbar: true
+    dynamicNavbar: true,
+    material: true //enable Material theme
 });
 
-var imageUrl = "http://zotime.ddns.net/pd/upload/image2.jpg";
+var imageUrl = "http://zotime.ddns.net/pd/upload/image1.jpg";
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
-    loadImage(
-    imageUrl,
-    function (img) {
-        if(img.type === "error") {
-            console.log("Error loading image " + imageUrl);
-        } else {
-            $$("#extraImage").append(img);
-        }
-    },
-    {
-        maxWidth: 150,
-        maxHeight:150,
-        orientation: 6
-    }
-);
+
 });
 
 
@@ -60,7 +47,7 @@ $$(document).on('pageInit', '.page[data-page="about"]', function (e) {
 
 function getImage() {
     navigator.camera.getPicture(uploadPhoto, function (message) {
-        alert('get picture failed: '+message);
+        alert('get picture failed: ' + message);
     }, {
         quality: 100,
         destinationType: navigator.camera.DestinationType.FILE_URI,
@@ -69,8 +56,126 @@ function getImage() {
     });
 }
 
+function takeImage() {
+    navigator.camera.getPicture(uploadPhoto, function (message) {
+        alert('get picture failed: ' + message);
+    }, {
+        quality: 100,
+        destinationType: navigator.camera.DestinationType.FILE_URI,
+        sourceType: navigator.camera.PictureSourceType.CAMERA,
+        correctOrientation: true
+    });
+}
+
+var myPhotoBrowserDark = myApp.photoBrowser({
+    photos : [
+        {
+            html: '<iframe width="560" height="315" src="https://www.youtube.com/embed/92ISlO9U-84" style="height: 70%" frameborder="0" allowfullscreen></iframe>',
+            caption: 'zotime :)'
+        },
+        'http://lorempixel.com/1024/1024/sports/1/',
+        {url: imageUrl, caption: 'Sauce!'},
+        'http://lorempixel.com/1024/1024/sports/2/',
+        {url: imageUrl, caption: 'Sauce!'},{url: imageUrl, caption: 'Sauce!'},
+        {url:'http://lorempixel.com/1024/1024/sports/3/'},
+        {url: imageUrl, caption: 'Sauce!'},{url: imageUrl, caption: 'Sauce!'},{url: imageUrl, caption: 'Sauce!'},
+    ],
+    theme: 'dark'
+});
+$$('.pb-standalone-dark').on('click', function () {
+    myPhotoBrowserDark.open();
+});
+
+var count = 0;
+var rowCount = -1;
+var ROW_ID = "#photoUploads" + rowCount;
+
+function iGotTheSauce() {
+    if (count % 3 == 0) {
+        rowCount++;
+        ROW_ID = "#photoUploads" + rowCount
+        nextRow = document.createElement("div")
+        nextRow.setAttribute("class", "row")
+        nextRow.setAttribute("id","photoUploads" + rowCount)
+        nextRow.setAttribute("style", "min-height:100px; padding:5px")
+        $$("#inner-body").append(nextRow)
+
+        for (i = 0; i < 3; i++) {
+            imgSlot = document.createElement("div")
+            imgSlot.setAttribute("id", "div" + (count + i));
+            imgSlot.setAttribute("class", "short-loder col-auto")
+            //alert("ROW_ID: "+ROW_ID+" CONTAIN_ID: #div"+(count+i))
+            $$(ROW_ID).append(imgSlot)
+            
+            image = document.createElement("img")
+            image.setAttribute("src", imageUrl)
+            image.setAttribute("style", "max-height: 150px")
+            $$("#div" + (count + i)).append(image)
+        }
+        count += 3
+    }
+}
+
 function uploadPhoto(imageURI) {
-    console.log("SUCCESS!")
+    console.log("Sending photo...")
+
+    // alert("count = "+count+"\n"
+    //     +   "rowCount = "+rowCount+"\n"
+    //     +   
+    // )
+    if (count % 3 == 0) {
+        rowCount++;
+        ROW_ID = "#photoUploads" + rowCount
+        nextRow = document.createElement("div")
+        nextRow.setAttribute("class", "row")
+        nextRow.setAttribute("id", "photoUploads" + rowCount)
+        nextRow.setAttribute("style", "min-height:100px; padding:5px")
+        $$("#inner-body").append(nextRow)
+
+        for (i = 0; i < 3; i++) {
+            imgSlot = document.createElement("div")
+            imgSlot.setAttribute("id", "div" + (count + i));
+            imgSlot.setAttribute("class", "short-loder col-auto")
+            //alert("ROW_ID: " + ROW_ID + " CONTAIN_ID: #div" + (count + i))
+            $$(ROW_ID).append(imgSlot)
+        }
+    }
+
+    CONTAIN_ID = "#div" + count;
+    count++
+
+    loadImage(
+        imageURI,
+        function (img) {
+            if (img.type === "error") {
+                console.log("Error loading image " + imageURI);
+            } else {
+                alert("CONTAIN_ID: " + CONTAIN_ID)
+                $$(CONTAIN_ID).append(img);
+            }
+        }, {
+            maxWidth: 150,
+            maxHeight: 150
+        }
+    );
+
+    var container = CONTAIN_ID
+    myApp.showProgressbar(container, 0);
+    var ft = new FileTransfer();
+    ft.onprogress = function (progressEvent) {
+        if (progressEvent.lengthComputable) {
+            if (progressEvent.loaded < 1) {
+                myApp.setProgressbar(container, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
+            } else {
+                myApp.hideProgressbar(container); //hide
+                console.log("Photo sent!")
+            }
+        } else {
+            //loadingStatus.increment();
+            alert("DONE")
+        }
+    };
+
     var options = new FileUploadOptions();
     options.fileKey = "file";
     options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
@@ -81,18 +186,6 @@ function uploadPhoto(imageURI) {
     params.value2 = "param";
     options.params = params;
     options.chunkedMode = false;
-
-    var ft = new FileTransfer();
-    ft.onprogress = function(progressEvent) {
-        if (progressEvent.lengthComputable) {
-            //loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-            myApp.setProgressbar(".progressbar",(progressEvent.loaded / progressEvent.total)*100);
-            //alert(progressEvent.loaded / progressEvent.total)
-        } else {
-            //loadingStatus.increment();
-            alert("DONE")
-        }
-    };
     ft.upload(imageURI, "http://zotime.ddns.net/pd/photoUpload.php", function (result) {
         console.log(JSON.stringify(result));
     }, function (error) {
