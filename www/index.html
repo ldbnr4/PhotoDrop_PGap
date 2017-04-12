@@ -110,15 +110,22 @@
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block" id="inner-body" style="min-height:100px;">
+                    <div class="page-content list-block" style="min-height:100px;">
                         <div class="content-block">
-                            <div id="extraImage"></div>
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-input">
                                         <input type="text" placeholder="Select an album" readonly id="picker-device">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="item-content" style="display:none;" id="cont_file_input">
+                                <div class="item-inner">
+                                    <div class="item-input left">
+                                        <input type="file" id="inputfile" multiple/>
+                                    </div>
+                                </div>
+                                <a href="#" onclick="go()" class="button button-raised button-fill color-yellow right">upload</a>
                             </div>
                             <!-- Link to another page -->
                             <!--<a href="about.html">About app</a>-->
@@ -127,6 +134,7 @@
                                 <a href="#" class="button button-raised button-fill color-indigo pb-standalone-dark">Swipe media</a>
                             </p>
                         </div>
+                        <div class="list-block" id="inner-body"></div>
                         <!--<div class="row" id="photoUploads0" style="min-height:100px; padding:5px">-->
                     </div>
                 </div>
