@@ -12,7 +12,7 @@ var mainView = myApp.addView('.view-main', {
     material: true //enable Material theme
 });
 
-var imageUrl = "http://zotime.ddns.net/pd/upload/image1.jpg";
+var imageUrl = "http://zotime.ddns.net/pd/img/gates.jpg";
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
@@ -109,7 +109,7 @@ $$('.pb-standalone-dark').on('click', function () {
 
 var count = 0;
 var rowCount = -1;
-var ROW_ID = "#photoUploads" + rowCount;
+var ROW_ID;
 var COL_COUNT = 3;
 var physicalScreenWidth = window.screen.width;
 var physicalScreenHeight = window.screen.height;
@@ -131,10 +131,41 @@ var pickerDevice = myApp.picker({
         ALBUM = album
     },
     onClose: function(picker){
-        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function(resp){
-            console.log(resp)
-            alert(resp)
-        })
+        // Browser only
+        // httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function(resp){
+        //     respObj = JSON.parse(resp)
+        //     console.log(respObj)
+        //     alert(respObj)
+        //     if(respObj.status == true){
+        //         for(x = 2; x < respObj.photos.length; x++){
+        //             pUrl = encodeURI("http://zotime.ddns.net/pd/"+ALBUM.toString()+"/"+respObj.photos[x])
+        //             //console.log(pUrl)
+        //             alert(pUrl)
+        //             placeImage(pUrl)
+        //         }
+        //     }
+        //     //alert(resp)
+        // })
+        
+        cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
+            album: encodeURI(ALBUM.toString()),
+            message: "test"
+        }, { Authorization: "OAuth2: token" }, function(response) {
+            //alert("Response: "+response.data.status);
+            respObj = JSON.parse(response.data)
+            //alert("RESP_OBJ: "+respObj)
+            if(respObj.status == true){
+                for(x = 2; x < respObj.photos.length; x++){
+                    pUrl = encodeURI("http://zotime.ddns.net/pd/"+ALBUM.toString()+"/"+respObj.photos[x])
+                    //console.log(pUrl)
+                    //alert(pUrl)
+                    placeImage(pUrl)
+                }
+            }
+        }, function(response) {
+            console.log(response)
+            alert("Error: "+response);
+        });
     }
 });
 
@@ -149,40 +180,61 @@ function httpGetAsync(theUrl, callback) {
 }
 
 function iGotTheSauce() {
-    if (count % COL_COUNT == 0) {
-        rowCount++;
-        ROW_ID = "#photoUploads" + rowCount
-        nextRow = document.createElement("div")
-        nextRow.setAttribute("class", "row")
-        nextRow.setAttribute("id", "photoUploads" + rowCount)
-        nextRow.setAttribute("style", "min-height:100px; padding:5px; text-align:center;")
-        $$("#inner-body").append(nextRow)
-
-        for (i = 0; i < COL_COUNT; i++) {
-            imgSlot = document.createElement("div")
-            imgSlot.setAttribute("id", "div" + (count + i));
-            imgSlot.setAttribute("class", "short-loder col-auto")
-            //alert("ROW_ID: "+ROW_ID+" CONTAIN_ID: #div"+(count+i))
-            $$(ROW_ID).append(imgSlot)
-            placePic(count + i)
-
-        }
-        count += 3
+    for (i = 0; i < COL_COUNT; i++) {
+        //console.log("Count: "+count+" i: "+i)
+        placeImage(imageUrl)
     }
 }
 
-function placePic(num) {
-    //console.log(physicalScreenWidth)
+function createNewRow(c){
+    //console.log("Making new row")
+    rowCount++;
+    ROW_ID = "#photoUploads" + rowCount
+    nextRow = document.createElement("div")
+    nextRow.setAttribute("class", "row")
+    nextRow.setAttribute("id", "photoUploads" + rowCount)
+    nextRow.setAttribute("style", "min-height:100px; padding:5px;")
+    $$("#inner-body").append(nextRow)
+
+    for (j = 0; j < COL_COUNT; j++) {
+        imgSlot = document.createElement("div")
+        //console.log("Made slot: "+(c+j))
+        imgSlot.setAttribute("id", "div" + (c + j));
+        imgSlot.setAttribute("class", "short-loder col-auto")
+        $$(ROW_ID).append(imgSlot)
+    }
+}
+
+function placeImage(url, flag = true) {
+    c = parseInt(count)
+    if (c % COL_COUNT == 0) {
+        createNewRow(c);
+    }
+    
+    imgContainer = $$("#div" + c)
+
+    if(flag){
+        loader = document.createElement("span")
+        loader.setAttribute("class", "progressbar-infinite color-multi")
+        loader.setAttribute("id", "loader"+c)
+        imgContainer.append(loader)
+    }
+    startLoadingImg(url, c, flag)
+
+    count++
+}
+
+function startLoadingImg(url, c, flag){
     loadImage(
-        imageUrl,
+        url,
         function (img) {
             if (img.type === "error") {
-                console.log("Error loading image " + imageUrl);
+                console.log("Error loading image " + url);
             } else {
-                //alert("CONTAIN_ID: " + "#div" + (num))
+                if(flag) $$("#loader" + c).hide()
                 img.setAttribute("style", "margin:auto;")
-                //console.log(img)
-                $$("#div" + (num)).append(img);
+                //console.log("imgContainer: "+c)
+                $$("#div" + c).append(img);
             }
         }, {
             maxWidth: physicalScreenWidth / 3.5,
@@ -195,55 +247,17 @@ function placePic(num) {
 function uploadPhoto(imageURI) {
     console.log("Sending photo...")
 
-    // alert("count = "+count+"\n"
-    //     +   "rowCount = "+rowCount+"\n"
-    //     +   
-    // )
-    if (count % 3 == 0) {
-        rowCount++;
-        ROW_ID = "#photoUploads" + rowCount
-        nextRow = document.createElement("div")
-        nextRow.setAttribute("class", "row")
-        nextRow.setAttribute("id", "photoUploads" + rowCount)
-        nextRow.setAttribute("style", "min-height:100px; padding:5px")
-        $$("#inner-body").append(nextRow)
+    IMG_CONTAIN_ID = "#div" + count;
+    placeImage(imageURI, false)
 
-        for (i = 0; i < 3; i++) {
-            imgSlot = document.createElement("div")
-            imgSlot.setAttribute("id", "div" + (count + i));
-            imgSlot.setAttribute("class", "short-loder col-auto")
-            //alert("ROW_ID: " + ROW_ID + " CONTAIN_ID: #div" + (count + i))
-            $$(ROW_ID).append(imgSlot)
-        }
-    }
-
-    CONTAIN_ID = "#div" + count;
-    count++
-
-    loadImage(
-        imageURI,
-        function (img) {
-            if (img.type === "error") {
-                console.log("Error loading image " + imageURI);
-            } else {
-                //alert("CONTAIN_ID: " + CONTAIN_ID)
-                $$(CONTAIN_ID).append(img);
-            }
-        }, {
-            maxWidth: 150,
-            maxHeight: 150
-        }
-    );
-
-    var container = CONTAIN_ID
-    myApp.showProgressbar(container, 0);
+    myApp.showProgressbar(IMG_CONTAIN_ID, 0);
     var ft = new FileTransfer();
     ft.onprogress = function (progressEvent) {
         if (progressEvent.lengthComputable) {
             if (progressEvent.loaded < 1) {
-                myApp.setProgressbar(container, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
+                myApp.setProgressbar(IMG_CONTAIN_ID, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
             } else {
-                myApp.hideProgressbar(container); //hide
+                myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
                 console.log("Photo sent!")
             }
         } else {
