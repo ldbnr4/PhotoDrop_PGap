@@ -27,6 +27,9 @@
         },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
+        },
+        "cordova-plugin-image-picker": {
+            "PACKAGE_NAME": "com.cachemoney.photodrop"
         }
     },
     "dependent_plugins": {
