@@ -68,15 +68,15 @@ var bytesLoaded = 0;
 var tagInptFiles = $$("#inputfile")
 
 function readBlob(f, read, bload) {
-    var blob = f.slice(bload, bload + bufferSize);
+    blob = f.slice(bload, bload + bufferSize);
     read.readAsDataURL(blob);
 }
 
 function go() {
     console.log('Started loading images...');
     for (file of tagInptFiles[0].files) {
-        reader = new FileReader()
-        startReader(reader, 0, file)
+        console.log("loading " + file.name + "...")
+        startReader(new FileReader(), 0, file)
     }
     console.log("Done loading images!")
 }
@@ -85,17 +85,17 @@ function startReader(r, bLoaded, fl) {
     r.onprogress = function (evt) {
         if (evt.lengthComputable) bLoaded += evt.loaded;
     };
-    r.onloadend = function (e) {
-        placeImage(this.result)
-        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
-            console.log(resp)
-            // if (respObj.status == true) {
-            //     for (x = 2; x < respObj.photos.length; x++) {
-            //         pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-            //         placeImage(pUrl)
-            //     }
-            // }
-        }, file.name.split(".")[0], this.result)
+    r.onload = function (e) {
+        console.log("sending " + fl.name.split(".")[0] + "...")
+        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
+            function (resp) {
+                placeImage("http://zotime.ddns.net/pd/" + resp)
+                // console.log(resp) 
+            },
+            fl.name.split(".")[0],
+            r.result,
+            false
+        )
     }
     readBlob(fl, r, bLoaded);
 }
@@ -157,7 +157,7 @@ var ROW_ID;
 var COL_COUNT = 3;
 var physicalScreenWidth = window.screen.width;
 var physicalScreenHeight = window.screen.height;
-var ALBUM = "uploads"
+var ALBUM = "none"
 var pickerDevice = myApp.picker({
     input: '#picker-device',
     toolbarTemplate: '<div class="toolbar theme-teal">' +
@@ -169,20 +169,32 @@ var pickerDevice = myApp.picker({
         '</div>',
     cols: [{
         textAlign: 'center',
-        values: ['Family Reunion 2018', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3']
+        values: ['Family Reunion 2018', 'uploads']
     }],
     onClose: function (picker) {
-        ALBUM = picker.cols[0].value
+        if (picker.cols[0].value != ALBUM) {
+            ALBUM = picker.cols[0].value
+            rowCount = -1;
+            count = 0;
+            loadedPicNames = []
+            $$("#inner-body").html("")
+        }
         if (devicePlatform == "browser") {
             httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
                 respObj = JSON.parse(resp)
                 //console.log(respObj)
                 console.log(respObj)
                 if (respObj.status == true) {
+                    albumList = [];
                     for (x = 2; x < respObj.photos.length; x++) {
                         pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
                         placeImage(pUrl)
+                        albumList.push(pUrl)
                     }
+                    myPhotoBrowserDark = myApp.photoBrowser({
+                        theme: 'dark',
+                        photos: albumList
+                    });
                 }
             })
         } else {
@@ -194,10 +206,16 @@ var pickerDevice = myApp.picker({
             }, function (response) {
                 respObj = JSON.parse(response.data)
                 if (respObj.status == true) {
+                    albumList = [];
                     for (x = 2; x < respObj.photos.length; x++) {
                         pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
                         placeImage(pUrl)
+                        albumList.push(pUrl)
                     }
+                    myPhotoBrowserDark = myApp.photoBrowser({
+                        theme: 'dark',
+                        photos: albumList
+                    });
                 }
             }, function (response) {
                 alert("Error: " + response);
@@ -206,22 +224,24 @@ var pickerDevice = myApp.picker({
     }
 });
 
-function httpGetAsync(theUrl, callback, key = null, value = null) {
+function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
     xmlHttp = new XMLHttpRequest();
-    pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
+    pars = null;
     xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             callback(xmlHttp.responseText);
+        }
     }
     if (key == null) {
-        xmlHttp.open("GET", theUrl + "?album=" + ALBUM, true);
-        xmlHttp.send(null);
-    } // true for asynchronous
+        xmlHttp.open("GET", theUrl + "?album=" + ALBUM, asynchFlag); // true for asynchronous
+        console.log("Asynch call")
+    } 
     else {
-        xmlHttp.open("POST", theUrl, true); // true for asynchronous
+        pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
+        xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlHttp.send(pars);
     }
+    xmlHttp.send(pars);
 }
 
 
@@ -260,6 +280,7 @@ function placeImage(url, flag = true) {
     imgContainer = $$("#div" + count)
 
     if (flag) {
+        //console.log("show")
         loader = document.createElement("span")
         loader.setAttribute("class", "progressbar-infinite color-multi")
         loader.setAttribute("id", "loader" + count)
@@ -277,9 +298,10 @@ function startLoadingImg(url, c, flag) {
             if (img.type === "error") {
                 console.log("Error loading image " + url);
             } else {
-                if (flag) $$("#loader" + c).hide()
+                //console.log("hide")
                 img.setAttribute("style", "margin:auto;")
                 $$("#div" + c).append(img);
+                if (flag) $$("#loader" + c).hide()
             }
         }, {
             maxWidth: physicalScreenWidth / 3.5,
