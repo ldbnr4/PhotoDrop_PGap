@@ -172,55 +172,57 @@ var pickerDevice = myApp.picker({
         values: ['Family Reunion 2018', 'uploads']
     }],
     onClose: function (picker) {
-        if (picker.cols[0].value != ALBUM) {
-            ALBUM = picker.cols[0].value
-            rowCount = -1;
-            count = 0;
-            loadedPicNames = []
-            $$("#inner-body").html("")
-        }
-        if (devicePlatform == "browser") {
-            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
-                respObj = JSON.parse(resp)
-                //console.log(respObj)
-                console.log(respObj)
-                if (respObj.status == true) {
-                    albumList = [];
-                    for (x = 2; x < respObj.photos.length; x++) {
-                        pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                        placeImage(pUrl)
-                        albumList.push(pUrl)
+        setTimeout(function () {
+            if (picker.cols[0].value != ALBUM) {
+                ALBUM = picker.cols[0].value
+                rowCount = -1;
+                count = 0;
+                loadedPicNames = []
+                $$("#inner-body").html("")
+            }
+            if (devicePlatform == "browser") {
+                httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
+                    respObj = JSON.parse(resp)
+                    //console.log(respObj)
+                    console.log(respObj)
+                    if (respObj.status == true) {
+                        albumList = [];
+                        for (x = 2; x < respObj.photos.length; x++) {
+                            pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
+                            placeImage(pUrl)
+                            albumList.push(pUrl)
+                        }
+                        myPhotoBrowserDark = myApp.photoBrowser({
+                            theme: 'dark',
+                            photos: albumList
+                        });
                     }
-                    myPhotoBrowserDark = myApp.photoBrowser({
-                        theme: 'dark',
-                        photos: albumList
-                    });
-                }
-            })
-        } else {
-            cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
-                album: encodeURI(ALBUM),
-                message: "test"
-            }, {
-                Authorization: "OAuth2: token"
-            }, function (response) {
-                respObj = JSON.parse(response.data)
-                if (respObj.status == true) {
-                    albumList = [];
-                    for (x = 2; x < respObj.photos.length; x++) {
-                        pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                        placeImage(pUrl)
-                        albumList.push(pUrl)
+                })
+            } else {
+                cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
+                    album: encodeURI(ALBUM),
+                    message: "test"
+                }, {
+                    Authorization: "OAuth2: token"
+                }, function (response) {
+                    respObj = JSON.parse(response.data)
+                    if (respObj.status == true) {
+                        albumList = [];
+                        for (x = 2; x < respObj.photos.length; x++) {
+                            pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
+                            placeImage(pUrl)
+                            albumList.push(pUrl)
+                        }
+                        myPhotoBrowserDark = myApp.photoBrowser({
+                            theme: 'dark',
+                            photos: albumList
+                        });
                     }
-                    myPhotoBrowserDark = myApp.photoBrowser({
-                        theme: 'dark',
-                        photos: albumList
-                    });
-                }
-            }, function (response) {
-                alert("Error: " + response);
-            });
-        }
+                }, function (response) {
+                    alert("Error: " + response);
+                });
+            }
+        }, 750)
     }
 });
 
@@ -235,8 +237,7 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
     if (key == null) {
         xmlHttp.open("GET", theUrl + "?album=" + ALBUM, asynchFlag); // true for asynchronous
         console.log("Asynch call")
-    } 
-    else {
+    } else {
         pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
         xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
