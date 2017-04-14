@@ -30,6 +30,9 @@
         },
         "cordova-plugin-image-picker": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.cachemoney.photodrop"
         }
     },
     "dependent_plugins": {
