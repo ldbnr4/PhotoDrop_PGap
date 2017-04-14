@@ -382,7 +382,7 @@ var ptrContent = $$('.pull-to-refresh-content');
 
 ptrContent.on('ptr:pullstart', function (e) {
     //myApp.pullToRefreshDone();
-    console.log(ptrContent.scrollTop(100))
+    console.log(ptrContent.scrollTop())
     myApp.showIndicator();
 })
 ptrContent.on('ptr:done', function (e) {
