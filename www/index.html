@@ -79,7 +79,7 @@
                                 <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="left sliding">Awesome App</div>
+                            <div class="left sliding">PhotoCache</div>
 
                         </div>
                     </div>
@@ -110,14 +110,19 @@
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block pull-to-refresh-content">
+                    <div class="page-content list-block pull-to-refresh-content" data-ptr-distance="5">
                         <div class="content-block">
+                            <div class="pull-to-refresh-layer">
+                                <div class="preloader"></div>
+                                <div class="pull-to-refresh-arrow"></div>
+                            </div>
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-input">
                                         <input type="text" placeholder="Select an album" readonly id="picker-device">
                                     </div>
                                 </div>
+                                <i class="material-icons" onclick="addAlbum()">add</i>
                             </div>
                             <div class="item-content" style="display:none;" id="cont_file_input">
                                 <div class="item-inner">
