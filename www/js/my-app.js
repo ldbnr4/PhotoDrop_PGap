@@ -1,5 +1,7 @@
 // Initialize app
-var myApp = new Framework7();
+var myApp = new Framework7({
+    material: true, //enable Material theme
+});
 
 
 // If we need to use custom DOM library, let's save it to $$ variable:
@@ -9,7 +11,6 @@ var $$ = Dom7;
 var mainView = myApp.addView('.view-main', {
     // Because we want to use dynamic navbar, we need to enable it for this view:
     dynamicNavbar: true,
-    material: true //enable Material theme
 });
 
 var imageUrl = "http://zotime.ddns.net/pd/img/gates.jpg",
@@ -299,16 +300,20 @@ function startLoadingImg(url, c, flag) {
             if (img.type === "error") {
                 console.log("Error loading image " + url);
             } else {
+                img = loadImage.scale(
+                    img, {
+                        maxWidth: physicalScreenWidth / 3.5,
+                        maxHeight: physicalScreenHeight / 3.5,
+                        //crop: true,
+                        contain: true,
+                    }
+                )
                 //console.log("hide")
                 img.setAttribute("style", "margin:auto;")
                 $$("#div" + c).append(img);
                 if (flag) $$("#loader" + c).hide()
             }
-        }, {
-            maxWidth: physicalScreenWidth / 3.5,
-            maxHeight: physicalScreenHeight / 3.5,
-            crop: true
-        }
+        }, {}
     );
 }
 
@@ -353,3 +358,65 @@ function uploadPhoto(imageURI) {
         //console.log("Upload error: "+JSON.stringify(error));
     }, options);
 }
+
+// Pull to refresh content
+var ptrContent = $$('.pull-to-refresh-content');
+
+ptrContent.on('ptr:pullstart', function (e) {
+    //myApp.pullToRefreshDone();
+    console.log(ptrContent.scrollTop(100))
+    myApp.showIndicator();
+})
+ptrContent.on('ptr:done', function (e) {
+    myApp.hideIndicator();
+})
+// Add 'refresh' listener on it
+ptrContent.on('ptr:refresh', function (e) {
+    // Emulate 2s loading
+    setTimeout(function () {
+        if (devicePlatform == "browser") {
+            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
+                respObj = JSON.parse(resp)
+                //console.log(respObj)
+                console.log(respObj)
+                if (respObj.status == true) {
+                    albumList = [];
+                    for (x = 2; x < respObj.photos.length; x++) {
+                        pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
+                        placeImage(pUrl)
+                        albumList.push(pUrl)
+                    }
+                    myPhotoBrowserDark = myApp.photoBrowser({
+                        theme: 'dark',
+                        photos: albumList
+                    });
+                }
+            })
+        } else {
+            cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
+                album: encodeURI(ALBUM),
+                message: "test"
+            }, {
+                Authorization: "OAuth2: token"
+            }, function (response) {
+                respObj = JSON.parse(response.data)
+                if (respObj.status == true) {
+                    albumList = [];
+                    for (x = 2; x < respObj.photos.length; x++) {
+                        pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
+                        placeImage(pUrl)
+                        albumList.push(pUrl)
+                    }
+                    myPhotoBrowserDark = myApp.photoBrowser({
+                        theme: 'dark',
+                        photos: albumList
+                    });
+                }
+            }, function (response) {
+                alert("Error: " + response);
+            });
+        }
+        // When loading done, we need to reset it
+        myApp.pullToRefreshDone();
+    }, 500);
+});
