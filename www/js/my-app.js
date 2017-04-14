@@ -166,7 +166,7 @@ var COL_COUNT = 3;
 var physicalScreenWidth = window.screen.width;
 var physicalScreenHeight = window.screen.height;
 var ALBUM = "none"
-var albumPickerList = ['Family Reunion 2018', 'uploads']
+var albumPickerList = ['uploads', 'Dali', 'Family Reunion 2018']
 var myPicker
 // Pull to refresh content
 var ptrContent = $$('.pull-to-refresh-content');
