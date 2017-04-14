@@ -1,6 +1,13 @@
 // Initialize app
 var myApp = new Framework7({
     material: true, //enable Material theme
+    // Hide and show indicator during ajax requests
+    onAjaxStart: function (xhr) {
+        myApp.showIndicator();
+    },
+    onAjaxComplete: function (xhr) {
+        myApp.hideIndicator();
+    }
 });
 
 
@@ -394,16 +401,14 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-ptrContent.on('ptr:pullend', function (e) {
-    //myApp.pullToRefreshDone();
-    //console.log(ptrContent.scrollTop())
-    myApp.showIndicator();
-})
-ptrContent.on('ptr:done', function (e) {
-    myApp.hideIndicator();
-})
 // Add 'refresh' listener on it
 ptrContent.on('ptr:refresh', function (e) {
+    console.log(ALBUM)
+    //ALBUM = myPicker.cols[0].value
+    // rowCount = -1;
+    // count = 0;
+    // loadedPicNames = []
+    // $$("#inner-body").html("")
     if (devicePlatform == "browser") {
         httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
             respObj = JSON.parse(resp)
