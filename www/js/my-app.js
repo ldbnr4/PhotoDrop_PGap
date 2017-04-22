@@ -23,10 +23,7 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true,
     domCache: true,
 });
-
-var imageUrl = "http://zotime.ddns.net/pd/img/gates.jpg",
-    devicePlatform,
-    loadedPicNames = []
+var devicePlatform
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
@@ -56,71 +53,10 @@ $$(document).on('pageInit', '.page[data-page="about"]', function (e) {
     // Following code will be executed for page with data-page attribute equal to "about"
     myApp.alert('Here comes About page');
 })
-
-function getImage() {
-    if (devicePlatform == "browser") {
-        $$("#cont_file_input").show()
-    } else {
-        navigator.camera.getPicture(uploadPhoto, function (message) {
-            alert('get picture failed: ' + message);
-            console.log(message)
-        }, {
-            quality: 100,
-            destinationType: navigator.camera.DestinationType.FILE_URI,
-            sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
-            correctOrientation: true
-        });
-    }
-}
-var bufferSize = 1000000; // 1MB buffer
-var bytesLoaded = 0;
 var tagInptFiles = $$("#inputfile")
 
-function readBlob(f, read, bload) {
-    blob = f.slice(bload, bload + bufferSize);
-    read.readAsDataURL(blob);
-}
-
-function go() {
-    console.log('Started loading images...');
-    for (file of tagInptFiles[0].files) {
-        console.log("loading " + file.name + "...")
-        startReader(new FileReader(), 0, file)
-    }
-    console.log("Done loading images!")
-}
-
-function startReader(r, bLoaded, fl) {
-    r.onprogress = function (evt) {
-        if (evt.lengthComputable) bLoaded += evt.loaded;
-    };
-    r.onload = function (e) {
-        console.log("sending " + fl.name.split(".")[0] + "...")
-        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
-            function (resp) {
-                console.log(resp)
-                placeImage("http://zotime.ddns.net/pd/" + resp)
-            },
-            fl.name.split(".")[0],
-            r.result,
-            false
-        )
-    }
-    readBlob(fl, r, bLoaded);
-}
-
-function takeImage() {
-    navigator.camera.getPicture(uploadPhoto, function (message) {
-        alert('get picture failed: ' + message);
-        console.log(message)
-    }, {
-        quality: 100,
-        destinationType: navigator.camera.DestinationType.FILE_URI,
-        sourceType: navigator.camera.PictureSourceType.CAMERA,
-        correctOrientation: true
-    });
-}
-
+var imageUrl = "http://zotime.ddns.net/pd/img/gates.jpg",
+    loadedPicNames = []
 var myPhotoBrowserDark = myApp.photoBrowser({
     theme: 'dark',
     photos: [{
@@ -156,10 +92,6 @@ var myPhotoBrowserDark = myApp.photoBrowser({
     ]
 });
 
-$$('.pb-standalone-dark').on('click', function () {
-    myPhotoBrowserDark.open();
-});
-
 var count = 0;
 var rowCount = -1;
 var ROW_ID;
@@ -186,214 +118,6 @@ var myPicker = myApp.picker({
         goToAlbumPg()
     }
 });
-
-function askForAlbum(resp) {
-    //console.log(respObj)
-    respObj = JSON.parse(resp)
-    console.log(respObj)
-    if (respObj.status == true) {
-        albumList = [];
-        for (x = 2; x < respObj.photos.length; x++) {
-            pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-            placeImage(pUrl)
-            albumList.push(pUrl)
-        }
-        myPhotoBrowserDark = myApp.photoBrowser({
-            theme: 'dark',
-            photos: albumList
-        });
-    }
-}
-
-function goToAlbumPg() {
-    $$("#album_name_ttl").html(ALBUM)
-    // Load album page
-    mainView.router.load({
-        pageName: 'album',
-        query: {
-            album_name: ALBUM
-        }
-    });
-}
-
-function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
-    xmlHttp = new XMLHttpRequest();
-    pars = null;
-    xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            callback(xmlHttp.responseText);
-        }
-    }
-    if (key == null) {
-        xmlHttp.open("GET", theUrl + "?album=" + ALBUM, asynchFlag); // true for asynchronous
-        console.log("Asynch call")
-    } else {
-        pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
-        xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    }
-    xmlHttp.send(pars);
-}
-
-
-function iGotTheSauce() {
-    for (i = 0; i < COL_COUNT; i++) {
-        placeImage(imageUrl)
-    }
-}
-
-function createNewRow(c) {
-    rowCount++;
-    ROW_ID = "#photoUploads" + rowCount
-    nextRow = document.createElement("div")
-    nextRow.setAttribute("class", "row")
-    nextRow.setAttribute("id", "photoUploads" + rowCount)
-    nextRow.setAttribute("style", "min-height:100px; padding:5px")
-    $$("#inner-body").append(nextRow)
-
-    for (j = 0; j < COL_COUNT; j++) {
-        imgSlot = document.createElement("div")
-        imgSlot.setAttribute("id", "div" + (c + j));
-        imgSlot.setAttribute("class", "short-loder col-auto")
-        imgSlot.setAttribute("style", "margin:auto")
-        $$(ROW_ID).append(imgSlot)
-    }
-}
-
-function placeImage(url, flag = true) {
-    picName = url.substr(url.lastIndexOf('/') + 1)
-    if (loadedPicNames.indexOf(picName) != -1) return
-    if (picName != "gates.jpg") loadedPicNames.push(picName)
-    if (count % COL_COUNT == 0) {
-        createNewRow(count);
-    }
-
-    imgContainer = $$("#div" + count)
-
-    if (flag) {
-        //console.log("show")
-        loader = document.createElement("span")
-        loader.setAttribute("class", "progressbar-infinite color-multi")
-        loader.setAttribute("id", "loader" + count)
-        imgContainer.append(loader)
-    }
-    startLoadingImg(url, count, flag)
-
-    count++
-}
-
-function startLoadingImg(url, c, flag) {
-    loadImage(
-        url,
-        function (img) {
-            if (img.type === "error") {
-                console.log("Error loading image " + url);
-            } else {
-                img = loadImage.scale(
-                    img, {
-                        maxWidth: window.screen.width / 3.5,
-                        maxHeight: window.screen.height / 3.5,
-                        //crop: true,
-                        contain: true,
-                    }
-                )
-                //console.log("hide")
-                img.setAttribute("style", "margin:auto;")
-                $$("#div" + c).append(img);
-                if (flag) $$("#loader" + c).hide()
-            }
-        }, {}
-    );
-}
-
-function uploadPhoto(imageURI) {
-    console.log("Sending photo...")
-
-    IMG_CONTAIN_ID = "#div" + count;
-    placeImage(imageURI, false)
-
-    myApp.showProgressbar(IMG_CONTAIN_ID, 0);
-    ft = new FileTransfer();
-    ft.onprogress = function (progressEvent) {
-        if (progressEvent.lengthComputable) {
-            if (progressEvent.loaded < 1) {
-                myApp.setProgressbar(IMG_CONTAIN_ID, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
-            } else {
-                myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
-                console.log("Photo sent! " + progressEvent.loaded)
-            }
-        } else {
-            alert("DONE")
-        }
-    };
-
-    options = new FileUploadOptions();
-    options.fileKey = "file";
-    options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-    options.mimeType = "image/jpeg";
-    options.fileName = options.fileName.split("?")[0]
-    alert(options.fileName);
-    params = new Object();
-    params.album = ALBUM;
-    alert(ALBUM)
-    params.value2 = "param";
-    options.params = params;
-    options.chunkedMode = false;
-    ft.upload(encodeURI(imageURI), "http://zotime.ddns.net/pd/photoUpload.php", function (result) {
-        console.log("Result " + JSON.stringify(result));
-        //alert(JSON.stringify(result))
-    }, function (error) {
-        alert("Uplaod error!")
-        //console.log("Upload error: "+JSON.stringify(error));
-    }, options);
-}
-
-function checkConnection() {
-    var networkState = navigator.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN] = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI] = 'WiFi connection';
-    states[Connection.CELL_2G] = 'Cell 2G connection';
-    states[Connection.CELL_3G] = 'Cell 3G connection';
-    states[Connection.CELL_4G] = 'Cell 4G connection';
-    states[Connection.CELL] = 'Cell generic connection';
-    states[Connection.NONE] = 'No network connection';
-
-    console.log('Connection type: ' + states[networkState]);
-
-    return networkState = !Connection.NONE
-}
-
-function fillPhotoGrid(newAlbum){
-    ALBUM = newAlbum
-    rowCount = -1;
-    count = 0;
-    loadedPicNames = []
-    $$("#inner-body").html("")
-     if (devicePlatform == "browser") {
-            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
-                function (resp) {
-                    askForAlbum(resp)
-                })
-        } else {
-            cordovaHTTP.get(
-                "http://zotime.ddns.net/pd/photoUpload.php", {
-                    album: encodeURI(ALBUM),
-                    message: "test"
-                }, {
-                    Authorization: "OAuth2: token"
-                },
-                function (response) {
-                    askForAlbum(response.data)
-                },
-                function (response) {
-                    alert("Error: " + response);
-                }
-            );
-        }
-}
 
 // Pull to refresh content
 var ptrContent = $$('.pull-to-refresh-content');

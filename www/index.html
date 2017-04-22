@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-
+<script type="text/javascript" src="js/funcs.js"></script>
+<script type="text/javascript" src="js/UTL-media.js"></script>
 <head>
     <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
@@ -45,7 +46,6 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="css\material-icons.css" rel="stylesheet">
 </head>
-
 <body>
     <!-- Status bar overlay for full screen mode (PhoneGap) -->
     <div class="statusbar-overlay"></div>
@@ -157,7 +157,7 @@
                             </div>
                             <p class="buttons-row">
                                 <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
-                                <a href="#" class="button button-raised button-fill color-indigo pb-standalone-dark">Swipe media</a>
+                                <a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>
                             </p>
                         </div>
                         <div class="list-block" id="inner-body">
