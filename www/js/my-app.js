@@ -7,7 +7,10 @@ var myApp = new Framework7({
     },
     onAjaxComplete: function (xhr) {
         myApp.hideIndicator();
-    }
+    },
+    materialPageLoadDelay: 250,
+    uniqueHistory: true,
+    swipePanel: "left"
 });
 
 
@@ -18,6 +21,7 @@ var $$ = Dom7;
 var mainView = myApp.addView('.view-main', {
     // Because we want to use dynamic navbar, we need to enable it for this view:
     dynamicNavbar: true,
+    domCache: true,
 });
 
 var imageUrl = "http://zotime.ddns.net/pd/img/gates.jpg",
@@ -29,9 +33,6 @@ $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
 });
-
-
-// Now we need to run the code that will be executed only for About page.
 
 // Option 1. Using page callback for page (for "about" page in this case) (recommended way):
 myApp.onPageInit('about', function (page) {
@@ -163,93 +164,57 @@ var count = 0;
 var rowCount = -1;
 var ROW_ID;
 var COL_COUNT = 3;
-var physicalScreenWidth = window.screen.width;
-var physicalScreenHeight = window.screen.height;
-var ALBUM = "none"
-var albumPickerList = ['uploads', 'Dali', 'Family Reunion 2018']
-var myPicker
-// Pull to refresh content
-var ptrContent = $$('.pull-to-refresh-content');
+var ALBUM = "none";
+var albumPickerList = ['uploads', 'Dali', 'Family Reunion 2018'];
+var myPicker = myApp.picker({
+    input: '#picker-device',
+    toolbarTemplate: '<div class="toolbar theme-teal">' +
+        '<div class="toolbar-inner">' +
+        '<div class="right">' +
+        '<a href="#" class="link close-picker">Done</a>' +
+        '</div>' +
+        '</div>' +
+        '</div>',
+    cols: [{
+        textAlign: 'center',
+        values: albumPickerList
+    }],
+    onClose: function (picker) {
+        if (picker.cols[0].value != ALBUM) {
+            fillPhotoGrid(picker.cols[0].value)
+        }
+        goToAlbumPg()
+    }
+});
 
-function addToPicker(album_name) {
-    albumPickerList.push(album_name)
-    $$("#picker-device")[0].value = album_name
-    ALBUM = album_name
-    $$("#inner-body").html("")
-    myApp.pullToRefreshTrigger(ptrContent)
-    setPicker()
+function askForAlbum(resp) {
+    //console.log(respObj)
+    respObj = JSON.parse(resp)
+    console.log(respObj)
+    if (respObj.status == true) {
+        albumList = [];
+        for (x = 2; x < respObj.photos.length; x++) {
+            pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
+            placeImage(pUrl)
+            albumList.push(pUrl)
+        }
+        myPhotoBrowserDark = myApp.photoBrowser({
+            theme: 'dark',
+            photos: albumList
+        });
+    }
 }
 
-function setPicker() {
-    myPicker = myApp.picker({
-        input: '#picker-device',
-        toolbarTemplate: '<div class="toolbar theme-teal">' +
-            '<div class="toolbar-inner">' +
-            '<div class="right">' +
-            '<a href="#" class="link close-picker">Done</a>' +
-            '</div>' +
-            '</div>' +
-            '</div>',
-        cols: [{
-            textAlign: 'center',
-            values: albumPickerList
-        }],
-        onClose: function (picker) {
-            setTimeout(function () {
-                if (picker.cols[0].value != ALBUM) {
-                    ALBUM = picker.cols[0].value
-                    rowCount = -1;
-                    count = 0;
-                    loadedPicNames = []
-                    $$("#inner-body").html("")
-                }
-                if (devicePlatform == "browser") {
-                    httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
-                        respObj = JSON.parse(resp)
-                        //console.log(respObj)
-                        console.log(respObj)
-                        if (respObj.status == true) {
-                            albumList = [];
-                            for (x = 2; x < respObj.photos.length; x++) {
-                                pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                                placeImage(pUrl)
-                                albumList.push(pUrl)
-                            }
-                            myPhotoBrowserDark = myApp.photoBrowser({
-                                theme: 'dark',
-                                photos: albumList
-                            });
-                        }
-                    })
-                } else {
-                    cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
-                        album: encodeURI(ALBUM),
-                        message: "test"
-                    }, {
-                        Authorization: "OAuth2: token"
-                    }, function (response) {
-                        respObj = JSON.parse(response.data)
-                        if (respObj.status == true) {
-                            albumList = [];
-                            for (x = 2; x < respObj.photos.length; x++) {
-                                pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                                placeImage(pUrl)
-                                albumList.push(pUrl)
-                            }
-                            myPhotoBrowserDark = myApp.photoBrowser({
-                                theme: 'dark',
-                                photos: albumList
-                            });
-                        }
-                    }, function (response) {
-                        alert("Error: " + response);
-                    });
-                }
-            }, 750)
+function goToAlbumPg() {
+    $$("#album_name_ttl").html(ALBUM)
+    // Load album page
+    mainView.router.load({
+        pageName: 'album',
+        query: {
+            album_name: ALBUM
         }
     });
 }
-setPicker()
 
 function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
     xmlHttp = new XMLHttpRequest();
@@ -326,8 +291,8 @@ function startLoadingImg(url, c, flag) {
             } else {
                 img = loadImage.scale(
                     img, {
-                        maxWidth: physicalScreenWidth / 3.5,
-                        maxHeight: physicalScreenHeight / 3.5,
+                        maxWidth: window.screen.width / 3.5,
+                        maxHeight: window.screen.height / 3.5,
                         //crop: true,
                         contain: true,
                     }
@@ -401,59 +366,52 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-// Add 'refresh' listener on it
-ptrContent.on('ptr:refresh', function (e) {
-    console.log(ALBUM)
-    //ALBUM = myPicker.cols[0].value
-    // rowCount = -1;
-    // count = 0;
-    // loadedPicNames = []
-    // $$("#inner-body").html("")
-    if (devicePlatform == "browser") {
-        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php", function (resp) {
-            respObj = JSON.parse(resp)
-            //console.log(respObj)
-            console.log(respObj)
-            if (respObj.status == true) {
-                albumList = [];
-                for (x = 2; x < respObj.photos.length; x++) {
-                    pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                    placeImage(pUrl)
-                    albumList.push(pUrl)
+function fillPhotoGrid(newAlbum){
+    ALBUM = newAlbum
+    rowCount = -1;
+    count = 0;
+    loadedPicNames = []
+    $$("#inner-body").html("")
+     if (devicePlatform == "browser") {
+            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
+                function (resp) {
+                    askForAlbum(resp)
+                })
+        } else {
+            cordovaHTTP.get(
+                "http://zotime.ddns.net/pd/photoUpload.php", {
+                    album: encodeURI(ALBUM),
+                    message: "test"
+                }, {
+                    Authorization: "OAuth2: token"
+                },
+                function (response) {
+                    askForAlbum(response.data)
+                },
+                function (response) {
+                    alert("Error: " + response);
                 }
-                myPhotoBrowserDark = myApp.photoBrowser({
-                    theme: 'dark',
-                    photos: albumList
-                });
-            }
-        })
-    } else {
-        cordovaHTTP.get("http://zotime.ddns.net/pd/photoUpload.php", {
-            album: encodeURI(ALBUM),
-            message: "test"
-        }, {
-            Authorization: "OAuth2: token"
-        }, function (response) {
-            respObj = JSON.parse(response.data)
-            if (respObj.status == true) {
-                albumList = [];
-                for (x = 2; x < respObj.photos.length; x++) {
-                    pUrl = encodeURI("http://zotime.ddns.net/pd/" + ALBUM + "/" + respObj.photos[x])
-                    placeImage(pUrl)
-                    albumList.push(pUrl)
-                }
-                myPhotoBrowserDark = myApp.photoBrowser({
-                    theme: 'dark',
-                    photos: albumList
-                });
-            }
-        }, function (response) {
-            alert("Error: " + response);
-        });
-    }
+            );
+        }
+}
+
+// Pull to refresh content
+var ptrContent = $$('.pull-to-refresh-content');
+
+ptrContent.on('ptr:refresh', function(e){
+    fillPhotoGrid(ALBUM);
     // When loading done, we need to reset it
     myApp.pullToRefreshDone();
 });
+
+function addToPicker(album_name) {
+    albumPickerList.push(album_name)
+    ALBUM = album_name
+    myApp.pullToRefreshTrigger(ptrContent)
+    myPicker.setValue(albumPickerList, 0)
+    $$("#picker-device")[0].value = album_name
+    goToAlbumPg()
+}
 
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
