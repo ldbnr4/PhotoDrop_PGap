@@ -42,6 +42,7 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
         xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
     }
     xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlHttp.setRequestHeader("Access-Control-Allow-Origin", "*");
     xmlHttp.send(pars);
 }
 
