@@ -9,7 +9,7 @@ function photoSwiper(){
 }
 
 function _fillFromResp(resp) {
-    //console.log(respObj)
+    console.log(resp)
     respObj = JSON.parse(resp)
     console.log(respObj)
     if (respObj.status == true) {
@@ -40,8 +40,8 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
     } else {
         pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
         xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     }
+    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlHttp.send(pars);
 }
 
