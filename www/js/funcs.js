@@ -11,6 +11,10 @@ function photoSwiper() {
 }
 
 function _fillFromResp(resp) {
+    if(resp == ""){
+        alert("Empty response")
+        return
+    }
     console.log(resp)
     respObj = JSON.parse(resp)
     console.log(respObj)
