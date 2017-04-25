@@ -35,6 +35,7 @@ function createCORSRequest(method, url) {
         // Check if the XMLHttpRequest object has a "withCredentials" property.
         // "withCredentials" only exists on XMLHTTPRequest2 objects.
         xhr.open(method, url, true);
+        console.log("Made a CORS req")
 
     } else if (typeof XDomainRequest != "undefined") {
 
@@ -47,6 +48,7 @@ function createCORSRequest(method, url) {
 
         // Otherwise, CORS is not supported by the browser.
         xhr = null;
+        console.log("CORS not supported")
 
     }
     return xhr;
@@ -63,7 +65,7 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag = t
         url = theUrl
         method = "POST"
     }
-    var xhr = createCORSRequest(method, url);
+    var xhr = createCORSRequest(method, encodeURI(url));
     if (!xhr) {
         throw new Error('CORS not supported');
     }
@@ -132,7 +134,9 @@ function fillPhotoGrid(newAlbum) {
     if (devicePlatform == "browser") {
         httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
             function (resp) {
-                _fillFromResp(resp)
+                if(!resp) myApp.alert("Empty response from the server", "Uh Oh!")
+                else
+                    _fillFromResp(resp)
             })
     } else {
         cordovaHTTP.get(
