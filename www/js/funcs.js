@@ -1,10 +1,12 @@
 function goToAlbumPg() {
     $$("#album_name_ttl").html(ALBUM)
     // Load album page
-    mainView.router.load({pageName: 'album'});
+    mainView.router.load({
+        pageName: 'album'
+    });
 }
 
-function photoSwiper(){
+function photoSwiper() {
     myPhotoBrowserDark.open();
 }
 
@@ -26,24 +28,56 @@ function _fillFromResp(resp) {
     }
 }
 
-function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag) {
-    xmlHttp = new XMLHttpRequest();
-    pars = null;
-    xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            callback(xmlHttp.responseText);
-        }
+function createCORSRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr) {
+
+        // Check if the XMLHttpRequest object has a "withCredentials" property.
+        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+        xhr.open(method, url, true);
+
+    } else if (typeof XDomainRequest != "undefined") {
+
+        // Otherwise, check if XDomainRequest.
+        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+
+    } else {
+
+        // Otherwise, CORS is not supported by the browser.
+        xhr = null;
+
     }
+    return xhr;
+}
+
+function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag = true) {
+    pars = null;
+    url = null;
     if (key == null) {
-        xmlHttp.open("GET", theUrl + "?album=" + ALBUM, asynchFlag); // true for asynchronous
-        console.log("Asynch call")
+        url = theUrl + "?album=" + ALBUM // true for asynchronous
+        method = "GET"
     } else {
         pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
-        xmlHttp.open("POST", theUrl, asynchFlag); // true for asynchronous
+        url = theUrl
+        method = "POST"
     }
-    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlHttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-    xmlHttp.send(pars);
+    var xhr = createCORSRequest(method, url);
+    if (!xhr) {
+        throw new Error('CORS not supported');
+    }
+    xhr.onload = function () {
+        var responseText = xhr.responseText;
+        console.log(responseText);
+        // process the response.
+        callback(responseText);
+    };
+
+    xhr.onerror = function () {
+        console.log('There was an error!');
+    };
+    xhr.send(pars);
 }
 
 
@@ -89,31 +123,31 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-function fillPhotoGrid(newAlbum){
+function fillPhotoGrid(newAlbum) {
     ALBUM = newAlbum
     rowCount = -1;
     count = 0;
     loadedPicNames = []
     $$("#inner-body").html("")
-     if (devicePlatform == "browser") {
-            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
-                function (resp) {
-                    _fillFromResp(resp)
-                })
-        } else {
-            cordovaHTTP.get(
-                "http://zotime.ddns.net/pd/photoUpload.php", {
-                    album: encodeURI(ALBUM),
-                    message: "test"
-                }, {
-                    Authorization: "OAuth2: token"
-                },
-                function (response) {
-                    _fillFromResp(response.data)
-                },
-                function (response) {
-                    alert("Error: " + response);
-                }
-            );
-        }
+    if (devicePlatform == "browser") {
+        httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
+            function (resp) {
+                _fillFromResp(resp)
+            })
+    } else {
+        cordovaHTTP.get(
+            "http://zotime.ddns.net/pd/photoUpload.php", {
+                album: encodeURI(ALBUM),
+                message: "test"
+            }, {
+                Authorization: "OAuth2: token"
+            },
+            function (response) {
+                _fillFromResp(response.data)
+            },
+            function (response) {
+                alert("Error: " + response);
+            }
+        );
+    }
 }
