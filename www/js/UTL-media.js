@@ -91,27 +91,36 @@ function startReader(fl) {
         if (evt.lengthComputable) bLoaded += evt.loaded;
     };
     r.onloadend = function (e) {
-            if (e.target.readyState != FileReader.DONE) {
-                return;
-            }
-            if (bLoaded < bytesTotal) {
-                setTimeout(function () {
-                    //reader.readAsText(fl);
-                    readBlob(fl, r, bLoaded);
-                }, 10);
-            } else {
-                console.log("sending " + fl.name.split(".")[0] + "...")
-                httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
-                    function (resp) {
-                        console.log(resp)
-                        placeImage("http://zotime.ddns.net/pd/" + resp)
-                    },
-                    fl.name.split(".")[0],
-                    r.result,
-                    false
-                )
-            }
-        };
+        if (e.target.readyState != FileReader.DONE) {
+            return;
+        }
+        if (bLoaded < bytesTotal) {
+            setTimeout(function () {
+                //reader.readAsText(fl);
+                readBlob(fl, r, bLoaded);
+            }, 10);
+        } else {
+            console.log("sending " + fl.name.split(".")[0] + "...")
+            httpGetAsync("http://zotime.ddns.net/pd/photoUpload.php",
+                function (resp) {
+                    if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
+                    else {
+                        //console.log(resp)
+                        imgLocation = "http://zotime.ddns.net/pd/" + resp
+                        placeImage(imgLocation)
+                        albumList.push(imgLocation)
+                        myPhotoBrowserDark = myApp.photoBrowser({
+                            theme: 'dark',
+                            photos: albumList
+                        });
+                    }
+                },
+                fl.name.split(".")[0],
+                r.result,
+                false
+            )
+        }
+    };
     readBlob(fl, r, bLoaded);
 }
 

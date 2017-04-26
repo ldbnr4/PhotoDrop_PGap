@@ -11,13 +11,9 @@ function photoSwiper() {
 }
 
 function _fillFromResp(resp) {
-    if(resp == ""){
-        alert("Empty response")
-        return
-    }
-    console.log(resp)
+    //console.log(resp)
     respObj = JSON.parse(resp)
-    console.log(respObj)
+    //console.log(respObj)
     if (respObj.status == true) {
         albumList = [];
         for (x = 2; x < respObj.photos.length; x++) {
@@ -32,21 +28,21 @@ function _fillFromResp(resp) {
     }
 }
 
-function createCORSRequest(method, url) {
+function createCORSRequest(methd, url) {
     var xhr = new XMLHttpRequest();
     if ("withCredentials" in xhr) {
 
         // Check if the XMLHttpRequest object has a "withCredentials" property.
         // "withCredentials" only exists on XMLHTTPRequest2 objects.
-        xhr.open(method, url, true);
-        console.log("Made a CORS req")
+        xhr.open(methd, url, true);
+        //console.log("Made a CORS req")
 
     } else if (typeof XDomainRequest != "undefined") {
 
         // Otherwise, check if XDomainRequest.
         // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
         xhr = new XDomainRequest();
-        xhr.open(method, url);
+        xhr.open(methd, url);
 
     } else {
 
@@ -69,13 +65,17 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag = t
         url = theUrl
         method = "POST"
     }
+    
     var xhr = createCORSRequest(method, encodeURI(url));
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (!xhr) {
         throw new Error('CORS not supported');
     }
+    
+    xhr.send(pars);
     xhr.onload = function () {
         var responseText = xhr.responseText;
-        console.log(responseText);
+        //console.log(responseText);
         // process the response.
         callback(responseText);
     };
@@ -83,7 +83,6 @@ function httpGetAsync(theUrl, callback, key = null, value = null, asynchFlag = t
     xhr.onerror = function () {
         console.log('There was an error!');
     };
-    xhr.send(pars);
 }
 
 
