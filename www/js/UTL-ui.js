@@ -72,6 +72,10 @@ function startLoadingImg(url, c, flag) {
                 //console.log("hide")
                 img.setAttribute("style", "margin:auto;")
                 $$("#div" + c).append(img);
+                $$("#div" + c).on("click", function(e){
+                    myPhotoBrowser.activeIndex = c;
+                    myPhotoBrowser.open();
+                })
                 if (flag) $$("#loader" + c).hide()
             }
         }, {}
