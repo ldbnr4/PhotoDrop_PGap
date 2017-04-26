@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-<script type="text/javascript" src="js/funcs.js"></script>
-<script type="text/javascript" src="js/UTL-media.js"></script>
+
 <head>
     <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
@@ -46,6 +45,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="css\material-icons.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Status bar overlay for full screen mode (PhoneGap) -->
     <div class="statusbar-overlay"></div>
@@ -82,7 +82,7 @@
                             <div class="left sliding">PhotoCache</div>
                         </div>
                     </div>
-                    
+
                     <!-- Scrollable page content -->
                     <div class="page-content list-block">
                         <div class="content-block">
@@ -153,7 +153,7 @@
                                         <input type="file" id="inputfile" multiple/>
                                     </div>
                                 </div>
-                                <a href="#" onclick="go()" class="button button-raised button-fill color-yellow right">upload</a>
+                                <a href="#" onclick="uploadInputFiles()" class="button button-raised button-fill color-yellow right">upload</a>
                             </div>
                             <p class="buttons-row">
                                 <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
@@ -173,6 +173,9 @@
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
     <script type="text/javascript" src="lib/load-image.all.min.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>
+    <script type="text/javascript" src="js/UTL-media.js"></script>
+    <script type="text/javascript" src="js/UTL-network.js"></script>
+    <script type="text/javascript" src="js/UTL-ui.js"></script>
 </body>
 
 </html>
