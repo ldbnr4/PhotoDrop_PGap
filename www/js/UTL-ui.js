@@ -10,8 +10,10 @@ var COL_COUNT = 3;
 var ptrContent = $$('.pull-to-refresh-content');
 // List of picture names in the photo grid layout
 var loadedPicNames = []
-// List of albums to open
-var albumList = ['rand', 'uploads', 'Family Reunion 2018'];
+// List of albums the user created
+var albumList = ['rand', 'uploads'];
+// List of albums the user is included in
+var URN_albumList = ['Family Reunion 2018'];
 
 function placeImage(url, flag = true) {
     picName = url.substr(url.lastIndexOf('/') + 1)
@@ -115,10 +117,16 @@ ptrContent.on('ptr:refresh', function(e){
     myApp.pullToRefreshDone();
 });
 
-function fillAlbumListContain(){
+function fillAlbumLists(){
     $$("#albumListContain").html(
         Template7.templates.albumListTmplt({
-            albums: albumList
+            album: albumList
+        })
+    )
+
+    $$("#URN_albumListContain").html(
+        Template7.templates.albumListTmplt({
+            album: URN_albumList
         })
     )
 }
@@ -127,7 +135,7 @@ function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
         if (value.length != 0 && albumList.indexOf(value) == -1) {
             albumList.push(value)
-            fillAlbumListContain()
+            fillAlbumLists()
             goToAlbumPg(value)
         }
     });

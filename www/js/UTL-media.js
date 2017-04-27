@@ -24,10 +24,10 @@ function uploadPhoto(imageURI) {
     options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
     options.mimeType = "image/jpeg";
     options.fileName = options.fileName.split("?")[0]
-    alert(options.fileName);
+    //alert(options.fileName);
     params = new Object();
     params.album = ALBUM;
-    alert(ALBUM)
+    //alert(ALBUM)
     params.value2 = "param";
     options.params = params;
     options.chunkedMode = false;

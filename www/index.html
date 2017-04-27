@@ -47,18 +47,6 @@
 </head>
 
 <body>
-    <!-- Status bar overlay for full screen mode (PhoneGap) -->
-    <div class="statusbar-overlay"></div>
-
-    <!-- Panels overlay-->
-    <div class="panel-overlay"></div>
-    <!-- Left panel with reveal effect-->
-    <div class="panel panel-left panel-reveal">
-        <div class="content-block">
-            <p>Left panel content goes here</p>
-        </div>
-    </div>
-
     <!-- Views -->
     <div class="views theme-teal">
         <!-- Your main view, should have "view-main" class -->
@@ -69,40 +57,37 @@
                 <!-- Page, "data-page" contains page name -->
                 <div data-page="index" class="page">
                     <!-- Top Navbar-->
-                    <div class="navbar">
+                    <div class="navbar" style="height: 85px">
                         <div class="navbar-inner navbar-fixed">
-                            <div class="left">
-                                <!--
-                          Right link contains only icon - additional "icon-only" class
-                          Additional "open-panel" class tells app to open panel when we click on this link
-                        -->
-                                <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                            </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="left sliding">PhotoDrop</div>
+                            <div class="center sliding">PhotoDrop</div>
                         </div>
                     </div>
                     <!-- Floating Action Button -->
-                    <a href="#" class="floating-button" onclick="addAlbum()">
+                    <a href="#" class="floating-button color-amber mainPG-fab" onclick="addAlbum()">
                         <i class="material-icons">add_to_photos</i>
                     </a>
 
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block">
-                        <!--<div class="content-block">
-                            <div class="item-content">
-                                <div class="item-inner">
-                                    <div class="item-input">
-                                        <input type="text" placeholder="Select an album" readonly id="picker-device">
-                                    </div>
-                                </div>
-                                <i class="material-icons" onclick="addAlbum()">add</i>
-                            </div>
-                        </div>-->
+                    <div class="page-content list-block" style="padding-bottom: 10px; padding-top: 80px">
                         <div class="content-block-title">YOUR ALBUMS</div>
-                        <div class="list-block cards-list" style="padding-bottom: 10px;">
-                            <ul id="albumListContain">
-                            </ul>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="list-block">
+                                    <ul id="albumListContain">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-block-title">ALBUMS YOU ARE IN</div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="list-block">
+                                    <ul id="URN_albumListContain">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -126,7 +111,7 @@
                     <!-- Speed Dial Wrap -->
                     <div class="speed-dial">
                         <!-- FAB inside will open Speed Dial actions -->
-                        <a href="#" class="floating-button">
+                        <a href="#" class="floating-button color-amber">
                             <!-- First icon is visible when Speed Dial actions are closed -->
                             <i class="icon icon-plus"></i>
                             <!-- Second icon is visible when Speed Dial actions are opened -->
@@ -135,22 +120,22 @@
                         <!-- Speed Dial Actions -->
                         <div class="speed-dial-buttons">
                             <!-- First Speed Dial button -->
-                            <a href="#" class="close-speed-dial" onclick="getImage()">
+                            <a href="#" class="close-speed-dial color-amber" onclick="getImage()">
                                 <i class="material-icons">collections</i>
                             </a>
                             <!-- Second Speed Dial button -->
-                            <a href="#" class="close-speed-dial" onclick="takeImage()">
+                            <a href="#" class="close-speed-dial color-amber" onclick="takeImage()">
                                 <i class="material-icons">photo_camera</i>
                             </a>
                             <!-- Third Speed Dial button -->
-                            <a href="#" class="close-speed-dial" onclick="">
+                            <a href="#" class="close-speed-dial color-amber" onclick="">
                                 <i class="material-icons">videocam</i>
                             </a>
                         </div>
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block pull-to-refresh-content" data-ptr-distance="50">
+                    <div class="page-content list-block pull-to-refresh-content hide-navbar-on-scroll" data-ptr-distance="50">
                         <div class="content-block">
                             <div class="pull-to-refresh-layer">
                                 <div class="preloader"></div>
@@ -182,27 +167,20 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
 
-    <script type="text/javascript">
-        Template7.registerHelper('goToAlbumClick', function (nextAblum) {
-            return 'onClick  = "goToAlbumPg(\'' + nextAblum + '\')"';
-        });
-    </script>
-
     <script type="text/template7" id="albumListTmplt">
-        {{#each albums}}
+        {{#each album}}
         <li class="swipeout">
-            <div class="card">
-                <div class="card-content swipeout-content">
-                    <a href="#" class="item-link item-content" {{goToAlbumClick this}}>
-                        <div class="item-inner">
-                            <div class="item-title">{{this}}</div>
-                        </div>
-                    </a>
+            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{this}}')">
+                <div class="item-inner">
+                    <div class="item-title">{{this}}
+                        <div class="time-stamp">July 17, 2017</div>
+                    </div>
+                    
                 </div>
-            </div>
+            </a>
             <div class="swipeout-actions-right">
                 <!-- We add data-close-on-cancel attribute to close swipeout automatically -->
-                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete this item?" data-confirm-title="Delete?" data-close-on-cancel="true">Delete</a>
+                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete <b>{{this}}</b> from your album list?" data-confirm-title="Delete?" data-close-on-cancel="true">Delete</a>
             </div>
             {{/each}}
         </li>

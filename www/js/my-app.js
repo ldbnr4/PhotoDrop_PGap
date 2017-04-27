@@ -36,7 +36,7 @@ var albumPhotos = [];
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
-    fillAlbumListContain();
+    fillAlbumLists();
 });
 
 // Option 1. Using page callback for page (for "about" page in this case) (recommended way):
