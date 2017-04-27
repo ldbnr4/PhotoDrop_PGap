@@ -10,9 +10,8 @@ var myApp = new Framework7({
     },
     materialPageLoadDelay: 250,
     uniqueHistory: true,
-    swipePanel: "left"
+    precompileTemplates: true
 });
-
 
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
@@ -31,11 +30,13 @@ var ALBUM = "none";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
+var albumPhotos = [];
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
+    fillAlbumListContain();
 });
 
 // Option 1. Using page callback for page (for "about" page in this case) (recommended way):

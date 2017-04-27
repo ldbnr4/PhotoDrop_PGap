@@ -79,13 +79,17 @@
                                 <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="left sliding">PhotoCache</div>
+                            <div class="left sliding">PhotoDrop</div>
                         </div>
                     </div>
+                    <!-- Floating Action Button -->
+                    <a href="#" class="floating-button" onclick="addAlbum()">
+                        <i class="material-icons">add_to_photos</i>
+                    </a>
 
                     <!-- Scrollable page content -->
                     <div class="page-content list-block">
-                        <div class="content-block">
+                        <!--<div class="content-block">
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-input">
@@ -94,6 +98,11 @@
                                 </div>
                                 <i class="material-icons" onclick="addAlbum()">add</i>
                             </div>
+                        </div>-->
+                        <div class="content-block-title">YOUR ALBUMS</div>
+                        <div class="list-block cards-list" style="padding-bottom: 10px;">
+                            <ul id="albumListContain">
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -111,7 +120,7 @@
                                 <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="center sliding" id="album_name_ttl"></div>
+                            <div class="center sliding" >PhotoDrop</div>
                         </div>
                     </div>
                     <!-- Speed Dial Wrap -->
@@ -141,12 +150,14 @@
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block pull-to-refresh-content" data-ptr-distance="5">
+                    <div class="page-content list-block pull-to-refresh-content" data-ptr-distance="50">
                         <div class="content-block">
                             <div class="pull-to-refresh-layer">
                                 <div class="preloader"></div>
                                 <div class="pull-to-refresh-arrow"></div>
                             </div>
+                            
+                    <div class="content-block-title" id="album_name_ttl" style="margin:0">YOUR ALBUM NAME</div>
                             <div class="item-content" style="display:none;" id="cont_file_input">
                                 <div class="item-inner">
                                     <div class="item-input left">
@@ -155,10 +166,10 @@
                                 </div>
                                 <a href="#" onclick="uploadInputFiles()" class="button button-raised button-fill color-yellow right">upload</a>
                             </div>
-                            <p class="buttons-row">
-                                <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
-                                <a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>
-                            </p>
+                            <!--<p class="buttons-row">-->
+                            <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
+                            <!--<a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>-->
+                            <!--</p>-->
                         </div>
                         <div class="list-block" id="inner-body">
                             <!--Rows of photos are placed here by the code-->
@@ -168,14 +179,40 @@
             </div>
         </div>
     </div>
-
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+
+    <script type="text/javascript">
+        Template7.registerHelper('goToAlbumClick', function (nextAblum) {
+            return 'onClick  = "goToAlbumPg(\'' + nextAblum + '\')"';
+        });
+    </script>
+
+    <script type="text/template7" id="albumListTmplt">
+        {{#each albums}}
+        <li class = "swipeout">
+            <div class="card">
+                <div class="card-content swipeout-content">
+                    <a href="#" class="item-link item-content" {{goToAlbumClick this}}>
+                        <div class="item-inner">
+                            <div class="item-title">{{this}}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="swipeout-actions-right">
+                <!-- We add data-close-on-cancel attribute to close swipeout automatically -->
+                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete this item?" data-confirm-title="Delete?" data-close-on-cancel="true">Delete</a>
+            </div>
+            {{/each}}
+        </li>
+    </script>
     <script type="text/javascript" src="lib/load-image.all.min.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>
     <script type="text/javascript" src="js/UTL-media.js"></script>
     <script type="text/javascript" src="js/UTL-network.js"></script>
     <script type="text/javascript" src="js/UTL-ui.js"></script>
+
 </body>
 
 </html>

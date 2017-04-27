@@ -25,3 +25,10 @@
 p{
     color: white
 }*/
+
+.cntr-div{
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+}

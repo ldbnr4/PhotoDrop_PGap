@@ -11,28 +11,7 @@ var ptrContent = $$('.pull-to-refresh-content');
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 // List of albums to open
-var albumPickerList = ['uploads', 'Family Reunion 2018'];
-// Dropdown selector of albums
-var myPicker = myApp.picker({
-    input: '#picker-device',
-    toolbarTemplate: '<div class="toolbar theme-teal">' +
-        '<div class="toolbar-inner">' +
-        '<div class="right">' +
-        '<a href="#" class="link close-picker">Done</a>' +
-        '</div>' +
-        '</div>' +
-        '</div>',
-    cols: [{
-        textAlign: 'center',
-        values: albumPickerList
-    }],
-    onClose: function (picker) {
-        if (picker.cols[0].value != ALBUM) {
-            fillPhotoGrid(picker.cols[0].value)
-        }
-        goToAlbumPg()
-    }
-});
+var albumList = ['rand', 'uploads', 'Family Reunion 2018'];
 
 function placeImage(url, flag = true) {
     picName = url.substr(url.lastIndexOf('/') + 1)
@@ -100,8 +79,7 @@ function createNewRow(c) {
     }
 }
 
-function fillPhotoGrid(newAlbum) {
-    ALBUM = newAlbum
+function fillPhotoGrid() {
     rowCount = -1;
     count = 0;
     loadedPicNames = []
@@ -132,29 +110,34 @@ function fillPhotoGrid(newAlbum) {
 }
 
 ptrContent.on('ptr:refresh', function(e){
-    fillPhotoGrid(ALBUM);
+    fillPhotoGrid();
     // When loading done, we need to reset it
     myApp.pullToRefreshDone();
 });
 
-function addToPicker(album_name) {
-    albumPickerList.push(album_name)
-    ALBUM = album_name
-    myApp.pullToRefreshTrigger(ptrContent)
-    myPicker.setValue(albumPickerList, 0)
-    $$("#picker-device")[0].value = album_name
-    goToAlbumPg()
+function fillAlbumListContain(){
+    $$("#albumListContain").html(
+        Template7.templates.albumListTmplt({
+            albums: albumList
+        })
+    )
 }
 
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
-        if (value.length != 0) {
-            addToPicker(value)
+        if (value.length != 0 && albumList.indexOf(value) == -1) {
+            albumList.push(value)
+            fillAlbumListContain()
+            goToAlbumPg(value)
         }
     });
 }
 
-function goToAlbumPg() {
+function goToAlbumPg(val) {
+    if(val != ALBUM){
+        ALBUM = val;
+        fillPhotoGrid()
+    }
     $$("#album_name_ttl").html(ALBUM)
     // Load album page
     mainView.router.load({
@@ -171,15 +154,15 @@ function _fillFromResp(resp) {
     respObj = JSON.parse(resp)
     //console.log(respObj)
     if (respObj.status == true) {
-        albumList = [];
+        albumPhotos = [];
         for (x = 2; x < respObj.photos.length; x++) {
             pUrl = encodeURI(APP_BASE_URL + ALBUM + "/" + respObj.photos[x])
             placeImage(pUrl)
-            albumList.push(pUrl)
+            albumPhotos.push(pUrl)
         }
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',
-            photos: albumList
+            photos: albumPhotos
         });
     }
 }

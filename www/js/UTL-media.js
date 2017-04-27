@@ -99,10 +99,10 @@ function sendFileToServ(fl) {
                         //console.log(resp)
                         imgLocation = APP_BASE_URL + resp
                         placeImage(imgLocation)
-                        albumList.push(imgLocation)
+                        albumPhotos.push(imgLocation)
                         myPhotoBrowser = myApp.photoBrowser({
                             theme: 'dark',
-                            photos: albumList
+                            photos: albumPhotos
                         });
                     }
                 },
