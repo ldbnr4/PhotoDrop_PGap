@@ -176,18 +176,15 @@
                     <div class="item-title">{{title}}
                         <div class="time-stamp">{{date}}</div>
                     </div>
-
                 </div>
             </a>
             <div class="swipeout-actions-right">
                 <!-- We add data-close-on-cancel attribute to close swipeout automatically -->
-                {{#if flag}}
+                {{#if ../flag}}
                 <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete the album <b>{{title}}</b>?" data-confirm-title="Delete?"
-                    data-close-on-cancel="true">Delete</a>
-                {{else}}
-                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to remove yourself from the album <b>{{title}}</b>?" data-confirm-title="Remove?"
-                    data-close-on-cancel="true">Remove</a>
-                {{/if}}
+                    data-close-on-cancel="true">Delete</a> {{else}}
+                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to remove yourself from the album <b>{{title}}</b>?"
+                    data-confirm-title="Remove?" data-close-on-cancel="true">Remove</a> {{/if}}
             </div>
             {{/each}}
         </li>
