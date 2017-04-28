@@ -11,9 +11,24 @@ var ptrContent = $$('.pull-to-refresh-content');
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 // List of albums the user created
-var albumList = ['rand', 'uploads'];
+var albumList = [
+        {
+            title: 'rand',
+            date: Date.today().toString('dddd, MMMM d, yyyy')
+        }, 
+        {
+            title:'uploads',
+            date: Date.today().toString('dddd, MMMM d, yyyy')
+        }
+    ];
 // List of albums the user is included in
-var URN_albumList = ['Family Reunion 2018'];
+var URN_albumList = [
+    {
+        title:'Family Reunion 2018',
+        date: Date.today().toString('dddd, MMMM d, yyyy')
+    }
+
+];//[''];
 
 function placeImage(url, flag = true) {
     picName = url.substr(url.lastIndexOf('/') + 1)
@@ -134,7 +149,10 @@ function fillAlbumLists(){
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
         if (value.length != 0 && albumList.indexOf(value) == -1) {
-            albumList.push(value)
+            albumList.push({
+                title: value,
+                date: Date.today().toString('dddd, MMMM d, yyyy')
+            })
             fillAlbumLists()
             goToAlbumPg(value)
         }

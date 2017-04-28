@@ -166,21 +166,22 @@
     </div>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+    <script type="text/javascript" src="lib/date.js"></script>
 
     <script type="text/template7" id="albumListTmplt">
         {{#each album}}
         <li class="swipeout">
-            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{this}}')">
+            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{title}}')">
                 <div class="item-inner">
-                    <div class="item-title">{{this}}
-                        <div class="time-stamp">July 17, 2017</div>
+                    <div class="item-title">{{title}}
+                        <div class="time-stamp">{{date}}</div>
                     </div>
                     
                 </div>
             </a>
             <div class="swipeout-actions-right">
                 <!-- We add data-close-on-cancel attribute to close swipeout automatically -->
-                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete <b>{{this}}</b> from your album list?" data-confirm-title="Delete?" data-close-on-cancel="true">Delete</a>
+                <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete <b>{{title}}</b> from your album list?" data-confirm-title="Delete?" data-close-on-cancel="true">Delete</a>
             </div>
             {{/each}}
         </li>
