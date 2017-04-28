@@ -135,12 +135,14 @@ ptrContent.on('ptr:refresh', function(e){
 function fillAlbumLists(){
     $$("#albumListContain").html(
         Template7.templates.albumListTmplt({
+            flag: false,
             album: albumList
         })
     )
 
     $$("#URN_albumListContain").html(
         Template7.templates.albumListTmplt({
+            flag: false,
             album: URN_albumList
         })
     )
