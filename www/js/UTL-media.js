@@ -2,7 +2,6 @@ function uploadPhoto(imageURI) {
     console.log("Sending photo...")
 
     IMG_CONTAIN_ID = "#div" + count;
-    placeImage(imageURI, false)
 
     myApp.showProgressbar(IMG_CONTAIN_ID, 0);
     ft = new FileTransfer();
@@ -11,13 +10,19 @@ function uploadPhoto(imageURI) {
             if (progressEvent.loaded < 1) {
                 myApp.setProgressbar(IMG_CONTAIN_ID, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
             } else {
-                myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
                 console.log("Photo sent! " + progressEvent.loaded)
+                myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
+                placeImage(imageURI, false)
             }
         } else {
             alert("DONE")
         }
     };
+    params = new Object();
+    params.album = ALBUM;
+    //alert(ALBUM)
+    params.username = USER.username;
+    params.password = USER.password;
 
     options = new FileUploadOptions();
     options.fileKey = "file";
@@ -25,12 +30,9 @@ function uploadPhoto(imageURI) {
     options.mimeType = "image/jpeg";
     options.fileName = options.fileName.split("?")[0]
     //alert(options.fileName);
-    params = new Object();
-    params.album = ALBUM;
-    //alert(ALBUM)
-    params.value2 = "param";
     options.params = params;
     options.chunkedMode = false;
+
     ft.upload(encodeURI(imageURI), APP_BASE_FILE_URL, function (result) {
         console.log("Result " + JSON.stringify(result));
         //alert(JSON.stringify(result))

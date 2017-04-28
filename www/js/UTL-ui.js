@@ -112,10 +112,10 @@ function fillPhotoGrid() {
         cordovaHTTP.get(
             APP_BASE_FILE_URL, {
                 album: encodeURI(ALBUM),
-                message: "test"
-            }, {
-                Authorization: "OAuth2: token"
-            },
+                user: USER.username,
+                passwor: USER.password
+            }, 
+            {},
             function (response) {
                 _fillFromResp(response.data)
             },

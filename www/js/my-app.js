@@ -31,6 +31,10 @@ var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
 var albumPhotos = [];
+var USER = {
+    username: "joeSmoe",
+    password: "password"
+}
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
