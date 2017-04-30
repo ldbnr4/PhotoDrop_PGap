@@ -98,9 +98,12 @@ function sendFileToServ(fl) {
                 function (resp) {
                     if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
                     else {
-                        //console.log(resp)
-                        imgLocation = APP_BASE_URL + resp
-                        placeImage(imgLocation)
+                        respArr = resp.split("/")
+                        imgLocation = encodeURI(APP_NEW_FILE_URL+"?album="+respArr[0]+"&image="+respArr[1]);
+                        setTimeout(function () {
+                            placeImage(imgLocation)
+                        }, 10);
+                            
                         albumPhotos.push(imgLocation)
                         myPhotoBrowser = myApp.photoBrowser({
                             theme: 'dark',

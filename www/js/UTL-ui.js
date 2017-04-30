@@ -51,11 +51,12 @@ function placeImage(url, flag = true) {
 }
 
 function startLoadingImg(url, c, flag) {
+    //console.log(url)
     loadImage(
         url,
         function (img) {
             if (img.type === "error") {
-                console.log("Error loading image " + url);
+                console.log("Error loading image");
             } else {
                 img = loadImage.scale(
                     img, {
@@ -105,8 +106,9 @@ function fillPhotoGrid() {
         serverComm(APP_BASE_FILE_URL,
             function (resp) {
                 if(!resp) myApp.alert("Empty response from the server", "Uh Oh!")
-                else
-                    _fillFromResp(resp)
+                else{
+                    _fillFromResp(resp, true)
+                }
             })
     } else {
         cordovaHTTP.get(
@@ -117,7 +119,7 @@ function fillPhotoGrid() {
             }, 
             {},
             function (response) {
-                _fillFromResp(response.data)
+                _fillFromResp(response.data, false)
             },
             function (response) {
                 alert("Error: " + response);
@@ -177,16 +179,32 @@ function photoSwiper() {
     myPhotoBrowser.open();
 }
 
-function _fillFromResp(resp) {
+function _fillFromResp(resp, browser) {
     //console.log(resp)
     respObj = JSON.parse(resp)
     //console.log(respObj)
     if (respObj.status == true) {
         albumPhotos = [];
         for (x = 2; x < respObj.photos.length; x++) {
-            pUrl = encodeURI(APP_BASE_URL + ALBUM + "/" + respObj.photos[x])
-            placeImage(pUrl)
-            albumPhotos.push(pUrl)
+            purl = encodeURI(APP_NEW_FILE_URL+"?album="+ALBUM+"&image="+respObj.photos[x]);
+            placeImage(purl)
+            albumPhotos.push(purl)
+            // if(browser){
+            //     getPhotoFromServer(respObj.photos[x], function(resp){
+            //         if(!resp){
+            //             console.log("empty resp")
+            //         }
+            //         else{
+            //             $$("#demo").attr("src", resp);
+                        
+            //         }
+            //     })
+            // }
+            // else{
+
+            // }
+            // purl = response from get request to 
+            //          encodeURI(APP_NEW_FILE_URL+?album=ALBUM&image=respObj.photos[x]);
         }
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',
