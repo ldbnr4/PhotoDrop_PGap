@@ -24,8 +24,8 @@ var mainView = myApp.addView('.view-main', {
 });
 
 var devicePlatform;
-var APP_BASE_URL = "http://zotime.ddns.net/pd/";
-var APP_BASE_FILE_URL = "http://zotime.ddns.net/pd/photoUpload.php";
+var APP_BASE_URL = "http://zotime.ddns.net/_PD/";
+var APP_BASE_FILE_URL = APP_BASE_URL+"_PD/photoUpload.php";
 var ALBUM = "none";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
