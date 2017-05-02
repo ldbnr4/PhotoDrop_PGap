@@ -103,7 +103,7 @@ function fillPhotoGrid() {
     loadedPicNames = []
     $$("#inner-body").html("")
     if (devicePlatform == "browser") {
-        serverComm(APP_BASE_FILE_URL,
+        serverComm(APP_BASE_FILE_URL,{album:ALBUM}, false,
             function (resp) {
                 if(!resp) myApp.alert("Empty response from the server", "Uh Oh!")
                 else{

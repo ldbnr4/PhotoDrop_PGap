@@ -36,6 +36,9 @@ var USER = {
     username: "joeSmoe",
     password: "password"
 }
+var POST_SERVICES = {
+    USER: APP_BASE_URL+"UserService.php"   
+};
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {

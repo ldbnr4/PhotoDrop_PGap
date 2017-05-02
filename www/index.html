@@ -58,10 +58,23 @@
                 <!--Home page-->
                 <div data-page="index" class="page">
                     <!-- Top Navbar-->
-                    <div class="navbar" style="height: 85px">
+                    <div class="navbar" style="height: 65px">
                         <div class="navbar-inner navbar-fixed">
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                             <div class="center sliding">PhotoDrop</div>
+                            <div class="right" style="width: 60%;">
+                                <!-- Search Bar -->
+                                <form class="searchbar">
+                                    <div class="searchbar-input">
+                                        <input type="search">
+                                        <a href="#" class="searchbar-clear"></a>
+                                    </div>
+                                    <a href="#" class="searchbar-cancel">Cancel</a>
+                                </form>
+                                <!-- Search Bar overlay-->
+                                <div class="searchbar-overlay"></div>
+                                
+                            </div>
                         </div>
                     </div>
                     <!-- Floating Action Button -->
@@ -70,7 +83,8 @@
                     </a>
 
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block" style="padding-bottom: 10px; padding-top: 80px">
+                    <div class="page-content list-block" style="padding-bottom: 10px; padding-top: 65px">
+                        
                         <div class="content-block-title">YOUR ALBUMS</div>
                         <div class="card">
                             <div class="card-content">
@@ -199,6 +213,7 @@
     <script type="text/javascript" src="js/UTL-network.js"></script>
     <script type="text/javascript" src="js/UTL-ui.js"></script>
 
+    <!--<script type="text/javascript" src="test/create-a-user.js"></script>-->
 </body>
 
 </html>

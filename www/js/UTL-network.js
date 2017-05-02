@@ -1,21 +1,21 @@
-function serverComm(theUrl, callback, key = null, value = null) {
-    pars = null;
-    url = null;
-    if (key == null) {
-        url = theUrl + "?album=" + ALBUM // true for asynchronous
-        method = "GET"
-    } else {
-        pars = "photo=true&album=" + ALBUM + "&" + key + "=" + value
-        url = theUrl
-        method = "POST"
+function _get_key_value_str(__set){
+    var str_ = "";
+    for(var ___k in __set){
+        str_ = str_ + ___k+"="+__set[___k]+"&";
     }
-    
-    var xhr = createCORSRequest(method, encodeURI(url));
+    return str_.slice(0, -1);
+}
+
+function serverComm(url, par_set, post, callback){
+    var pars = _get_key_value_str(par_set);
+    if(!post){
+        url = url+"?"+pars;
+    }
+    var xhr = createCORSRequest((post ? "POST" :"GET"), encodeURI(url));
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (!xhr) {
         throw new Error('CORS not supported');
     }
-    
     xhr.send(pars);
     xhr.onload = function () {
         var responseText = xhr.responseText;
@@ -27,6 +27,7 @@ function serverComm(theUrl, callback, key = null, value = null) {
     xhr.onerror = function () {
         console.log('There was an error!');
     };
+
 }
 
 function createCORSRequest(methd, url) {

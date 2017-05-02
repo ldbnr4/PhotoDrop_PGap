@@ -93,8 +93,9 @@ function sendFileToServ(fl) {
                 readBlob(fl, r, bLoaded);
             }, 10);
         } else {
-            console.log("Sending " + fl.name.split(".")[0] + "...")
-            serverComm(APP_BASE_FILE_URL,
+            fl_name = fl.name.split(".")[0]
+            console.log("Sending " + fl_name + "...")
+            serverComm(APP_BASE_FILE_URL,{photo:true,album:ALBUM,fl_name : r.result},true,
                 function (resp) {
                     if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
                     else {
@@ -110,10 +111,7 @@ function sendFileToServ(fl) {
                             photos: albumPhotos
                         });
                     }
-                },
-                fl.name.split(".")[0],
-                r.result,
-                false
+                }
             )
         }
     };
