@@ -77,25 +77,25 @@ function readBlob(f, read, bload) {
 }
 
 function sendFileToServ(fl) {
-    var r = new FileReader()
+    var fr = new FileReader()
     var bLoaded = 0
     var bytesTotal = fl.size;
-    r.onprogress = function (evt) {
+    fr.onprogress = function (evt) {
         if (evt.lengthComputable) bLoaded += evt.loaded;
     };
-    r.onloadend = function (e) {
+    fr.onloadend = function (e) {
         if (e.target.readyState != FileReader.DONE) {
             return;
         }
         if (bLoaded < bytesTotal) {
             setTimeout(function () {
                 //reader.readAsText(fl);
-                readBlob(fl, r, bLoaded);
+                readBlob(fl, fr, bLoaded);
             }, 10);
         } else {
             fl_name = fl.name.split(".")[0]
             console.log("Sending " + fl_name + "...")
-            serverComm(APP_BASE_FILE_URL,{photo:true,album:ALBUM,fl_name : r.result},true,
+            serverComm(APP_BASE_FILE_URL,{photo:true,album:ALBUM,fl_name : fr.result},true,
                 function (resp) {
                     if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
                     else {
@@ -115,5 +115,5 @@ function sendFileToServ(fl) {
             )
         }
     };
-    readBlob(fl, r, bLoaded);
+    readBlob(fl, fr, bLoaded);
 }

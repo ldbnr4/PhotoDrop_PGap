@@ -10,23 +10,20 @@ function serverComm(url, par_set, post, callback){
     var pars = _get_key_value_str(par_set);
     if(!post){
         url = url+"?"+pars;
+        pars = null;
     }
     var xhr = createCORSRequest((post ? "POST" :"GET"), encodeURI(url));
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (!xhr) {
         throw new Error('CORS not supported');
     }
-    xhr.send(pars);
     xhr.onload = function () {
-        var responseText = xhr.responseText;
-        //console.log(responseText);
-        // process the response.
-        callback(responseText);
+        callback(xhr.responseText);
     };
-
     xhr.onerror = function () {
-        console.log('There was an error!');
+        console.log('There was a server communication error!');
     };
+    xhr.send(pars);
 
 }
 
