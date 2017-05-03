@@ -109,7 +109,9 @@ function fillPhotoGrid() {
                 else{
                     _fillFromResp(resp, true)
                 }
-            })
+            },
+            "Failed to fill photo grid array"
+        )
     } else {
         cordovaHTTP.get(
             APP_BASE_FILE_URL, {

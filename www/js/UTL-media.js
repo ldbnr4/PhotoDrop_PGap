@@ -111,7 +111,8 @@ function sendFileToServ(fl) {
                             photos: albumPhotos
                         });
                     }
-                }
+                },
+                "Failed to send photos, to the server"
             )
         }
     };

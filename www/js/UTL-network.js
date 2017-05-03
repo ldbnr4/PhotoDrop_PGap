@@ -6,7 +6,7 @@ function _get_key_value_str(__set){
     return str_.slice(0, -1);
 }
 
-function serverComm(url, par_set, post, callback){
+function serverComm(url, par_set, post, success, fail_msg){
     var pars = _get_key_value_str(par_set);
     if(!post){
         url = url+"?"+pars;
@@ -18,7 +18,12 @@ function serverComm(url, par_set, post, callback){
         throw new Error('CORS not supported');
     }
     xhr.onload = function () {
-        callback(xhr.responseText);
+        var rsp = xhr.responseText;
+        if(!rsp){
+            myApp.alert(fail_msg);
+        }else{
+            success(xhr.responseText);
+        }
     };
     xhr.onerror = function () {
         console.log('There was a server communication error!');
