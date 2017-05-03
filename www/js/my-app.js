@@ -40,6 +40,10 @@ var POST_S = {
     USER_SERVICE: APP_BASE_URL+"UserService.php"   
 };
 
+var GET_S = {
+    USER_SERVICE: POST_S.USER_SERVICE
+};
+
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");

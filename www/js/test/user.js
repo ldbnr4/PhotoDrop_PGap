@@ -47,3 +47,11 @@ serverComm(POST_S.USER_SERVICE,{username:test_name, FIND_USER:true}, true,
     },
     "Failed to check for username."
 )
+
+// Ask for album lists
+serverComm(GET_S.USER_SERVICE,{username:test_name, GET_ALBUMS:true}, false,
+    function(resp){
+        console.log(resp)
+    },
+    "Failed to get user album lists."
+)
