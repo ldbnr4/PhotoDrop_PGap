@@ -10,25 +10,6 @@ var COL_COUNT = 3;
 var ptrContent = $$('.pull-to-refresh-content');
 // List of picture names in the photo grid layout
 var loadedPicNames = []
-// List of albums the user created
-var albumList = [
-        {
-            title: 'rand',
-            date: Date.today().toString('dddd, MMMM d, yyyy')
-        }, 
-        {
-            title:'uploads',
-            date: Date.today().toString('dddd, MMMM d, yyyy')
-        }
-    ];
-// List of albums the user is included in
-var URN_albumList = [
-    {
-        title:'Family Reunion 2018',
-        date: Date.today().toString('dddd, MMMM d, yyyy')
-    }
-
-];//[''];
 
 function placeImage(url, flag = true) {
     picName = url.substr(url.lastIndexOf('/') + 1)
@@ -43,7 +24,7 @@ function placeImage(url, flag = true) {
         loader = document.createElement("span")
         loader.setAttribute("class", "progressbar-infinite color-multi")
         loader.setAttribute("id", "loader" + count)
-         $$("#div" + count).append(loader)
+        $$("#div" + count).append(loader)
     }
     startLoadingImg(url, count, flag)
 
@@ -69,7 +50,7 @@ function startLoadingImg(url, c, flag) {
                 //console.log("hide")
                 img.setAttribute("style", "margin:auto;")
                 $$("#div" + c).append(img);
-                $$("#div" + c).on("click", function(e){
+                $$("#div" + c).on("click", function (e) {
                     myPhotoBrowser.activeIndex = c;
                     myPhotoBrowser.open();
                 })
@@ -103,10 +84,12 @@ function fillPhotoGrid() {
     loadedPicNames = []
     $$("#inner-body").html("")
     if (devicePlatform == "browser") {
-        serverComm(APP_BASE_FILE_URL,{album:ALBUM}, false,
+        serverComm(APP_BASE_FILE_URL, {
+                album: ALBUM
+            }, false,
             function (resp) {
-                if(!resp) myApp.alert("Empty response from the server", "Uh Oh!")
-                else{
+                if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
+                else {
                     _fillFromResp(resp, true)
                 }
             },
@@ -118,8 +101,7 @@ function fillPhotoGrid() {
                 album: encodeURI(ALBUM),
                 user: USER.username,
                 passwor: USER.password
-            }, 
-            {},
+            }, {},
             function (response) {
                 _fillFromResp(response.data, false)
             },
@@ -130,26 +112,41 @@ function fillPhotoGrid() {
     }
 }
 
-ptrContent.on('ptr:refresh', function(e){
+ptrContent.on('ptr:refresh', function (e) {
     fillPhotoGrid();
     // When loading done, we need to reset it
     myApp.pullToRefreshDone();
 });
 
-function fillAlbumLists(){
-    $$("#albumListContain").html(
-        Template7.templates.albumListTmplt({
-            flag: true,
-            album: albumList
-        })
-    )
-
-    $$("#URN_albumListContain").html(
-        Template7.templates.albumListTmplt({
-            flag: false,
-            album: URN_albumList
-        })
-    )
+function fillAlbumLists() {
+    serverComm(USER_SERVICE,{username:USER.username, GET_ALBUMS:true}, false,
+        function(resp){
+            resp = JSON.parse(resp)
+            if(resp.albums){
+                $$("#albumListContain").html(
+                    Template7.templates.albumListTmplt({
+                        flag: true,
+                        album: resp.albums
+                    })
+                );
+            }
+            else{
+                console.log("User has not created a single album");
+            }
+            if(resp.urn_albums){
+                $$("#URN_albumListContain").html(
+                    Template7.templates.albumListTmplt({
+                        flag: false,
+                        album: resp.urn_albums
+                    })
+                );
+            }
+            else{
+                console.log("User is not tagged in a single album");
+            }
+        },
+        "Failed to get user album lists."
+    );
 }
 
 function addAlbum() {
@@ -166,7 +163,7 @@ function addAlbum() {
 }
 
 function goToAlbumPg(val) {
-    if(val != ALBUM){
+    if (val != ALBUM) {
         ALBUM = val;
         fillPhotoGrid()
     }
@@ -188,25 +185,9 @@ function _fillFromResp(resp, browser) {
     if (respObj.status == true) {
         albumPhotos = [];
         for (x = 2; x < respObj.photos.length; x++) {
-            purl = encodeURI(APP_NEW_FILE_URL+"?album="+ALBUM+"&image="+respObj.photos[x]);
+            purl = encodeURI(APP_NEW_FILE_URL + "?album=" + ALBUM + "&image=" + respObj.photos[x]);
             placeImage(purl)
             albumPhotos.push(purl)
-            // if(browser){
-            //     getPhotoFromServer(respObj.photos[x], function(resp){
-            //         if(!resp){
-            //             console.log("empty resp")
-            //         }
-            //         else{
-            //             $$("#demo").attr("src", resp);
-                        
-            //         }
-            //     })
-            // }
-            // else{
-
-            // }
-            // purl = response from get request to 
-            //          encodeURI(APP_NEW_FILE_URL+?album=ALBUM&image=respObj.photos[x]);
         }
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',

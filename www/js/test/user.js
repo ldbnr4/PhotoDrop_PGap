@@ -20,10 +20,22 @@ var randomString = function(length) {
 // Create A User
 var _salt = randomString(17);
 var _pswrd = (USER.password+_salt).hashCode()
-serverComm(POST_S.USER_SERVICE,{username:USER.username, password:_pswrd, salt:_salt, NEW_USER:true},true,
+serverComm(USER_SERVICE,{username:USER.username, password:_pswrd, salt:_salt, ADD_USER:true},true,
     function(resp){
-        if(resp != 1){
-            console.log(resp);
+        switch (JSON.parse(resp)) {
+            case 0:
+                console.log("DB did not aknowledge the write.")
+                break;
+            case 1:
+                console.log("Created a user!");
+                break;
+            case 2:
+                console.log("User already exist.");
+                break;
+        
+            default:
+                console.log("ADD_USER resp: "+resp);
+                break;
         }
     },
     "Failed to create a user."
@@ -31,14 +43,15 @@ serverComm(POST_S.USER_SERVICE,{username:USER.username, password:_pswrd, salt:_s
 
 // Check for a username
 var test_name = USER.username;
-// test_name = "test";
-serverComm(POST_S.USER_SERVICE,{username:test_name, FIND_USER:true}, true,
+//test_name = "test";
+serverComm(USER_SERVICE,{username:test_name, FIND_USER:true}, false,
     function (resp){
         resp = JSON.parse(resp);
-        if(resp.taken){
+        //console.log(resp);
+        if(resp){
             console.log("Username taken :(");
         }
-        else if(resp.free){
+        else if(!resp){
             console.log("I'ts all yours!");
         }
         else{
@@ -49,8 +62,9 @@ serverComm(POST_S.USER_SERVICE,{username:test_name, FIND_USER:true}, true,
 )
 
 // Ask for album lists
-serverComm(GET_S.USER_SERVICE,{username:test_name, GET_ALBUMS:true}, false,
+serverComm(USER_SERVICE,{username:test_name, GET_ALBUMS:true}, false,
     function(resp){
+        resp = JSON.parse(resp)
         console.log(resp)
     },
     "Failed to get user album lists."
