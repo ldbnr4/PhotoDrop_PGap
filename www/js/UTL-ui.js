@@ -99,7 +99,7 @@ function fillPhotoGrid() {
         cordovaHTTP.get(
             APP_BASE_FILE_URL, {
                 album: encodeURI(ALBUM),
-                user: USER.username,
+                user: USER._id,
                 passwor: USER.password
             }, {},
             function (response) {
@@ -119,30 +119,34 @@ ptrContent.on('ptr:refresh', function (e) {
 });
 
 function fillAlbumLists() {
-    serverComm(USER_SERVICE,{username:USER.username, GET_ALBUMS:true}, false,
+    serverComm(USER_SERVICE,{username:USER._id, GET_ALBUMS:true}, false,
         function(resp){
-            resp = JSON.parse(resp)
-            if(resp.albums){
-                $$("#albumListContain").html(
-                    Template7.templates.albumListTmplt({
-                        flag: true,
-                        album: resp.albums
-                    })
-                );
-            }
-            else{
-                console.log("User has not created a single album");
-            }
-            if(resp.urn_albums){
-                $$("#URN_albumListContain").html(
-                    Template7.templates.albumListTmplt({
-                        flag: false,
-                        album: resp.urn_albums
-                    })
-                );
-            }
-            else{
-                console.log("User is not tagged in a single album");
+            try{
+                resp = JSON.parse(resp)
+                if(resp.albums){
+                    $$("#albumListContain").html(
+                        Template7.templates.albumListTmplt({
+                            flag: true,
+                            album: resp.albums
+                        })
+                    );
+                }
+                else{
+                    console.log("User has not created a single album");
+                }
+                if(resp.urn_albums){
+                    $$("#URN_albumListContain").html(
+                        Template7.templates.albumListTmplt({
+                            flag: false,
+                            album: resp.urn_albums
+                        })
+                    );
+                }
+                else{
+                    console.log("User is not tagged in a single album");
+                }
+            }catch(error){
+                myApp.alert("Unexpected response: "+resp, "GET_ALBUMS")
             }
         },
         "Failed to get user album lists."

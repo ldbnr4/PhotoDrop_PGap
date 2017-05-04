@@ -31,10 +31,15 @@ var ALBUM = "none";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
-var albumPhotos = [];
+var albumPhotos = [];  
+var _salt = randomString(17);
+var _password = "password";
 var USER = {
-    username: "joeSmoe",
-    password: "password"
+    _id: "joeSmoe",
+    password: encryptPswd(_password, _salt),
+    salt : _salt,
+    albums : [],
+    urn_albums : []
 }
 
 USER_SERVICE = APP_BASE_URL+"UserService.php"   

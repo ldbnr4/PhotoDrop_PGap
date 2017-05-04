@@ -1,71 +1,84 @@
-String.prototype.hashCode = function() {
-  var hash = 0, i, chr;
-  if (this.length === 0) return hash;
-  for (i = 0; i < this.length; i++) {
-    chr   = this.charCodeAt(i);
-    hash  = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-};
-var randomString = function(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for(var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}
-
 // Create A User
-var _salt = randomString(17);
-var _pswrd = (USER.password+_salt).hashCode()
-serverComm(USER_SERVICE,{username:USER.username, password:_pswrd, salt:_salt, ADD_USER:true},true,
+serverComm(USER_SERVICE,{ADD_USER:true, username:USER._id, new_user:JSON.stringify(USER)},true,
     function(resp){
-        switch (JSON.parse(resp)) {
-            case 0:
-                console.log("DB did not aknowledge the write.")
-                break;
-            case 1:
-                console.log("Created a user!");
-                break;
-            case 2:
-                console.log("User already exist.");
-                break;
-        
-            default:
-                console.log("ADD_USER resp: "+resp);
-                break;
+        try {
+            switch (JSON.parse(resp)) {
+                case 0:
+                    console.log("DB did not insert.")
+                    break;
+                case 1:
+                    console.log("Created a user!");
+                    break;
+                case 2:
+                    console.log("User already exist.");
+                    break;
+                default:
+                    console.log("ADD_USER resp: "+resp);
+                    break;
+            }
+        } catch (error) {
+            myApp.alert("Got an unexpected response: "+resp, "ADD_USER")
         }
     },
     "Failed to create a user."
 )
 
 // Check for a username
-var test_name = USER.username;
+var test_name = USER._id;
 //test_name = "test";
-serverComm(USER_SERVICE,{username:test_name, FIND_USER:true}, false,
+serverComm(USER_SERVICE,{FIND_USER:true, username:test_name}, false,
     function (resp){
-        resp = JSON.parse(resp);
-        //console.log(resp);
-        if(resp){
-            console.log("Username taken :(");
-        }
-        else if(!resp){
-            console.log("I'ts all yours!");
-        }
-        else{
-            console.log(resp)
+        try{
+                switch(JSON.parse(resp)){
+                //console.log(resp);
+                case 1:
+                    console.log("Username taken :(");
+                    break;
+                case 0:
+                    console.log("I'ts all yours!");
+                    break;
+                default:
+                    console.log("FIND_USER resp: "+resp)
+                    break;
+            }
+        }catch(error){
+            myApp.alert("Got an unexpected response: "+resp, "FIND_USER")
         }
     },
     "Failed to check for username."
 )
 
 // Ask for album lists
-serverComm(USER_SERVICE,{username:test_name, GET_ALBUMS:true}, false,
+serverComm(USER_SERVICE,{GET_ALBUMS:true, username:test_name}, false,
     function(resp){
-        resp = JSON.parse(resp)
-        console.log(resp)
+        try{
+            resp = JSON.parse(resp)
+        }catch(error){
+            myApp.alert("Got an unexpected response: "+resp, "GET_ALBUMS")
+        }
     },
     "Failed to get user album lists."
+)
+
+var imgAlbum = {
+    title: "img",
+    date: Date.today().toString('dddd, MMMM d, yyyy')
+}
+serverComm(USER_SERVICE, {ADD_ALBUM:true, username:test_name, password: USER.password, album:JSON.stringify(imgAlbum)}, true,
+    function (resp){
+        try{
+            resp = JSON.parse(resp)
+            if(resp == 1){
+                console.log("Added an album");
+            }
+            else if(resp == 0){
+                console.log("Album already exists");
+            }
+            else{
+                console.log("ADD_ALBUM resp: "+resp);
+            }
+        }catch(error){
+            myApp.alert("Got an unexpected response: "+resp, "ADD_ALBUM")
+        }
+    }
 )

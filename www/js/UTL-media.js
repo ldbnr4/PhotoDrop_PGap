@@ -21,7 +21,7 @@ function uploadPhoto(imageURI) {
     params = new Object();
     params.album = ALBUM;
     //alert(ALBUM)
-    params.username = USER.username;
+    params.username = USER._id;
     params.password = USER.password;
 
     options = new FileUploadOptions();
