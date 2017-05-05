@@ -183,19 +183,21 @@ function photoSwiper() {
 }
 
 function _fillFromResp(resp, browser) {
-    //console.log(resp)
     respObj = JSON.parse(resp)
-    //console.log(respObj)
-    if (respObj.status == true) {
-        albumPhotos = [];
-        for (x = 2; x < respObj.photos.length; x++) {
-            purl = encodeURI(APP_NEW_FILE_URL + "?album=" + ALBUM + "&image=" + respObj.photos[x]);
-            placeImage(purl)
-            albumPhotos.push(purl)
+    try{
+        if (respObj.status == true) {
+            albumPhotos = [];
+            for (x = 2; x < respObj.photos.length; x++) {
+                purl = encodeURI(APP_NEW_FILE_URL + "?album=" + ALBUM + "&image=" + respObj.photos[x]);
+                placeImage(purl)
+                albumPhotos.push(purl)
+            }
+            myPhotoBrowser = myApp.photoBrowser({
+                theme: 'dark',
+                photos: albumPhotos
+            });
         }
-        myPhotoBrowser = myApp.photoBrowser({
-            theme: 'dark',
-            photos: albumPhotos
-        });
+    }catch(error){
+        myApp.alert("Did not get JSON response to fill picture grid with images");
     }
 }
