@@ -24,7 +24,7 @@ var mainView = myApp.addView('.view-main', {
 });
 
 var devicePlatform;
-var test = false;
+var test = true;
 var APP_BASE_URL = test?"http://localhost:8000/":"http://zotime.ddns.net/_PD/";
 var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
 var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
@@ -33,15 +33,16 @@ var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
 var albumPhotos = [];  
-var _salt = randomString(17);
+var _salt = randomString(27);
 var _password = "password";
 var USER = {
-    _id: "joeSmoe",
+    username: "joeSmoe",
     password: encryptPswd(_password, _salt),
     salt : _salt,
     albums : [],
     urn_albums : []
 }
+USER._id = randomString(17)
 
 USER_SERVICE = APP_BASE_URL+"UserService.php"   
 

@@ -1,5 +1,5 @@
 // Create A User
-serverComm(USER_SERVICE,{ADD_USER:true, username:USER._id, new_user:JSON.stringify(USER)},true,
+serverComm(USER_SERVICE,{ADD_USER:true, new_user:JSON.stringify(USER)},true,
     function(resp){
         try {
             switch (JSON.parse(resp)) {
@@ -24,7 +24,7 @@ serverComm(USER_SERVICE,{ADD_USER:true, username:USER._id, new_user:JSON.stringi
 )
 
 // Check for a username
-var test_name = USER._id;
+var test_name = USER.username;
 //test_name = "test";
 serverComm(USER_SERVICE,{FIND_USER:true, username:test_name}, false,
     function (resp){
@@ -48,23 +48,13 @@ serverComm(USER_SERVICE,{FIND_USER:true, username:test_name}, false,
     "Failed to check for username."
 )
 
-// Ask for album lists
-serverComm(USER_SERVICE,{GET_ALBUMS:true, username:test_name}, false,
-    function(resp){
-        try{
-            resp = JSON.parse(resp)
-        }catch(error){
-            myApp.alert("Got an unexpected response: "+resp, "GET_ALBUMS")
-        }
-    },
-    "Failed to get user album lists."
-)
-
 var imgAlbum = {
     title: "img",
     date: Date.today().toString('dddd, MMMM d, yyyy')
 }
-serverComm(USER_SERVICE, {ADD_ALBUM:true, username:test_name, password: USER.password, album:JSON.stringify(imgAlbum)}, true,
+
+//Add a new album
+serverComm(USER_SERVICE, {ADD_ALBUM:true, _id:USER._id, password: USER.password, album:JSON.stringify(imgAlbum)}, true,
     function (resp){
         try{
             resp = JSON.parse(resp)

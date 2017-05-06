@@ -119,7 +119,7 @@ ptrContent.on('ptr:refresh', function (e) {
 });
 
 function fillAlbumLists() {
-    serverComm(USER_SERVICE,{username:USER._id, GET_ALBUMS:true}, false,
+    serverComm(USER_SERVICE,{_id:USER._id, GET_ALBUMS:true}, false,
         function(resp){
             try{
                 resp = JSON.parse(resp)
