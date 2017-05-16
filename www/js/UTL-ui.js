@@ -6,8 +6,6 @@ var rowCount = -1;
 var ROW_ID;
 // The number of photos per row
 var COL_COUNT = 3;
-// Pull to refresh content
-var ptrContent = $$('.pull-to-refresh-content');
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 
@@ -37,7 +35,8 @@ function startLoadingImg(url, c, flag) {
         url,
         function (img) {
             if (img.type === "error") {
-                console.log("Error loading image");
+                console.log("Error loading image from source: "+url);
+                console.log(img);
             } else {
                 img = loadImage.scale(
                     img, {
@@ -85,7 +84,8 @@ function fillPhotoGrid() {
     $$("#inner-body").html("")
     if (devicePlatform == "browser") {
         serverComm(APP_BASE_FILE_URL, {
-                album: ALBUM
+                album: encryptStr(ALBUM),
+                id: USER.id
             }, false,
             function (resp) {
                 if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
@@ -99,7 +99,7 @@ function fillPhotoGrid() {
         cordovaHTTP.get(
             APP_BASE_FILE_URL, {
                 album: encodeURI(ALBUM),
-                user: USER._id,
+                user: USER.username,
                 passwor: USER.password
             }, {},
             function (response) {
@@ -112,17 +112,24 @@ function fillPhotoGrid() {
     }
 }
 
-ptrContent.on('ptr:refresh', function (e) {
+$$('.pull-to-refresh-content').on('ptr:refresh', function (e) {
     fillPhotoGrid();
     // When loading done, we need to reset it
     myApp.pullToRefreshDone();
 });
 
 function fillAlbumLists() {
-    serverComm(USER_SERVICE,{_id:USER._id, GET_ALBUMS:true}, false,
+    //console.log("USER.id: "+USER.id)
+    serverComm(USER_SERVICE,{id:JSON.stringify(USER.id), GET_ALBUMS:true}, false,
         function(resp){
             try{
                 resp = JSON.parse(resp)
+            }catch(error){
+                myApp.alert("Unexpected response: "+resp, "GET_ALBUMS")
+                //console.log(resp)
+            }
+            //console.log(resp)
+            if(!resp.err){
                 if(resp.albums){
                     $$("#albumListContain").html(
                         Template7.templates.albumListTmplt({
@@ -145,8 +152,14 @@ function fillAlbumLists() {
                 else{
                     console.log("User is not tagged in a single album");
                 }
-            }catch(error){
-                myApp.alert("Unexpected response: "+resp, "GET_ALBUMS")
+                $$(".swipeout").on('swipeout:deleted', function () {
+                    for (var i = 0; i < this.children.length; i++) {
+                        if(this.children[i].tagName == "INPUT"){
+                            delete_album(this.children[i].getAttribute("value"));
+                        }
+                    }
+                    //myApp.alert('Item removed: '+ttl);
+                });
             }
         },
         "Failed to get user album lists."
@@ -155,11 +168,14 @@ function fillAlbumLists() {
 
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
-        if (value.length != 0 && albumList.indexOf(value) == -1) {
-            albumList.push({
+        if (value.length != 0 && USER.albums.indexOf(value) == -1) {
+            albumObj = {
+                key: encryptStr(value),
                 title: value,
-                date: Date.today().toString('dddd, MMMM d, yyyy')
-            })
+                date: new Date().toString('dddd, MMMM d, yyyy')
+            }
+            USER.albums.push(albumObj)
+            addNewAlbum(albumObj)
             fillAlbumLists()
             goToAlbumPg(value)
         }
@@ -183,12 +199,12 @@ function photoSwiper() {
 }
 
 function _fillFromResp(resp, browser) {
-    respObj = JSON.parse(resp)
     try{
+        respObj = JSON.parse(resp)
         if (respObj.status == true) {
             albumPhotos = [];
             for (x = 2; x < respObj.photos.length; x++) {
-                purl = encodeURI(APP_NEW_FILE_URL + "?album=" + ALBUM + "&image=" + respObj.photos[x]);
+                purl = encodeURI(APP_NEW_FILE_URL + "?album=" + encryptStr(ALBUM) + "&image=" + respObj.photos[x] + "&id=" + USER.id);
                 placeImage(purl)
                 albumPhotos.push(purl)
             }
@@ -198,6 +214,6 @@ function _fillFromResp(resp, browser) {
             });
         }
     }catch(error){
-        myApp.alert("Did not get JSON response to fill picture grid with images");
+        myApp.alert("Resp: "+resp, "_fillFromResp ERR");
     }
 }

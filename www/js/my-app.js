@@ -13,9 +13,6 @@ var myApp = new Framework7({
     precompileTemplates: true
 });
 
-// If we need to use custom DOM library, let's save it to $$ variable:
-var $$ = Dom7;
-
 // Add view
 var mainView = myApp.addView('.view-main', {
     // Because we want to use dynamic navbar, we need to enable it for this view:
@@ -32,25 +29,25 @@ var ALBUM = "none";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
-var albumPhotos = [];  
-var _salt = randomString(27);
+var albumPhotos = [];
 var _password = "password";
+var _username = "joeSmoe";
 var USER = {
-    username: "joeSmoe",
-    password: encryptPswd(_password, _salt),
-    salt : _salt,
+    username: encryptStr(_username),
+    password: encryptStr(_password),
     albums : [],
     urn_albums : []
 }
-USER._id = randomString(17)
 
-USER_SERVICE = APP_BASE_URL+"UserService.php"   
+USER_SERVICE = APP_BASE_URL+"UserService.php"
+PHOTO_SERVICE = APP_BASE_URL+"PhotoService.php"   
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
-    fillAlbumLists();
+    createNewUser(USER_SERVICE, USER)
+    login()
 });
 
 // Option 1. Using page callback for page (for "about" page in this case) (recommended way):

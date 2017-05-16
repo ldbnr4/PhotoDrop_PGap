@@ -6,17 +6,7 @@ var randomString = function(length) {
     }
     return text;
 }
-String.prototype.hashCode = function() {
-  var hash = 0, i, chr;
-  if (this.length === 0) return hash;
-  for (i = 0; i < this.length; i++) {
-    chr   = this.charCodeAt(i);
-    hash  = ((hash << 8) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-};
 
-var encryptPswd = function(pswrd, slt){
-    return (pswrd+slt).hashCode()
+var encryptStr = function(str){
+    return md5(str)
 }

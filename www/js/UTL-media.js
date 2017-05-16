@@ -21,7 +21,7 @@ function uploadPhoto(imageURI) {
     params = new Object();
     params.album = ALBUM;
     //alert(ALBUM)
-    params.username = USER._id;
+    params.username = USER.username;
     params.password = USER.password;
 
     options = new FileUploadOptions();
@@ -92,28 +92,39 @@ function sendFileToServ(fl) {
                 //reader.readAsText(fl);
                 readBlob(fl, fr, bLoaded);
             }, 10);
-        } else {
+        } else if(bLoaded >= bytesTotal){
             fl_name = fl.name.split(".")[0]
             console.log("Sending " + fl_name + "...")
-            serverComm(APP_BASE_FILE_URL,{photo:true,album:ALBUM,fl_name : fr.result},true,
-                function (resp) {
-                    if (!resp) myApp.alert("Empty response from the server", "Uh Oh!")
-                    else {
-                        respArr = resp.split("/")
-                        imgLocation = encodeURI(APP_NEW_FILE_URL+"?album="+respArr[0]+"&image="+respArr[1]);
-                        setTimeout(function () {
-                            placeImage(imgLocation)
-                        }, 10);
-                            
-                        albumPhotos.push(imgLocation)
-                        myPhotoBrowser = myApp.photoBrowser({
-                            theme: 'dark',
-                            photos: albumPhotos
-                        });
+            var _data = {NEW_PHOTO:true, WEB:true, ALBUM:encryptStr(ALBUM), ID:USER.id, DATA:fr.result}
+            var success = function (data, status, xhr) {
+                    try{
+                        var resp = JSON.parse(data);
+                        if(resp.err){
+                            myApp.alert("Error in response: "+resp.msg,"ERR Pic Upload Resp");
+                        }
+                        else {
+                            imgLocation = encodeURI(APP_NEW_FILE_URL+"?album="+encryptStr(ALBUM)+"&image="+resp.image+"&id="+USER.id);                      
+                            albumPhotos.push(imgLocation)
+                            myPhotoBrowser = myApp.photoBrowser({
+                                theme: 'dark',
+                                photos: albumPhotos
+                            });
+                        }
+                    }catch(error){
+                        myApp.alert("Did not recieve json response. Resp: "+error,"ERR Pic Upload");
+                        console.log("Data: "+data)
+                        console.log("Status: "+status)
+                        console.log("XHR: "+xhr)
                     }
-                },
-                "Failed to send photos, to the server"
-            )
+            }
+            var error = function (xhr, status){
+                myApp.alert("Failed to send photos, to the server")
+                console.log("XHR: "+xhr);
+                console.log("STATUS: "+status);
+            }
+            // console.log(fr.result);
+
+            $$.post(PHOTO_SERVICE, _data, success, error)
         }
     };
     readBlob(fl, fr, bLoaded);
