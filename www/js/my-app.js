@@ -21,7 +21,7 @@ var mainView = myApp.addView('.view-main', {
 });
 
 var devicePlatform;
-var test = true;
+var test = false;
 var APP_BASE_URL = test?"http://localhost:8000/":"http://zotime.ddns.net/_PD/";
 var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
 var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
