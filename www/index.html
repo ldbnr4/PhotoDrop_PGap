@@ -164,7 +164,7 @@
                                         <input type="file" id="inputfile" multiple/>
                                     </div>
                                 </div>
-                                <a href="#" onclick="uploadInputFiles()" class="button button-raised button-fill color-yellow right">upload</a>
+                                <a href="#" onclick="DEV_uploadPics()" class="button button-raised button-fill color-yellow right">upload</a>
                             </div>
                             <!--<p class="buttons-row">-->
                             <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
@@ -173,6 +173,9 @@
                         </div>
                         <div class="list-block" id="inner-body">
                             <!--Rows of photos are placed here by the code-->
+                        </div>
+                        <div id="debugBox">
+                            <!--DEBUG-->
                         </div>
                     </div>
                 </div>
@@ -187,11 +190,11 @@
     <script type="text/template7" id="albumListTmplt">
         {{#each album}}
         <li class="swipeout">
-            <input type="hidden" value="{{title}}">
-            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{title}}')">
+            <input type="hidden" value="{{_id.$oid}}">
+            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{title}}', '{{_id.$oid}}')">
                 <div class="item-inner">
                     <div class="item-title">{{title}}
-                        <div class="time-stamp">{{date}}</div>
+                        <div class="time-stamp">{{creation.date}}</div>
                     </div>
                 </div>
             </a>

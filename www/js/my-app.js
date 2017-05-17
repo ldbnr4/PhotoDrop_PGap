@@ -10,7 +10,8 @@ var myApp = new Framework7({
     },
     materialPageLoadDelay: 250,
     uniqueHistory: true,
-    precompileTemplates: true
+    precompileTemplates: true,
+    tapHold: true
 });
 
 // Add view
@@ -25,7 +26,7 @@ var test = false;
 var APP_BASE_URL = test?"http://localhost:8000/":"http://zotime.ddns.net/_PD/";
 var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
 var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
-var ALBUM = "none";
+var ALBUM = {};
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
@@ -35,8 +36,8 @@ var _username = "joeSmoe";
 var USER = {
     username: encryptStr(_username),
     password: encryptStr(_password),
-    albums : [],
-    urn_albums : []
+    albums: [],
+    urn_albums: []
 }
 
 USER_SERVICE = APP_BASE_URL+"UserService.php"
@@ -46,8 +47,7 @@ PHOTO_SERVICE = APP_BASE_URL+"PhotoService.php"
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
-    createNewUser(USER_SERVICE, USER)
-    login()
+    checkForUsername(USER.username)
 });
 
 // Option 1. Using page callback for page (for "about" page in this case) (recommended way):

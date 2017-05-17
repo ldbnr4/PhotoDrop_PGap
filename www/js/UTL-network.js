@@ -1,79 +1,87 @@
-function delete_album(albm_nm) {
-    serverComm(USER_SERVICE, {
-            DEL_ALBUM: true,
-            id: USER.id,
-            key: encryptStr(albm_nm),
-            album_ttl: JSON.stringify(albm_nm)
-        }, true,
-        function (resp) {
-            try {
-                resp = JSON.parse(resp)
-                if (!resp.err) {
-                    if (resp.mod_cnt == 1) {
-                        console.log("Deleted album " + albm_nm)
-                    } else if (resp.mod_cnt == 0) {
-                        console.log("Album not deleted.")
-                    } else {
-                        console.log("ADD_ALBUM did not create a new album.");
-                    }
-                } else {
-                    console.log("DEL_ALBUM error: " + resp.msg);
-                }
-            } catch (error) {
-                myApp.alert("Got an unexpected response: " + resp, "DEL_ALBUM")
+function delete_album(albumId) {
+    var success = function (data, status, xhr) {
+        try{
+            var resp = JSON.parse(data);
+            if(resp.err){
+                myApp.alert("Response error message: "+resp.msg,"ERR DEL_ALBUM");
             }
+            else {
+                console.log("Deleted album")    
+            }
+        }catch(err){
+            myApp.alert("Did not recieve json response. Resp: "+err,"ERR DEL_ALBUM");
+            console.log("Data: "+data)
+            console.log("Status: "+status)
+            console.log("XHR: "+xhr)
         }
-    )
+    }
+    var error = function (xhr, status){
+        myApp.alert("Failed to delete album.", "ERR DEL_ALBUM")
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+    $$.post(USER_SERVICE, {DEL_ALBUM: true, USER_ID: USER.id, ALBUM_ID: albumId}, success, error)
+    return
 }
 
 //Add a new album
-function addNewAlbum(imgAlbum) {
-    serverComm(USER_SERVICE, {
-            ADD_ALBUM: true,
-            id: JSON.stringify(USER.id),
-            album: JSON.stringify(imgAlbum)
-        }, true,
-        function (resp) {
+function addNewAlbum(ttl) {
+    var success = function (data, status, xhr) {
             try {
-                resp = JSON.parse(resp)
+                resp = JSON.parse(data)
                 if (!resp.err) {
                     if (resp.mod_cnt == 1) {
                         console.log("Created a new album.")
+                        ALBUM.title = resp.title
+                        ALBUM.id = resp.id
+                        goToAlbumPg()
+                        getAlbums()
                     } else {
-                        console.log("ADD_ALBUM did not create a new album.");
+                        myApp.alert("Did not create a new album.", "ERR ADD_ALBUM");
                     }
                 } else {
-                    console.log("ADD_ALBUM error: " + resp.msg);
+                    myApp.alert("Response error: " + resp.msg, "ERR ADD_ALBUM");
                 }
-            } catch (error) {
-                myApp.alert("Got an unexpected response: " + resp, "ADD_ALBUM")
-            }
-        }
-    )
+            }catch (error) {
+                    myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD_ALBUM");
+                    console.log("Data: "+data)
+                    console.log("Status: "+status)
+                    console.log("XHR: "+xhr)
+                }
+    }
+    var err = function (xhr, status){
+        myApp.alert("Failed to add a new album.", )
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+    
+    $$.post(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, err);
 }
 
-function createNewUser(_url, _USER) {
+function createNewUser(_url, _username, _password) {
     // Create A User
-    serverComm(_url, {
-            ADD_USER: true,
-            new_user: JSON.stringify(_USER)
-        }, true,
-        function (resp) {
+    var success = function (data, status, xhr) {
             try {
-                var JResp = JSON.parse(resp);
-                if (JResp.err == false) {
-                    _USER.id = JResp.id;
-                } else if (JResp.msg == "ERR_USERNAME") {
-                    console.log("Username taken.");
-                } else {
-                    console.log("ADD_USER resp: " + resp);
+                    var JResp = JSON.parse(data);
+                    if (JResp.err == false) {
+                        USER.id = JResp.id;
+                    } else {
+                        myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
+                    }
+                } catch (error) {
+                    myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD USER");
+                    console.log("Data: "+data)
+                    console.log("Status: "+status)
+                    console.log("XHR: "+xhr)
                 }
-            } catch (error) {
-                myApp.alert("Got an unexpected response: " + resp, "ADD_USER")
-            }
-        },
-        "Failed to create a user."
-    )
+    }
+    var err = function (xhr, status){
+        myApp.alert("Failed to create a user.", "ERR ADD USER")
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+
+    $$.post(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
 }
 
 function _get_key_value_str(__set){
@@ -93,6 +101,7 @@ function serverComm(url, par_set, post, success, fail_msg){
     var xhr = createCORSRequest((post ? "POST" :"GET"), encodeURI(url));
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (!xhr) {
+        myApp.alert('CORS not supported')
         throw new Error('CORS not supported');
     }
     xhr.onload = function () {
@@ -154,13 +163,13 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-function uploadInputFiles() {
+function DEV_uploadPics() {
     console.log('Sending images...');
     for (file of $$("#inputfile")[0].files) {
-        sendFileToServ(file)
+        uploadPhoto(file)
     }
     setTimeout(function () {
-        fillPhotoGrid();
+        clrNfillPhotoGrid();
     }, 500);
     //console.log("Done loading images!")
 }

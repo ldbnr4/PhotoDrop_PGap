@@ -5,30 +5,37 @@ var imageAlbum = {
 
 function checkForUsername(_username) {
 // Check for a username
-    serverComm(USER_SERVICE, {
-            FIND_USER: true,
-            username: _username
-        }, false,
-        function (resp) {
-            try {
-                switch (JSON.parse(resp)) {
-                    //console.log(resp);
-                    case 1:
-                        console.log("Username taken :(");
-                        break;
-                    case 0:
-                        console.log("I'ts all yours!");
-                        break;
-                    default:
-                        console.log("FIND_USER resp: " + resp)
-                        break;
-                }
-            } catch (error) {
-                myApp.alert("Got an unexpected response: " + resp, "FIND_USER")
+    var success = function (data, status, xhr) {
+            if(data.length == 0){
+                console.log("No user found, I'ts all yours!");
+                createNewUser(USER_SERVICE, USER.username, USER.password)
             }
-        },
-        "Failed to check for username."
-    )
+            else{
+                try{
+                    var resp = JSON.parse(data);
+                    if(resp.err){
+                        myApp.alert("Error in response: "+resp.msg,"ERR FIND_USER");
+                    }
+                    else if(resp) {
+                        console.log("Username taken :(");             
+                        login();
+                    }else{
+                        myApp.alert("FIND_USER resp: " + resp, "ERR FIND_USER")
+                    }
+                }catch(err){
+                    myApp.alert("Did not recieve json response. Resp: "+err,"ERR FIND_USER");
+                    console.log("Data: "+data)
+                    console.log("Status: "+status)
+                    console.log("XHR: "+xhr)
+                }
+            }
+    }
+    var error = function (xhr, status){
+        myApp.alert("Failed to search for username.", "ERR FIND_USER")
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+    $$.get(USER_SERVICE, {FIND_USER: true, username: _username}, success, error)
 }
 
 function login() {
@@ -43,9 +50,7 @@ function login() {
                 if (!resp.err) {
                     USER.id = resp.id;
                     console.log("Successful login")
-                    //addNewAlbum(imageAlbum);
-                    fillAlbumLists();
-                    //delete_album("img");
+                    getAlbums();
                 } else {
                     console.log("LOGIN error: " + resp.msg);
                 }

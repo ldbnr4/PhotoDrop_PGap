@@ -22,9 +22,6 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
-        "cordova-plugin-http": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
