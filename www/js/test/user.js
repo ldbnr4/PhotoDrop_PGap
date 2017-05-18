@@ -5,9 +5,10 @@ var imageAlbum = {
 
 function checkForUsername(_username) {
 // Check for a username
-    var success = function (data, status, xhr) {
+    var success = function (data) {
             if(data.length == 0){
                 console.log("No user found, I'ts all yours!");
+                // myApp.alert("No user found, I'ts all yours!");
                 createNewUser(USER_SERVICE, USER.username, USER.password)
             }
             else{
@@ -17,6 +18,7 @@ function checkForUsername(_username) {
                         myApp.alert("Error in response: "+resp.msg,"ERR FIND_USER");
                     }
                     else if(resp) {
+                        // myApp.alert("Username taken :(");
                         console.log("Username taken :(");             
                         login();
                     }else{
@@ -32,9 +34,12 @@ function checkForUsername(_username) {
     }
     var error = function (xhr, status){
         myApp.alert("Failed to search for username.", "ERR FIND_USER")
-        console.log("XHR: "+xhr);
-        console.log("STATUS: "+status);
+        console.log(xhr);
+        $$("#debugBox").html("XHR: "+JSON.stringify(xhr));
+        console.log(status);
+        myApp.alert("STATUS: "+status);
     }
+    // serverComm(USER_SERVICE, {FIND_USER: true, username: _username}, false, success, error)
     $$.get(USER_SERVICE, {FIND_USER: true, username: _username}, success, error)
 }
 

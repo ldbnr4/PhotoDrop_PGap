@@ -77,10 +77,10 @@ function createNewUser(_url, _username, _password) {
     }
     var err = function (xhr, status){
         myApp.alert("Failed to create a user.", "ERR ADD USER")
-        console.log("XHR: "+xhr);
-        console.log("STATUS: "+status);
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
     }
-
+    // serverComm(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
     $$.post(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
 }
 
@@ -92,7 +92,9 @@ function _get_key_value_str(__set){
     return str_.slice(0, -1);
 }
 
-function serverComm(url, par_set, post, success, fail_msg){
+//$$.get(USER_SERVICE, {FIND_USER: true, username: _username}, success, error)
+
+function serverComm(url, par_set, post, success, fail){
     var pars = _get_key_value_str(par_set);
     if(!post){
         url = url+"?"+pars;
@@ -105,15 +107,14 @@ function serverComm(url, par_set, post, success, fail_msg){
         throw new Error('CORS not supported');
     }
     xhr.onload = function () {
-        var rsp = xhr.responseText;
-        if(!rsp){
-            myApp.alert(fail_msg);
+        if(xhr.status != 200){
+            fail(xhr, xhr.status);
         }else{
             success(xhr.responseText);
         }
     };
     xhr.onerror = function () {
-        console.log('There was a server communication error!');
+        myApp.alert('There was a server communication error!');
     };
     xhr.send(pars);
 
