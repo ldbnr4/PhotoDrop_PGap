@@ -73,7 +73,7 @@
                                 </form>
                                 <!-- Search Bar overlay-->
                                 <div class="searchbar-overlay"></div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -83,29 +83,37 @@
                     </a>
 
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block" style="padding-bottom: 10px; padding-top: 65px">
-                        
-                        <div class="content-block-title">YOUR ALBUMS</div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="list-block">
-                                    <ul id="albumListContain">
-                                    </ul>
-                                </div>
+                    <div class="page-content list-block pull-to-refresh-content" id="homePgCntnt">
+                        <!-- Default pull to refresh layer-->
+                        <div class="content-block">
+                            <div class="pull-to-refresh-layer">
+                                <div class="preloader"></div>
+                                <div class="pull-to-refresh-arrow"></div>
                             </div>
-                        </div>
+                            <div style="padding-bottom: 10px; padding-top: 40px">
+                                <div class="content-block-title">YOUR ALBUMS</div>
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="list-block">
+                                            <ul id="albumListContain">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div class="content-block-title">ALBUMS YOU ARE IN</div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="list-block">
-                                    <ul id="URN_albumListContain">
-                                    </ul>
+                                <div class="content-block-title">ALBUMS YOU ARE IN</div>
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="list-block">
+                                            <ul id="URN_albumListContain">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="debugBox">
+                                    <!--DEBUG-->
                                 </div>
                             </div>
-                        </div>
-                        <div id="debugBox">
-                            <!--DEBUG-->
                         </div>
                     </div>
                 </div>
@@ -153,11 +161,7 @@
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div 
-                        class="page-content list-block pull-to-refresh-content hide-navbar-on-scroll" 
-                        data-ptr-distance="50"
-                        style = "user-select: none;"
-                    >
+                    <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt" data-ptr-distance="50" style="user-select: none;">
                         <div class="content-block">
                             <div class="pull-to-refresh-layer">
                                 <div class="preloader"></div>
@@ -190,7 +194,7 @@
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
     <!--<script type="text/javascript" src="lib/date.js"></script>-->
 
-	<!--TEMPLATES-->
+    <!--TEMPLATES-->
     <script type="text/template7" id="albumListTmplt">
         {{#each album}}
         <li class="swipeout">
@@ -219,13 +223,13 @@
     <script type="text/javascript" src="lib/helper_funcs.js"></script>
     <script type="text/javascript" src="lib/dom7.js"></script>
     <script type="text/javascript" src="lib/md5.js"></script>
-    
+
     <script type="text/javascript" src="js/UTL-media.js"></script>
     <script type="text/javascript" src="js/UTL-network.js"></script>
     <script type="text/javascript" src="js/UTL-ui.js"></script>
 
     <script type="text/javascript" src="js/my-app.js"></script>
-    
+
     <script type="text/javascript" src="js/test/user.js"></script>
 
 </body>

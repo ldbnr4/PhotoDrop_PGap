@@ -30,7 +30,14 @@ function addNewAlbum(ttl) {
             try {
                 resp = JSON.parse(data)
                 if (!resp.err) {
-                    if (resp.mod_cnt == 1) {
+                    if(resp.dup){
+                        console.log("Duplicate album name.")
+                        ALBUM.title = resp.title
+                        ALBUM.id = resp.id
+                        goToAlbumPg()
+                        getAlbums()
+                    }
+                    else if (resp.mod_cnt == 1) {
                         console.log("Created a new album.")
                         ALBUM.title = resp.title
                         ALBUM.id = resp.id
@@ -44,9 +51,6 @@ function addNewAlbum(ttl) {
                 }
             }catch (error) {
                     myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD_ALBUM");
-                    console.log("Data: "+data)
-                    console.log("Status: "+status)
-                    console.log("XHR: "+xhr)
                 }
     }
     var err = function (xhr, status){

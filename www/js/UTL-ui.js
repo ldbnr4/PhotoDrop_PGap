@@ -5,7 +5,7 @@ var rowCount = -1;
 // The current row number
 var ROW_ID;
 // The number of photos per row
-var COL_COUNT = 3;
+var COL_COUNT = 2;
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 
@@ -23,6 +23,8 @@ function placeImage(url, pid = null) {
     loader.setAttribute("class", "progressbar-infinite color-multi")
     loader.setAttribute("id", "loader" + count)
     $$("#div" + count).append(loader)
+    // imgDIV = $$("#div" + count)
+
     startLoadingImg(url, count, pid)
 
     count++
@@ -39,24 +41,20 @@ function startLoadingImg(url, c, pid) {
             } else {
                 img = loadImage.scale(
                     img, {
-                        maxWidth: window.screen.width / 3.5,
-                        maxHeight: window.screen.height / 3.5,
-                        // crop: true,
-                        downsamplingRatio: 0.5,
-                        canvas: true,
+                        maxWidth: window.screen.width / 2.15,
+                        maxHeight: window.screen.height / 3.2,
+                        downsamplingRatio: 0.4,
                         contain: true,
+                        crop: true,
+                        canvas: true,
+                        cover: true,
                     }
                 )
                 //console.log(img)
-                // img.setAttribute("value", "<PHOTO_ID>")
                 img.setAttribute("id", "contPic"+c)
-                // img.setAttribute("class", "button")
-                // linkWrapper = document.createElement("a")
-                // linkWrapper.setAttribute("id", "linkWrap"+c)
+                console.log($$("#div" + c).children())
                 $$("#div" + c).append(img);
                 $$("#div" + c).attr("val", pid)
-                // console.log(linkWrapper)
-                // $$("#linkWrap"+c).append(img)
                 $$("#div" + c).on("click", function (e) {
                     myPhotoBrowser.activeIndex = c;
                     myPhotoBrowser.open();
@@ -82,9 +80,9 @@ function startLoadingImg(url, c, pid) {
                 $$("#loader" + c).remove()
             }
         }, {
-            aspectRatio:1,
-            downsamplingRatio: 0.5,
-            canvas: true
+            aspectRatio: 1, 
+            // sourceWidth: window.screen.width / 2.2,
+            // sourceHeight: window.screen.height / 3.2,
         }
     );
 }
@@ -108,6 +106,7 @@ function createNewRow(c) {
 }
 
 function clrNfillPhotoGrid() {
+    myApp.showPreloader();
     rowCount = -1;
     count = 0;
     loadedPicNames = []
@@ -142,6 +141,7 @@ function clrNfillPhotoGrid() {
                     photos: albumPhotos
                 }); 
             }
+            myApp.hidePreloader();
         }catch(err){
             myApp.alert("Did not recieve json response. Resp: "+err,"ERR GET_ALBUM_PHOTOS");
         }
@@ -154,13 +154,19 @@ function clrNfillPhotoGrid() {
     $$.get(PHOTO_SERVICE, pars, success, error)
 }
 
-$$('.pull-to-refresh-content').on('ptr:refresh', function (e) {
+$$('#albumPgCntnt').on('ptr:refresh', function (e) {
     clrNfillPhotoGrid();
     // When loading done, we need to reset it
     myApp.pullToRefreshDone();
 });
 
+$$('#homePgCntnt').on('ptr:refresh', function (e) {
+    getAlbums()
+    myApp.pullToRefreshDone()
+});
+
 function getAlbums() {
+    myApp.showPreloader();
     var success = function (data, status, xhr) {
         try{
             var resp = JSON.parse(data);
@@ -196,16 +202,14 @@ function getAlbums() {
                     }
                 });
             }
+            myApp.hidePreloader();
         }
         catch(err){
             myApp.alert("Did not recieve json response. Resp: "+data,"ERR GET_ALBUMS");
-            console.log("Data: "+data)
-            console.log("Status: "+status)
-            console.log("XHR: "+xhr)
         }
     }
     var error = function (xhr, status){
-        myApp.alert("Failed to get albums", "FAIL GET_ALBUMS")
+        myApp.alert("Failed to get albums.", "FAIL GET_ALBUMS")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
     }
