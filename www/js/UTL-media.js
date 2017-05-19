@@ -28,9 +28,6 @@ function sendFileToServ(fl) {
                         }
                     }catch(err){
                         myApp.alert("Did not recieve json response. Resp: "+err,"ERR NEW_PHOTO");
-                        console.log("Data: "+data)
-                        console.log("Status: "+status)
-                        console.log("XHR: "+xhr)
                     }
             }
             var error = function (xhr, status){
@@ -62,7 +59,8 @@ function uploadPhoto(imageURI) {
                 } else {
                     console.log("Photo sent! " + progressEvent.loaded)
                     myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
-                    placeImage(imageURI, false)
+                    clrNfillPhotoGrid();
+
                 }
             }else {
                 myApp.alert("DONE")

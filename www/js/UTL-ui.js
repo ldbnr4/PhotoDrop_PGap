@@ -9,27 +9,26 @@ var COL_COUNT = 3;
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 
-function placeImage(url, flag = true) {
+function placeImage(url, pid = null) {
     picName = url.substr(url.lastIndexOf('/') + 1)
+    // console.log(url)
     if (loadedPicNames.indexOf(picName) != -1) return
     if (picName != "gates.jpg") loadedPicNames.push(picName)
     if (count % COL_COUNT == 0) {
         createNewRow(count);
     }
 
-    if (flag) {
-        //console.log("show")
-        loader = document.createElement("span")
-        loader.setAttribute("class", "progressbar-infinite color-multi")
-        loader.setAttribute("id", "loader" + count)
-        $$("#div" + count).append(loader)
-    }
-    startLoadingImg(url, count, flag)
+    //console.log("show")
+    loader = document.createElement("span")
+    loader.setAttribute("class", "progressbar-infinite color-multi")
+    loader.setAttribute("id", "loader" + count)
+    $$("#div" + count).append(loader)
+    startLoadingImg(url, count, pid)
 
     count++
 }
 
-function startLoadingImg(url, c, flag) {
+function startLoadingImg(url, c, pid) {
     //console.log(url)
     loadImage(
         url,
@@ -42,21 +41,51 @@ function startLoadingImg(url, c, flag) {
                     img, {
                         maxWidth: window.screen.width / 3.5,
                         maxHeight: window.screen.height / 3.5,
-                        //crop: true,
+                        // crop: true,
+                        downsamplingRatio: 0.5,
+                        canvas: true,
                         contain: true,
                     }
                 )
-                //console.log("hide")
-                img.setAttribute("style", "margin:auto;")
+                //console.log(img)
+                // img.setAttribute("value", "<PHOTO_ID>")
+                img.setAttribute("id", "contPic"+c)
+                // img.setAttribute("class", "button")
+                // linkWrapper = document.createElement("a")
+                // linkWrapper.setAttribute("id", "linkWrap"+c)
                 $$("#div" + c).append(img);
+                $$("#div" + c).attr("val", pid)
+                // console.log(linkWrapper)
+                // $$("#linkWrap"+c).append(img)
                 $$("#div" + c).on("click", function (e) {
                     myPhotoBrowser.activeIndex = c;
                     myPhotoBrowser.open();
                 })
+                var popoverHTML = "\
+                    <div class=\"popover popover-links\" style=\"width:125px\">\
+                        <div class=\"popover-inner\">\
+                            <div class=\"list-block\">\
+                                <ul>\
+                                <li>\
+                                    <a href=\"#\" onClick=\"deletePic('"+pid+"',"+c+")\" class=\"list-button item-link close-popover\">Delete</a>\
+                                </li>\
+                                </ul>\
+                            </div>\
+                        </div>\
+                    </div>\
+                "
+                
+                $$('#contPic'+c).on('taphold', function () {
+                    myApp.popover(popoverHTML, "#div" + c)
+                });
 
-                if (flag) $$("#loader" + c).hide()
+                $$("#loader" + c).remove()
             }
-        }, {}
+        }, {
+            aspectRatio:1,
+            downsamplingRatio: 0.5,
+            canvas: true
+        }
     );
 }
 
@@ -73,7 +102,7 @@ function createNewRow(c) {
         imgSlot = document.createElement("div")
         imgSlot.setAttribute("id", "div" + (c + j));
         imgSlot.setAttribute("class", "short-loder col-auto")
-        imgSlot.setAttribute("style", "margin:auto")
+        imgSlot.setAttribute("style", "margin:auto;text-align: center;")
         $$(ROW_ID).append(imgSlot)
     }
 }
@@ -91,33 +120,31 @@ function clrNfillPhotoGrid() {
         userId: USER.id
     };
     var success = function (data, status, xhr) {
-            try{
-                if(data.length == 0){
-                    console.log("This album has no photos :(")
-                    return
-                }
-                var resp = JSON.parse(data);
-                if(resp.err){
-                    myApp.alert("Error in response: "+resp.msg,"ERR GET_ALBUM_PHOTOS");
-                }
-                else {
-                    albumPhotos = [];
-                    for (var i = 0, len = resp.photoIds.length; i < len; i++) {
-                        imgLocation = encodeURI(APP_NEW_FILE_URL+"?albumId="+ALBUM.id+"&imageId="+resp.photoIds[i].$oid+"&userId="+USER.id);
-                        placeImage(imgLocation);
-                        albumPhotos.push(imgLocation)
-                    }
-                    myPhotoBrowser = myApp.photoBrowser({
-                        theme: 'dark',
-                        photos: albumPhotos
-                    }); 
-                }
-            }catch(err){
-                myApp.alert("Did not recieve json response. Resp: "+err,"ERR GET_ALBUM_PHOTOS");
-                console.log("Data: "+data)
-                console.log("Status: "+status)
-                console.log("XHR: "+xhr)
+        try{
+            if(data.length == 0){
+                console.log("This album has no photos :(")
+                return
             }
+            var resp = JSON.parse(data);
+            if(resp.err){
+                myApp.alert("Error in response: "+resp.msg,"ERR GET_ALBUM_PHOTOS");
+            }
+            else {
+                albumPhotos = [];
+                for (var i = 0, len = resp.photoIds.length; i < len; i++) {
+                    pid = resp.photoIds[i].$oid;
+                    imgLocation = encodeURI(APP_NEW_FILE_URL+"?albumId="+ALBUM.id+"&imageId="+pid+"&userId="+USER.id);
+                    placeImage(imgLocation, pid);
+                    albumPhotos.push(imgLocation)
+                }
+                myPhotoBrowser = myApp.photoBrowser({
+                    theme: 'dark',
+                    photos: albumPhotos
+                }); 
+            }
+        }catch(err){
+            myApp.alert("Did not recieve json response. Resp: "+err,"ERR GET_ALBUM_PHOTOS");
+        }
     }
     var error = function (xhr, status){
         myApp.alert("Failed to send photo.", "ERR GET_ALBUM_PHOTOS")
@@ -213,22 +240,26 @@ function photoSwiper() {
     myPhotoBrowser.open();
 }
 
-function _fillFromResp(resp, browser) {
-    try{
-        respObj = JSON.parse(resp)
-        if (respObj.status == true) {
-            albumPhotos = [];
-            for (x = 2; x < respObj.photos.length; x++) {
-                purl = encodeURI(PHOTO_SERVICE+"?albumId="+resp.albumId+"&imageId="+resp.image+"&userId="+USER.id);
-                placeImage(purl)
-                albumPhotos.push(purl)
+function deletePic(pid, c){
+    var success = function (data, status, xhr) {
+        try{
+            var resp = JSON.parse(data);
+            if(resp.err){
+                myApp.alert("Error in response: "+resp.msg,"ERR DEL_PHOTO");
             }
-            myPhotoBrowser = myApp.photoBrowser({
-                theme: 'dark',
-                photos: albumPhotos
-            });
+            else {
+                clrNfillPhotoGrid()
+            }
+        }catch(err){
+            myApp.alert("Did not recieve json response. Resp: "+data,"ERR DEL_PHOTO");
         }
-    }catch(error){
-        myApp.alert("Resp: "+resp, "_fillFromResp ERR");
     }
+    var error = function (xhr, status){
+        myApp.alert("Failed to send photo.", "ERR DEL_PHOTO")
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+    
+
+    $$.post(PHOTO_SERVICE,{DEL_PHOTO:true, USER_ID:USER.id, PID:pid}, success, error)
 }

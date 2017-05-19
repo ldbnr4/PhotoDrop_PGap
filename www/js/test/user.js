@@ -26,9 +26,6 @@ function checkForUsername(_username) {
                     }
                 }catch(err){
                     myApp.alert("Did not recieve json response. Resp: "+err,"ERR FIND_USER");
-                    console.log("Data: "+data)
-                    console.log("Status: "+status)
-                    console.log("XHR: "+xhr)
                 }
             }
     }
@@ -44,14 +41,12 @@ function checkForUsername(_username) {
 }
 
 function login() {
-    serverComm(USER_SERVICE, {
-            LOGIN: true,
-            username: USER.username,
-            password: USER.password
-        }, true,
-        function (resp) {
+    var success = function(){
+        
+    }
+    var success = function (data, status, xhr) {
             try {
-                resp = JSON.parse(resp)
+                resp = JSON.parse(data)
                 if (!resp.err) {
                     USER.id = resp.id;
                     console.log("Successful login")
@@ -62,6 +57,21 @@ function login() {
             } catch (error) {
                 myApp.alert("Got an unexpected response: " + resp, "LOGIN")
             }
-        }
-    )
+    }
+    var error = function (xhr, status){
+        myApp.alert("Failed to send photo.", "ERR NEW_PHOTO")
+        console.log("XHR: "+xhr);
+        console.log("STATUS: "+status);
+    }
+
+    $$.post(
+        USER_SERVICE,
+        {
+            LOGIN: true,
+            username: USER.username,
+            password: USER.password
+        },
+        success,
+        error)
+    return
 }

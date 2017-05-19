@@ -1,3 +1,4 @@
+var test = false;
 // Initialize app
 var myApp = new Framework7({
     material: true, //enable Material theme
@@ -22,7 +23,6 @@ var mainView = myApp.addView('.view-main', {
 });
 
 var devicePlatform;
-var test = false;
 var APP_BASE_URL = test?"http://localhost:8000/":"http://zotime.ddns.net/_PD/";
 var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
 var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
@@ -50,11 +50,11 @@ $$(document).on('deviceready', function () {
     checkForUsername(USER.username)
 });
 
-// Option 1. Using page callback for page (for "about" page in this case) (recommended way):
-myApp.onPageInit('about', function (page) {
+myApp.onPageInit('album', function (page) {
     // Do something here for "about" page
-
+    
 })
+
 
 // Option 2. Using one 'pageInit' event handler for all pages:
 $$(document).on('pageInit', function (e) {
