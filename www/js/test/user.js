@@ -41,9 +41,7 @@ function checkForUsername(_username) {
 }
 
 function login() {
-    var success = function(){
-        
-    }
+    myApp.showPreloader();
     var success = function (data, status, xhr) {
             try {
                 resp = JSON.parse(data)
@@ -54,6 +52,7 @@ function login() {
                 } else {
                     console.log("LOGIN error: " + resp.msg);
                 }
+                myApp.hidePreloader();
             } catch (error) {
                 myApp.alert("Got an unexpected response: " + resp, "LOGIN")
             }

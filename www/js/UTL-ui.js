@@ -52,7 +52,9 @@ function startLoadingImg(url, c, pid) {
                 )
                 //console.log(img)
                 img.setAttribute("id", "contPic"+c)
-                console.log($$("#div" + c).children())
+                if(!($$("#div" + c).children()[0] == $$("#loader" + c)[0])){
+                    myApp.alert("attempt to double load image slot")
+                }
                 $$("#div" + c).append(img);
                 $$("#div" + c).attr("val", pid)
                 $$("#div" + c).on("click", function (e) {
