@@ -1,6 +1,9 @@
 function delete_album(albumId) {
+    myApp.hidePreloader();
+    myApp.showPreloader("Deleting album");
     var success = function (data, status, xhr) {
         try{
+            myApp.hidePreloader();
             var resp = JSON.parse(data);
             if(resp.err){
                 myApp.alert("Response error message: "+resp.msg,"ERR DEL_ALBUM");
@@ -16,6 +19,7 @@ function delete_album(albumId) {
         }
     }
     var error = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to delete album.", "ERR DEL_ALBUM")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
@@ -26,8 +30,11 @@ function delete_album(albumId) {
 
 //Add a new album
 function addNewAlbum(ttl) {
+    myApp.hidePreloader();
+    myApp.showPreloader("Adding a new album");
     var success = function (data, status, xhr) {
             try {
+                myApp.hidePreloader();
                 resp = JSON.parse(data)
                 if (!resp.err) {
                     if(resp.dup){
@@ -54,7 +61,8 @@ function addNewAlbum(ttl) {
                 }
     }
     var err = function (xhr, status){
-        myApp.alert("Failed to add a new album.", )
+        myApp.hidePreloader();
+        myApp.alert("Failed to add a new album.", "ERR ADD_ALBUM")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
     }
@@ -63,9 +71,12 @@ function addNewAlbum(ttl) {
 }
 
 function createNewUser(_url, _username, _password) {
+    myApp.hidePreloader();
+    myApp.showPreloader("Creating a new user");
     // Create A User
     var success = function (data, status, xhr) {
             try {
+                    myApp.hidePreloader();
                     var JResp = JSON.parse(data);
                     if (JResp.err == false) {
                         USER.id = JResp.id;
@@ -80,6 +91,7 @@ function createNewUser(_url, _username, _password) {
                 }
     }
     var err = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to create a user.", "ERR ADD USER")
         myApp.alert("XHR: "+JSON.stringify(xhr));
         myApp.alert("STATUS: "+status);

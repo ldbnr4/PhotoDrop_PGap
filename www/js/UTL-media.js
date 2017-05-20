@@ -43,6 +43,8 @@ function sendFileToServ(fl) {
 }
 
 function uploadPhoto(imageURI) {
+    myApp.hidePreloader();
+    myApp.showPreloader("Uploading photo");
     if(devicePlatform == "browser"){
         sendFileToServ(imageURI)
     }else{
@@ -59,8 +61,6 @@ function uploadPhoto(imageURI) {
                 } else {
                     console.log("Photo sent! " + progressEvent.loaded)
                     myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
-                    clrNfillPhotoGrid();
-
                 }
             }else {
                 myApp.alert("DONE")
@@ -77,6 +77,7 @@ function uploadPhoto(imageURI) {
 
         ft.upload(encodeURI(imageURI), PHOTO_SERVICE, function (result) {
             try{
+                myApp.hidePreloader();
                 var resp = JSON.parse(result.response);
                 if(resp.err){
                     myApp.alert("Error in response: "+resp.msg,"ERR Pic Upload Resp");
@@ -92,6 +93,7 @@ function uploadPhoto(imageURI) {
                 myApp.alert("Resp: "+JSON.stringify(result.response));
             }
         }, function (error) {
+            myApp.hidePreloader();
             myApp.alert("Uplaod error!")
         }, options);
     }

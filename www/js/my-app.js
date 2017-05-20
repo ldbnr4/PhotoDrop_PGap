@@ -2,13 +2,6 @@ var test = false;
 // Initialize app
 var myApp = new Framework7({
     material: true, //enable Material theme
-    // Hide and show indicator during ajax requests
-    onAjaxStart: function (xhr) {
-        myApp.showIndicator();
-    },
-    onAjaxComplete: function (xhr) {
-        myApp.hideIndicator();
-    },
     materialPageLoadDelay: 250,
     uniqueHistory: true,
     precompileTemplates: true,
@@ -23,6 +16,7 @@ var mainView = myApp.addView('.view-main', {
 });
 
 var devicePlatform;
+// var GATES_IMG_URL = "http://zotime.ddns.net/ProfPic.php"
 var APP_BASE_URL = test?"http://localhost:8000/":"http://zotime.ddns.net/_PD/";
 var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
 var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
@@ -34,6 +28,7 @@ var albumPhotos = [];
 var _password = "password";
 var _username = "joeSmoe";
 var USER = {
+    nickname: "joeSmoe",
     username: encryptStr(_username),
     password: encryptStr(_password),
     albums: [],
@@ -47,7 +42,7 @@ PHOTO_SERVICE = APP_BASE_URL+"PhotoService.php"
 $$(document).on('deviceready', function () {
     console.log("Device is ready!");
     devicePlatform = device.platform;
-    checkForUsername(USER.username)
+    checkNsignin(USER.username)
 });
 
 myApp.onPageInit('album', function (page) {

@@ -58,21 +58,28 @@
                 <!--Home page-->
                 <div data-page="index" class="page">
                     <!-- Top Navbar-->
-                    <div class="navbar" style="height: 65px">
+                    <div class="navbar" style="height: 70px">
+                        <!--<div id="profileBox" style="margin-right: 10px;float: right;margin-top: 10px;"> </div>-->
                         <div class="navbar-inner navbar-fixed">
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="center sliding">PhotoDrop</div>
-                            <div class="right" style="width: 60%;">
+                            <div class="center sliding">
+                                <!--<div>PhotoDrop</div>-->
+                            </div>
+                            
+                            <div class="right">
+                                <div id="TFuserName" style="padding-bottom: 32px;padding-right: 8px;"></div>
+                                <div id="profileBox" style="margin-right:5px;margin-top: 8px;"></div>
+
                                 <!-- Search Bar -->
-                                <form class="searchbar">
+                                <!--<form class="searchbar">
                                     <div class="searchbar-input">
                                         <input type="search">
                                         <a href="#" class="searchbar-clear"></a>
                                     </div>
                                     <a href="#" class="searchbar-cancel">Cancel</a>
-                                </form>
+                                </form>-->
                                 <!-- Search Bar overlay-->
-                                <div class="searchbar-overlay"></div>
+                                <!--<div class="searchbar-overlay"></div>-->
 
                             </div>
                         </div>
@@ -202,7 +209,7 @@
             <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{title}}', '{{_id.$oid}}')">
                 <div class="item-inner">
                     <div class="item-title">{{title}}
-                        <div class="time-stamp">{{creation.date}}</div>
+                        <!--<div class="time-stamp">{{creation.date}}</div>-->
                     </div>
                 </div>
             </a>

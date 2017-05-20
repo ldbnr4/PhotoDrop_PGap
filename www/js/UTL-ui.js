@@ -36,8 +36,9 @@ function startLoadingImg(url, c, pid) {
         url,
         function (img) {
             if (img.type === "error") {
-                console.log("Error loading image from source: "+url);
-                console.log(img);
+                console.log("Error loading image id:"+pid+" from source:"+url);
+                $$("#div" + c).html("ERROR delete:(")
+                // console.log(img);
             } else {
                 img = loadImage.scale(
                     img, {
@@ -51,36 +52,36 @@ function startLoadingImg(url, c, pid) {
                     }
                 )
                 //console.log(img)
-                img.setAttribute("id", "contPic"+c)
                 if(!($$("#div" + c).children()[0] == $$("#loader" + c)[0])){
                     myApp.alert("attempt to double load image slot")
+                    return
                 }
                 $$("#div" + c).append(img);
-                $$("#div" + c).attr("val", pid)
-                $$("#div" + c).on("click", function (e) {
-                    myPhotoBrowser.activeIndex = c;
-                    myPhotoBrowser.open();
-                })
-                var popoverHTML = "\
-                    <div class=\"popover popover-links\" style=\"width:125px\">\
-                        <div class=\"popover-inner\">\
-                            <div class=\"list-block\">\
-                                <ul>\
-                                <li>\
-                                    <a href=\"#\" onClick=\"deletePic('"+pid+"',"+c+")\" class=\"list-button item-link close-popover\">Delete</a>\
-                                </li>\
-                                </ul>\
-                            </div>\
+            }
+            $$("#div" + c).attr("val", pid)
+            $$("#div" + c).on("click", function (e) {
+                myPhotoBrowser.activeIndex = c;
+                myPhotoBrowser.open();
+            })
+            var popoverHTML = "\
+                <div class=\"popover popover-links\" style=\"width:125px\">\
+                    <div class=\"popover-inner\">\
+                        <div class=\"list-block\">\
+                            <ul>\
+                            <li>\
+                                <a href=\"#\" onClick=\"deletePic('"+pid+"',"+c+")\" class=\"list-button item-link close-popover\">Delete</a>\
+                            </li>\
+                            </ul>\
                         </div>\
                     </div>\
-                "
-                
-                $$('#contPic'+c).on('taphold', function () {
-                    myApp.popover(popoverHTML, "#div" + c)
-                });
+                </div>\
+            "
+            
+            $$("#div" + c).on('taphold', function () {
+                myApp.popover(popoverHTML, "#div" + c)
+            });
 
-                $$("#loader" + c).remove()
-            }
+            $$("#loader" + c).remove()
         }, {
             aspectRatio: 1, 
             // sourceWidth: window.screen.width / 2.2,
@@ -108,7 +109,8 @@ function createNewRow(c) {
 }
 
 function clrNfillPhotoGrid() {
-    myApp.showPreloader();
+    myApp.hidePreloader();
+    myApp.showPreloader("Gathering media");
     rowCount = -1;
     count = 0;
     loadedPicNames = []
@@ -122,6 +124,7 @@ function clrNfillPhotoGrid() {
     };
     var success = function (data, status, xhr) {
         try{
+            myApp.hidePreloader();
             if(data.length == 0){
                 console.log("This album has no photos :(")
                 return
@@ -143,12 +146,12 @@ function clrNfillPhotoGrid() {
                     photos: albumPhotos
                 }); 
             }
-            myApp.hidePreloader();
         }catch(err){
             myApp.alert("Did not recieve json response. Resp: "+err,"ERR GET_ALBUM_PHOTOS");
         }
     }
     var error = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to send photo.", "ERR GET_ALBUM_PHOTOS")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
@@ -168,9 +171,11 @@ $$('#homePgCntnt').on('ptr:refresh', function (e) {
 });
 
 function getAlbums() {
-    myApp.showPreloader();
+    myApp.hidePreloader();
+    myApp.showPreloader("Gathering albums");
     var success = function (data, status, xhr) {
         try{
+            myApp.hidePreloader();
             var resp = JSON.parse(data);
             if(resp.err){
                 myApp.alert("Error in response: "+resp.msg,"ERR GET_ALBUMS");
@@ -204,13 +209,13 @@ function getAlbums() {
                     }
                 });
             }
-            myApp.hidePreloader();
         }
         catch(err){
             myApp.alert("Did not recieve json response. Resp: "+data,"ERR GET_ALBUMS");
         }
     }
     var error = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to get albums.", "FAIL GET_ALBUMS")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
@@ -247,8 +252,11 @@ function photoSwiper() {
 }
 
 function deletePic(pid, c){
+    myApp.hidePreloader();
+    myApp.showPreloader("Deleting photo");
     var success = function (data, status, xhr) {
         try{
+            myApp.hidePreloader();
             var resp = JSON.parse(data);
             if(resp.err){
                 myApp.alert("Error in response: "+resp.msg,"ERR DEL_PHOTO");
@@ -261,6 +269,7 @@ function deletePic(pid, c){
         }
     }
     var error = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to send photo.", "ERR DEL_PHOTO")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);

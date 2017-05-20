@@ -3,7 +3,7 @@ var imageAlbum = {
     date: new Date().toString('dddd, MMMM d, yyyy')
 }
 
-function checkForUsername(_username) {
+function checkNsignin(_username) {
 // Check for a username
     var success = function (data) {
             if(data.length == 0){
@@ -41,23 +41,59 @@ function checkForUsername(_username) {
 }
 
 function login() {
-    myApp.showPreloader();
+    myApp.hidePreloader();
+    myApp.showPreloader("Signing in");
     var success = function (data, status, xhr) {
             try {
+                myApp.hidePreloader();
                 resp = JSON.parse(data)
                 if (!resp.err) {
                     USER.id = resp.id;
                     console.log("Successful login")
+                    $$("#TFuserName").html(USER.nickname)
                     getAlbums();
+                    loadImage(
+                        "http://zotime.ddns.net/_PD/photoUploadNEW.php?albumId=591e86a35e5d87785d59b8e2&imageId=591e87035e5d87785c64cd22&userId=591daa6f5e5d87148c6c1954",
+                        function (img) {
+                            if (img.type === "error") {
+                                console.log("Error loading static image from source:"+url);
+                            } else {
+                                img = loadImage.scale(
+                                    img, {
+                                        maxWidth: 60,
+                                        maxHeight: 60,
+                                        downsamplingRatio: 0.4,
+                                        contain: true,
+                                        crop: true,
+                                        canvas: true,
+                                        cover: true,
+                                    }
+                                )
+                                // if($$("#profileBox").children().length != 1){
+                                //     myApp.alert("attempt to double load image slot", "ERR PROFILE PIC")
+                                //     return
+                                // }
+                                
+                                img.setAttribute("style", "border-radius: 50%;")
+                                // img.setAttribute("style", "")
+                                $$("#profileBox").prepend(img);
+                            }
+                            
+                            $$("#profileBox").on("click", function (e) {myApp.alert("Go to the user's home page")})
+                        }, {
+                            aspectRatio: 1, 
+                        }
+                    );
                 } else {
                     console.log("LOGIN error: " + resp.msg);
                 }
-                myApp.hidePreloader();
+                
             } catch (error) {
                 myApp.alert("Got an unexpected response: " + resp, "LOGIN")
             }
     }
     var error = function (xhr, status){
+        myApp.hidePreloader();
         myApp.alert("Failed to send photo.", "ERR NEW_PHOTO")
         console.log("XHR: "+xhr);
         console.log("STATUS: "+status);
@@ -72,5 +108,4 @@ function login() {
         },
         success,
         error)
-    return
 }
