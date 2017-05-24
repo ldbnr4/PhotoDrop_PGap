@@ -71,15 +71,18 @@ function addNewAlbum(ttl) {
 }
 
 function createNewUser(_url, _username, _password) {
-    myApp.hidePreloader();
-    myApp.showPreloader("Creating a new user");
+    _setUSER(_username,_password)
+    myApp.hidePreloader()
+    myApp.showPreloader("Creating a new user...")
     // Create A User
     var success = function (data, status, xhr) {
             try {
                     myApp.hidePreloader();
                     var JResp = JSON.parse(data);
                     if (JResp.err == false) {
+                        console.log("Successfully created a new user!")
                         USER.id = JResp.id;
+                        goToHomePg()
                     } else {
                         myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
                     }
@@ -97,7 +100,7 @@ function createNewUser(_url, _username, _password) {
         myApp.alert("STATUS: "+status);
     }
     // serverComm(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
-    $$.post(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
+    $$.post(_url, {ADD_USER: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
 }
 
 function _get_key_value_str(__set){

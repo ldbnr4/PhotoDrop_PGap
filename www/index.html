@@ -54,9 +54,130 @@
             <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
             <!--<div class="pages navbar-through toolbar-through">-->
             <div class="pages">
+
                 <!-- Page, "data-page" contains page name -->
-                <!--Home page-->
                 <div data-page="index" class="page">
+                    <!-- swiper-init to initialize swiper automatically -->
+                    <div class="swiper-container swiper-init" data-speed="400" data-space-between="40" data-pagination=".swiper-pagination" style="height:82%">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">Slide 1</div>
+                            <div class="swiper-slide">Slide 2</div>
+                            <div class="swiper-slide">Slide 3</div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+
+                    <div class="list-block" style="position: absolute;bottom: 0;left: 0;width: 100%;margin-bottom: 5px;text-align:center">
+                        <!--<div>-->
+                        <a href="#login" class="button button-big button-raised" style="margin: auto;width: 90%;font-size: 30px;">Login</a>
+                        <!--</div>
+                        <div>-->
+                        <a href="#signup" class="button button-big button-fill button-raised color-teal" style="width: 90%;margin: auto; margin-top:5px;font-size: 30px;">Signup</a>
+                        <!--</div>-->
+                    </div>
+
+                </div>
+
+                <!--Sign Up Page-->
+                <div data-page="signup" class="page cached">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <div class="navbar-inner navbar-fixed">
+                            <div class="left">
+                                <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
+                            </div>
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="center sliding">PhotoDrop</div>
+                        </div>
+                    </div>
+                    <div class="page-content list-block">
+                        <div class="content-block inset">
+                            <form id="signup_form">
+                                <ul>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title floating-label">Email</div>
+                                                <div class="item-input">
+                                                    <input type="email" name="email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title floating-label">Username</div>
+                                                <div class="item-input">
+                                                    <input type="text" name="username">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title floating-label">Password</div>
+                                                <div class="item-input">
+                                                    <input type="password" name="password">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Toolbar has additional "toolbar-bottom" class -->
+                    <div class="toolbar toolbar-bottom">
+                        <a href="#" id="signup_link" class="link" style="float:right">Sign up</a>
+                    </div>
+                </div>
+
+                <!--Login Page-->
+                <div data-page="login" class="page cached">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <div class="navbar-inner navbar-fixed">
+                            <div class="left">
+                                <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
+                            </div>
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="center sliding">PhotoDrop</div>
+                        </div>
+                    </div>
+                    <div class="page-content list-block">
+                        <div class="content-block list-block inset">
+                            <form id="login_form">
+                                <ul>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title floating-label">Username/Email</div>
+                                            <div class="item-input">
+                                                <input type="text" name="username">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title floating-label">Password</div>
+                                            <div class="item-input">
+                                                <input type="password" name="password">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Toolbar has additional "toolbar-bottom" class -->
+                    <div class="toolbar toolbar-bottom">
+                        <a href="#" id="login_link" class="link" style="float:right">Log in</a>
+                    </div>
+                </div>
+
+                <!--Home page-->
+                <div data-page="home" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar" style="height: 70px">
                         <!--<div id="profileBox" style="margin-right: 10px;float: right;margin-top: 10px;"> </div>-->
@@ -65,10 +186,10 @@
                             <div class="center sliding">
                                 <!--<div>PhotoDrop</div>-->
                             </div>
-                            
+
                             <div class="right">
                                 <div id="TFuserName" style="padding-bottom: 32px;padding-right: 8px;"></div>
-                                <div id="profileBox" style="margin-right:5px;margin-top: 8px;"></div>
+                                <div id="profileBox" data-panel="right" class="open-panel" style="margin-right:5px;margin-top: 8px;"></div>
 
                                 <!-- Search Bar -->
                                 <!--<form class="searchbar">
@@ -88,6 +209,15 @@
                     <a href="#" class="floating-button color-amber mainPG-fab" onclick="addAlbum()">
                         <i class="material-icons">add_to_photos</i>
                     </a>
+
+                    <!-- Panels Overlay -->
+                    <div class="panel-overlay"></div>
+                    <!-- Right Panel with Cover effect -->
+                    <div class="panel panel-right panel-cover">
+                        <div class="content-block">
+                            <p><a href="#index" class="close-panel">Log out</a></p>
+                        </div>
+                    </div>
 
                     <!-- Scrollable page content -->
                     <div class="page-content list-block pull-to-refresh-content" id="homePgCntnt">
@@ -135,7 +265,7 @@
                           Right link contains only icon - additional "icon-only" class
                           Additional "open-panel" class tells app to open panel when we click on this link
                         -->
-                                <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
+                                <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                             <div class="center sliding">PhotoDrop</div>
@@ -168,7 +298,8 @@
                     </div>
                     <!-- End -->
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt" data-ptr-distance="50" style="user-select: none;">
+                    <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt" data-ptr-distance="50"
+                        style="user-select: none;">
                         <div class="content-block">
                             <div class="pull-to-refresh-layer">
                                 <div class="preloader"></div>
@@ -230,6 +361,7 @@
     <script type="text/javascript" src="lib/helper_funcs.js"></script>
     <script type="text/javascript" src="lib/dom7.js"></script>
     <script type="text/javascript" src="lib/md5.js"></script>
+    <script type="text/javascript" src="lib/validate.min.js"></script>
 
     <script type="text/javascript" src="js/UTL-media.js"></script>
     <script type="text/javascript" src="js/UTL-network.js"></script>
