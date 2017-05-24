@@ -109,12 +109,12 @@ function login(_username, _password) {
             }
 
         } catch (error) {
-            myApp.alert("Got an unexpected response: " + resp, "LOGIN")
+            myApp.alert("Got an unexpected response: " + resp, "RESP LOGIN")
         }
     }
     var error = function (xhr, status) {
         myApp.hidePreloader();
-        myApp.alert("Failed to send photo.", "ERR NEW_PHOTO")
+        myApp.alert("Failed to send photo.", "ERR LOGIN")
         console.log("XHR: " + xhr);
         console.log("STATUS: " + status);
     }

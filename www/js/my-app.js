@@ -1,4 +1,4 @@
-var test = true;
+var test = false;
 // Initialize app
 var myApp = new Framework7({
     material: true, //enable Material theme
