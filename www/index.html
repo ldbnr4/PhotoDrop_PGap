@@ -188,8 +188,10 @@
                             </div>
 
                             <div class="right">
-                                <div id="TFuserName" style="padding-bottom: 32px;padding-right: 8px;"></div>
-                                <div id="profileBox" data-panel="right" class="open-panel" style="margin-right:5px;margin-top: 8px;"></div>
+                                <div id="profileBox" data-panel="right" data-popover=".popover-menu" class="open-popover" style="margin-right:5px;margin-top: 8px;">
+                                    <div id="profilePicBox" style="float:right"></div>
+                                    <div id="TFuserName" style="padding-right: 8px; float:left; padding-top:5px"></div>
+                                </div>
 
                                 <!-- Search Bar -->
                                 <!--<form class="searchbar">
@@ -210,12 +212,15 @@
                         <i class="material-icons">add_to_photos</i>
                     </a>
 
-                    <!-- Panels Overlay -->
-                    <div class="panel-overlay"></div>
-                    <!-- Right Panel with Cover effect -->
-                    <div class="panel panel-right panel-cover">
-                        <div class="content-block">
-                            <p><a href="#index" class="close-panel">Log out</a></p>
+                    <!-- User Menu popover -->
+                    <div class="popover popover-menu">
+                        <div class="popover-angle"></div>
+                        <div class="popover-inner">
+                        <div class="list-block">
+                            <ul>
+                            <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
+                            </ul>
+                        </div>
                         </div>
                     </div>
 
@@ -366,10 +371,9 @@
     <script type="text/javascript" src="js/UTL-media.js"></script>
     <script type="text/javascript" src="js/UTL-network.js"></script>
     <script type="text/javascript" src="js/UTL-ui.js"></script>
+    <script type="text/javascript" src="js/user.js"></script>
 
     <script type="text/javascript" src="js/my-app.js"></script>
-
-    <script type="text/javascript" src="js/test/user.js"></script>
 
 </body>
 

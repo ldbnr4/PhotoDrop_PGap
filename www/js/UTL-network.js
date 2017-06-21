@@ -70,39 +70,6 @@ function addNewAlbum(ttl) {
     $$.post(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, err);
 }
 
-function createNewUser(_url, _username, _password) {
-    _setUSER(_username,_password)
-    myApp.hidePreloader()
-    myApp.showPreloader("Creating a new user...")
-    // Create A User
-    var success = function (data, status, xhr) {
-            try {
-                    myApp.hidePreloader();
-                    var JResp = JSON.parse(data);
-                    if (JResp.err == false) {
-                        console.log("Successfully created a new user!")
-                        USER.id = JResp.id;
-                        goToHomePg()
-                    } else {
-                        myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
-                    }
-                } catch (error) {
-                    myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD USER");
-                    console.log("Data: "+data)
-                    console.log("Status: "+status)
-                    console.log("XHR: "+xhr)
-                }
-    }
-    var err = function (xhr, status){
-        myApp.hidePreloader();
-        myApp.alert("Failed to create a user.", "ERR ADD USER")
-        myApp.alert("XHR: "+JSON.stringify(xhr));
-        myApp.alert("STATUS: "+status);
-    }
-    // serverComm(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
-    $$.post(_url, {ADD_USER: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
-}
-
 function _get_key_value_str(__set){
     var str_ = "";
     for(var ___k in __set){

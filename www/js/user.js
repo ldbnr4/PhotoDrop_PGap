@@ -1,8 +1,3 @@
-var imageAlbum = {
-    title: "img",
-    date: new Date().toString('dddd, MMMM d, yyyy')
-}
-
 function checkNsignin(_username) {
     // Check for a username
     var success = function (data) {
@@ -57,10 +52,10 @@ function goToHomePg() {
     $$("#TFuserName").html(USER.nickname)
     getAlbums();
     loadImage(
-        "http://zotime.ddns.net/_PD/photoUploadNEW.php?albumId=591e86a35e5d87785d59b8e2&imageId=591e87035e5d87785c64cd22&userId=591daa6f5e5d87148c6c1954",
+        USER_SERVICE+"?PROF_PIC=true&uid="+USER.id,
         function (img) {
             if (img.type === "error") {
-                console.log("Error loading static image from source:" + url);
+                myApp.alert("Error loading image!","ERR PROF PIC");
             } else {
                 img = loadImage.scale(
                     img, {
@@ -73,9 +68,9 @@ function goToHomePg() {
                         cover: true,
                     }
                 )
-                $$("#profileBox").html("")
+                $$("#profilePicBox").html("")
                 img.setAttribute("style", "border-radius: 50%;")
-                $$("#profileBox").prepend(img);
+                $$("#profilePicBox").prepend(img);
             }
 
             $$("#profileBox").on("click", function (e) {
@@ -114,7 +109,7 @@ function login(_username, _password) {
     }
     var error = function (xhr, status) {
         myApp.hidePreloader();
-        myApp.alert("Failed to send photo.", "ERR LOGIN")
+        myApp.alert("Failed to login.", "ERR LOGIN")
         console.log("XHR: " + xhr);
         console.log("STATUS: " + status);
     }
@@ -127,4 +122,37 @@ function login(_username, _password) {
         },
         success,
         error)
+}
+
+function createNewUser(_url, _username, _password) {
+    _setUSER(_username,_password)
+    myApp.hidePreloader()
+    myApp.showPreloader("Creating a new user...")
+    // Create A User
+    var success = function (data, status, xhr) {
+            try {
+                    myApp.hidePreloader();
+                    var JResp = JSON.parse(data);
+                    if (JResp.err == false) {
+                        console.log("Successfully created a new user!")
+                        USER.id = JResp.id;
+                        goToHomePg()
+                    } else {
+                        myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
+                    }
+                } catch (error) {
+                    myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD USER");
+                    console.log("Data: "+data)
+                    console.log("Status: "+status)
+                    console.log("XHR: "+xhr)
+                }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to create a user.", "ERR ADD USER")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+    // serverComm(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
+    $$.post(_url, {ADD_USER: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
 }

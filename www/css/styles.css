@@ -39,3 +39,7 @@ p{
 .swiper-slide{
     text-align: center
 }
+
+.popover {
+    width: 200px;
+}
