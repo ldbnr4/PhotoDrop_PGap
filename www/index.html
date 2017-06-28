@@ -219,6 +219,7 @@
                         <div class="list-block">
                             <ul>
                             <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
+                            <li><a href="#profile" class="list-button item-link close-popover">Edit Profile</a></li>
                             </ul>
                         </div>
                         </div>
@@ -330,6 +331,54 @@
                         </div>
                     </div>
                 </div>
+
+                <!--Profile Page-->
+                <div data-page="profile" class="page cached">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <div class="navbar-inner navbar-fixed">
+                            <div class="left">
+                                <!--
+                          Right link contains only icon - additional "icon-only" class
+                          Additional "open-panel" class tells app to open panel when we click on this link
+                        -->
+                                <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
+                            </div>
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="center sliding"></div>
+                        </div>
+                    </div>
+                    <!--Page Content-->
+                    <div class="page-content list-block">
+                        <div class="content-block list-block inset">
+                            <form id="profile_form">
+                                <ul>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title floating-label">Username/Email</div>
+                                            <div class="item-input">
+                                                <input type="text" name="username">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title floating-label">Password</div>
+                                            <div class="item-input">
+                                                <input type="password" name="password">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Toolbar has additional "toolbar-bottom" class -->
+                    <div class="toolbar toolbar-bottom">
+                        <a href="#" id="update_link" class="link" style="float:right">Update</a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
