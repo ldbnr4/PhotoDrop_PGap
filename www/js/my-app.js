@@ -78,7 +78,7 @@ myApp.onPageInit('signup', function(){
         var formData = myApp.formToData('#signup_form')
         var errors = validate(formData, signup_const)
         if(!errors){
-            createNewUser(USER_SERVICE, formData.username, formData.password)
+            createNewUser(USER_SERVICE, formData.username, formData.password, formData.email)
             // console.log(formData)
         }
         else{
@@ -92,6 +92,84 @@ myApp.onPageInit('album', function (page) {
     
 })
 
+myApp.onPageInit('edit-profile', function(page) {
+    myApp.hidePreloader();
+    myApp.showPreloader("Loading profile");
+    getProfileInfo();
+    $$('#update_link').on('click', function(){
+        myApp.hidePreloader();
+        myApp.showPreloader("Updating profile");
+        var formData = myApp.formToData('#profile_form')
+        var errors = validate(formData, signup_const)
+        if(!errors){
+            console.log(formData)
+            // updateProfile()
+        }
+        else{
+            myApp.hidePreloader();
+            myApp.alert(JSON.stringify(errors), "Login errors");
+        }
+    });
+})
+
+function profileStart(page) {
+    // console.log(page)
+    url = USER_SERVICE+"?PROF_PIC=true"
+    if(page.url.indexOf("nickname") === -1){
+        $$("#usernameSlot").html("<b>"+USER.nickname+"</b>")
+        $$("#editProfBtn").attr("style", "display:flex")
+        url = url+"&uid="+USER.id
+    }
+    else{
+        nickname = page.query.nickname
+        $$("#usernameSlot").html("<b>"+nickname+"</b>")
+        $$("#memberSince").html("Member since <b>"+page.query.joined+"</b>")
+        $$("#editProfBtn").hide()
+        url = url + "&nickname="+nickname
+    }
+    
+    console.log("URl: "+url)
+    loadImage(
+        url,
+        function (img) {
+            if (img.type === "error") {
+                myApp.alert("Error loading image!","ERR PROF PIC");
+            } else {
+                img = loadImage.scale(
+                    img, {
+                        maxWidth: 200,
+                        maxHeight: 200,
+                        downsamplingRatio: 0.4,
+                        contain: true,
+                        crop: true,
+                        canvas: true,
+                        cover: true,
+                    }
+                )
+                $$("#profilePic").html("")
+                img.setAttribute("style", "border-radius: 50%;")
+                $$("#profilePic").prepend(img);
+            }
+        }, {
+            aspectRatio: 1,
+        }
+    );
+}
+
+myApp.onPageReinit('user-profile', profileStart)
+myApp.onPageInit('user-profile', profileStart)
+
+var mySearchbar = myApp.searchbar('.searchbar', {
+    customSearch:true,
+    onSearch: function(s){
+        search4Handle(s)
+    }
+});
+
+function clearSearch(){
+    $$(".searchbar-found").html("")
+    mySearchbar.clear()
+}
 
 // Option 2. Using one 'pageInit' event handler for all pages:
 $$(document).on('pageInit', function (e) {

@@ -36,15 +36,17 @@ function checkNsignin(_username) {
     }, success, error)
 }
 
-function _setUSER(_username, _password) {
+function _setUSER(_username, _password, _email) {
     ALBUM = {};
     albumPhotos = [];
     USER = {
         nickname: _username,
         username: encryptStr(_username),
         password: encryptStr(_password),
+        pswrd_plain: _password,
         albums: [],
-        urn_albums: []
+        urn_albums: [],
+        email:_email
     }
 }
 
@@ -68,9 +70,9 @@ function goToHomePg() {
                         cover: true,
                     }
                 )
-                $$("#profilePicBox").html("")
+                $$("#profPicThumb").html("")
                 img.setAttribute("style", "border-radius: 50%;")
-                $$("#profilePicBox").prepend(img);
+                $$("#profPicThumb").prepend(img);
             }
 
             $$("#profileBox").on("click", function (e) {
@@ -96,7 +98,7 @@ function login(_username, _password) {
             resp = JSON.parse(data)
             if (!resp.err) {
                 USER.id = resp.id;
-                console.log("Successful login")
+                console.log("Successful login "+resp.id)
                 goToHomePg()
             } else {
                 myApp.hidePreloader();
@@ -124,7 +126,7 @@ function login(_username, _password) {
         error)
 }
 
-function createNewUser(_url, _username, _password) {
+function createNewUser(_url, _username, _password, _email) {
     _setUSER(_username,_password)
     myApp.hidePreloader()
     myApp.showPreloader("Creating a new user...")
@@ -154,5 +156,94 @@ function createNewUser(_url, _username, _password) {
         myApp.alert("STATUS: "+status);
     }
     // serverComm(_url, {ADD_USER: true, USERNAME:_username, PASSWORD:_password}, success, err)
-    $$.post(_url, {ADD_USER: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
+    $$.post(_url, {ADD_USER: true, USERNAME:USER.username, PASSWORD:USER.password, EMAIL:USER.email, NICKNAME:USER.nickname}, success, err)
+}
+
+function getProfileInfo(){
+    var success = function (data, status, xhr) {
+        try {
+                myApp.hidePreloader();
+                var JResp = JSON.parse(data);
+                if (JResp.err == false) {
+                    checkNset($$("#profile-unm"), USER.nickname)
+                    checkNset($$("#profile-eml"), JResp.email)
+                    checkNset($$("#profile-pswrd"), USER.pswrd_plain)
+                } else {
+                    myApp.alert("Error message: " + JResp.msg, "ERR PROFILE");
+                }
+            } catch (error) {
+                myApp.alert("Did not recieve json response. Resp: "+data,"ERR PROFILE");
+                console.log(error)
+                console.log("Data: "+data)
+                console.log("Status: "+status)
+                console.log("XHR: "+xhr)
+            }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR PROFILE")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+    $$.post(USER_SERVICE, {EDIT_PROFILE: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
+}
+
+function checkNset(tag, value){
+    if(!value){
+        console.log("Empty value for tag: "+tag)
+    }
+    else{
+        tag.val(value)
+        tag.addClass('not-empty-state')
+        tag.parent().addClass('not-empty-state')
+        tag.parent().parent().addClass('not-empty-state')
+    }
+}
+
+function search4Handle(handle){
+    var success = function (data, status, xhr) {
+        try {
+            var JResp = JSON.parse(data);
+            if (JResp.err == false) {
+                // $$(".searchbar-overlay").hide()
+                $$(".searchbar-found").html("")
+                JResp.result.forEach(function(element) {
+                    _date = element.joined['date'].split(" ")[0]
+                    console.log(_date)
+                    dt = element.joined['date'].split(" ")[0].split("-")
+                    // year = 2044
+                    // month = "Jan"
+                    year = dt[0]
+                    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                    month = months[Number(dt[1])-1]
+                    console.log(month)
+                    $$(".searchbar-found").append(
+                        Template7.templates.userListTmplt({
+                            name: element.nickname,
+                            joined: month + " " + year
+                        })
+                    )
+                })
+                console.log("Done!")
+            } else {
+                myApp.alert("Error message: " + JResp.msg, "ERR USER SEARCH");
+            }
+        } catch (error) {
+            myApp.alert("Did not recieve json response. Resp: "+data,"ERR USER SEARCH");
+            console.log(error)
+            console.log("Data: "+data)
+            console.log("Status: "+status)
+            console.log("XHR: "+xhr)
+        }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR USER SEARCH")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+    
+    if(handle.query)
+        $$.get(USER_SERVICE, {USER_SEARCH: true, nickname:handle.query}, success, err)
+
 }

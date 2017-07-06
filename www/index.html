@@ -87,7 +87,7 @@
                                 <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                            <div class="center sliding">` (Alpha)</div>
+                            <div class="center sliding">PhotoDrop</div>
                         </div>
                     </div>
                     <div class="page-content list-block">
@@ -189,7 +189,7 @@
 
                             <div class="right">
                                 <div id="profileBox" data-panel="right" data-popover=".popover-menu" class="open-popover" style="margin-right:5px;margin-top: 8px;">
-                                    <div id="profilePicBox" style="float:right"></div>
+                                    <div id="profPicThumb" style="float:right"></div>
                                     <div id="TFuserName" style="padding-right: 8px; float:left; padding-top:5px"></div>
                                 </div>
 
@@ -218,8 +218,9 @@
                         <div class="popover-inner">
                         <div class="list-block">
                             <ul>
+                            <li><a href="#user-profile" class="list-button item-link close-popover">Profile</a></li>
+                            <li><a href="#user-search" class="list-button item-link close-popover">User Search</a></li>
                             <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
-                            <li><a href="#profile" class="list-button item-link close-popover">Edit Profile</a></li>
                             </ul>
                         </div>
                         </div>
@@ -267,10 +268,6 @@
                     <div class="navbar">
                         <div class="navbar-inner navbar-fixed">
                             <div class="left">
-                                <!--
-                          Right link contains only icon - additional "icon-only" class
-                          Additional "open-panel" class tells app to open panel when we click on this link
-                        -->
                                 <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
@@ -302,7 +299,6 @@
                             </a>
                         </div>
                     </div>
-                    <!-- End -->
                     <!-- Scrollable page content -->
                     <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt" data-ptr-distance="50"
                         style="user-select: none;">
@@ -332,20 +328,43 @@
                     </div>
                 </div>
 
-                <!--Profile Page-->
-                <div data-page="profile" class="page cached">
+                <!-- User Profile page -->
+                <div class="page cached" data-page="user-profile">
                     <!-- Top Navbar-->
                     <div class="navbar">
                         <div class="navbar-inner navbar-fixed">
                             <div class="left">
-                                <!--
-                          Right link contains only icon - additional "icon-only" class
-                          Additional "open-panel" class tells app to open panel when we click on this link
-                        -->
-                                <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
+                                <a href="#" class="link icon-only back"><i class="icon icon-back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                             <div class="center sliding"></div>
+                        </div>
+                    </div>
+                    <a href="#edit-profile" id="editProfBtn" class="floating-button color-amber">
+                        <i class="icon material-icons">edit</i>
+                    </a>
+                    <!-- Scrollable page content -->
+                    <div class="page-content list-block hide-navbar-on-scroll">
+                        <!--<div class="content-block-title" id="album_name_ttl">YOUR PROFILE</div>-->
+                        <div class="content-block list-block inset" style="text-align: center;">
+                            <div id="usernameSlot" style="font-size:25px"></div>
+                            <div id="profilePic"></div>
+                            <div id="memberSince"></div>
+                            <div id="albumsSlot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Edit Profile Page-->
+                <div data-page="edit-profile" class="page cached">
+                    <!-- Top Navbar-->
+                    <div class="navbar">
+                        <div class="navbar-inner navbar-fixed">
+                            <div class="left">
+                                <a href="#" class="link icon-only back"><i class="icon icon-back"></i></a>
+                            </div>
+                            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                            <div class="center sliding">Edit Profile</div>
                         </div>
                     </div>
                     <!--Page Content-->
@@ -355,9 +374,17 @@
                                 <ul>
                                     <div class="item-content">
                                         <div class="item-inner">
-                                            <div class="item-title floating-label">Username/Email</div>
+                                            <div class="item-title floating-label">Email</div>
                                             <div class="item-input">
-                                                <input type="text" name="username">
+                                                <input type="email" id="profile-eml" name="email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title floating-label">Username</div>
+                                            <div class="item-input">
+                                                <input type="text" id="profile-unm" name="username">
                                             </div>
                                         </div>
                                     </div>
@@ -365,7 +392,7 @@
                                         <div class="item-inner">
                                             <div class="item-title floating-label">Password</div>
                                             <div class="item-input">
-                                                <input type="password" name="password">
+                                                <input type="password" id="profile-pswrd" name="password">
                                             </div>
                                         </div>
                                     </div>
@@ -378,7 +405,36 @@
                         <a href="#" id="update_link" class="link" style="float:right">Update</a>
                     </div>
                 </div>
-
+                
+                <div class="page cached" data-page="user-search">
+                    <!-- Search Bar -->
+                    <form class="searchbar">
+                        <div class="searchbar-input">
+                            <input type="search" placeholder="Search">
+                            <a href="#" class="searchbar-clear"></a>
+                        </div>
+                        <a href="#" class="searchbar-cancel">Cancel</a>
+                    </form>
+                    
+                    <div class="page-content">
+                        <!--<div style="display:none"></div>-->
+                        <!-- This block will be displayed if nothing found -->
+                        <div class="content-block searchbar-not-found">
+                            <div class="content-block-inner">No users found</div>
+                        </div>
+                    
+                        <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
+                        <div class="list-block list-block-search searchbar-found">
+                        <ul>
+                        </ul>
+                        </div>
+                    </div>
+                    <!-- Toolbar has additional "toolbar-bottom" class -->
+                    <div class="toolbar toolbar-bottom">
+                        <a href="#" id="clear_link" class="link" onclick="clearSearch()" style="float:right">Clear</a>
+                        <a href="#home" id="back_link" class="link back" style="float:left">Back</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -408,6 +464,14 @@
             </div>
             {{/each}}
         </li>
+    </script>
+
+    <script type="text/template7" id="userListTmplt">
+        <a href="#user-profile?nickname={{name}}&joined={{joined}}" class="item-link item-content">
+            <div class="item-inner">
+                <div class="item-title" style="width: 100%;">{{name}}</div>
+            </div>
+        </a>
     </script>
 
 
