@@ -1,41 +1,3 @@
-function checkNsignin(_username) {
-    // Check for a username
-    var success = function (data) {
-        if (data.length == 0) {
-            console.log("No user found, I'ts all yours!");
-            // myApp.alert("No user found, I'ts all yours!");
-            createNewUser(USER_SERVICE, USER.username, USER.password)
-        } else {
-            try {
-                var resp = JSON.parse(data);
-                if (resp.err) {
-                    myApp.alert("Error in response: " + resp.msg, "ERR FIND_USER");
-                } else if (resp) {
-                    // myApp.alert("Username taken :(");
-                    console.log("Username taken :(");
-                    login();
-                } else {
-                    myApp.alert("FIND_USER resp: " + resp, "ERR FIND_USER")
-                }
-            } catch (err) {
-                myApp.alert("Did not recieve json response. Resp: " + err, "ERR FIND_USER");
-            }
-        }
-    }
-    var error = function (xhr, status) {
-        myApp.alert("Failed to search for username.", "ERR FIND_USER")
-        console.log(xhr);
-        $$("#debugBox").html("XHR: " + JSON.stringify(xhr));
-        console.log(status);
-        myApp.alert("STATUS: " + status);
-    }
-    // serverComm(USER_SERVICE, {FIND_USER: true, username: _username}, false, success, error)
-    $$.get(USER_SERVICE, {
-        FIND_USER: true,
-        username: _username
-    }, success, error)
-}
-
 function _setUSER(_username, _password, _email) {
     ALBUM = {};
     albumPhotos = [];
@@ -48,6 +10,7 @@ function _setUSER(_username, _password, _email) {
         urn_albums: [],
         email:_email
     }
+    console.log(USER)
 }
 
 function goToHomePg() {
@@ -96,17 +59,22 @@ function login(_username, _password) {
     var success = function (data, status, xhr) {
         try {
             resp = JSON.parse(data)
-            if (!resp.err) {
-                USER.id = resp.id;
-                console.log("Successful login "+resp.id)
-                goToHomePg()
-            } else {
-                myApp.hidePreloader();
-                console.log("LOGIN error: " + resp.msg);
-            }
-
+            respU = JSON.parse(resp.user)
         } catch (error) {
+            myApp.hidePreloader();
             myApp.alert("Got an unexpected response: " + resp, "RESP LOGIN")
+        }
+        if (!resp.err) {
+            // console.log(respU)
+            USER.id = resp.id;
+            USER.email = resp.email
+            USER.joined = getMemDate(resp.joined)
+            USER.friends = respU.friends
+            // console.log("Successful login "+resp.id)
+            goToHomePg()
+        } else {
+            myApp.hidePreloader();
+            console.log("LOGIN error: " + resp.msg);
         }
     }
     var error = function (xhr, status) {
@@ -127,27 +95,27 @@ function login(_username, _password) {
 }
 
 function createNewUser(_url, _username, _password, _email) {
-    _setUSER(_username,_password)
+    _setUSER(_username,_password,_email)
     myApp.hidePreloader()
     myApp.showPreloader("Creating a new user...")
     // Create A User
     var success = function (data, status, xhr) {
-            try {
-                    myApp.hidePreloader();
-                    var JResp = JSON.parse(data);
-                    if (JResp.err == false) {
-                        console.log("Successfully created a new user!")
-                        USER.id = JResp.id;
-                        goToHomePg()
-                    } else {
-                        myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
-                    }
-                } catch (error) {
-                    myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD USER");
-                    console.log("Data: "+data)
-                    console.log("Status: "+status)
-                    console.log("XHR: "+xhr)
-                }
+        try {
+            myApp.hidePreloader();
+            var JResp = JSON.parse(data);
+            if (JResp.err == false) {
+                console.log("Successfully created a new user!")
+                USER.id = JResp.id;
+                goToHomePg()
+            } else {
+                myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
+            }
+        } catch (error) {
+            myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD USER");
+            console.log("Data: "+data)
+            console.log("Status: "+status)
+            console.log("XHR: "+xhr)
+        }
     }
     var err = function (xhr, status){
         myApp.hidePreloader();
@@ -185,7 +153,7 @@ function getProfileInfo(){
         myApp.alert("XHR: "+JSON.stringify(xhr));
         myApp.alert("STATUS: "+status);
     }
-    $$.post(USER_SERVICE, {EDIT_PROFILE: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
+    $$.post(USER_SERVICE, {USER_EMAIL: true, USERNAME:USER.username, PASSWORD:USER.password}, success, err)
 }
 
 function checkNset(tag, value){
@@ -206,25 +174,16 @@ function search4Handle(handle){
             var JResp = JSON.parse(data);
             if (JResp.err == false) {
                 // $$(".searchbar-overlay").hide()
-                $$(".searchbar-found").html("")
+                $$("#userSearchLB").html("")
                 JResp.result.forEach(function(element) {
-                    _date = element.joined['date'].split(" ")[0]
-                    console.log(_date)
-                    dt = element.joined['date'].split(" ")[0].split("-")
-                    // year = 2044
-                    // month = "Jan"
-                    year = dt[0]
-                    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-                    month = months[Number(dt[1])-1]
-                    console.log(month)
-                    $$(".searchbar-found").append(
+                    $$("#userSearchLB").append(
                         Template7.templates.userListTmplt({
                             name: element.nickname,
-                            joined: month + " " + year
+                            id: element._id.$oid
                         })
                     )
                 })
-                console.log("Done!")
+                // console.log("Done!")
             } else {
                 myApp.alert("Error message: " + JResp.msg, "ERR USER SEARCH");
             }
@@ -243,7 +202,274 @@ function search4Handle(handle){
         myApp.alert("STATUS: "+status);
     }
     
+    // If the search is not empty check
     if(handle.query)
         $$.get(USER_SERVICE, {USER_SEARCH: true, nickname:handle.query}, success, err)
 
+}
+
+function updtUserProf(formData){
+    formData.nickname = formData.username
+    formData.username = encryptStr(formData.nickname)
+    formData.pswrd_plain = formData.password
+    formData.password = encryptStr(formData.password)
+
+    success = function(data, status, xhr){
+        myApp.hidePreloader();
+        console.log("FORM_DATA: "+formData)
+        console.log("RESP_DATA: "+data)
+        USER.email = formData.email
+        USER.nickname = formData.nickname
+        USER.pswrd_plain = formData.pswrd_plain
+        USER.username = formData.username
+        USER.password = formData.password
+        $$("#TFuserName").html(USER.nickname)
+        mainView.router.load({
+            pageName: 'user-profile',
+        });
+    }
+    error = function(xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to update user profile.", "ERR USER UPDATE")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+
+    $$.post(USER_SERVICE, {EDIT_PROFILE: true, USERNAME:USER.username, PASSWORD:USER.password, FORM_DATA: JSON.stringify(formData)}, success, error)    
+}
+
+function getMemDate(date){
+    dt = date.split(" ")[0].split("-")
+    year = dt[0]
+    MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    month = MONTHS[Number(dt[1])-1]
+    return month + " " + year
+}
+
+function disconnect(profName){
+    success = function(data, status, xhr){
+        try{
+            var JResp = JSON.parse(data);
+            USER.friends = JSON.parse(JResp.friends)
+            mainView.router.back()
+        }catch(error){
+            myApp.alert("Did not recieve json response. Resp: "+data,"JSON_ERR DISCONNECT FRIEND");
+        }
+        console.log(JResp)
+    }
+    error = function(xhr, status){
+        myApp.alert("Failed to diconnect from user.", "ERR DISCONNECT FRIEND")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+
+    $$.post(USER_SERVICE, {DISCONNECT_FRIEND: true, UID:USER.id, FRIEND_NAME : profName}, success, error)    
+}
+
+function goToProfPg(){
+    mainView.router.load({
+        pageName: 'user-profile',
+        query:{
+            nickname : USER.nickname,
+            id : USER.id
+        }
+    });
+}
+
+function connect(profid){
+    success = function(data, status, xhr){
+        try{
+            var JResp = JSON.parse(data);
+        }catch(error){
+            myApp.alert("Did not recieve json response. Resp: "+data,"JSON_ERR CONNECT FRIEND");
+        }
+        console.log(JResp)
+        if(!JResp.err)
+            mainView.router.back()
+        else
+            myApp.alert("Error from server: "+JResp.msg, "SERVER ERR CONNECT FRIEND")
+    }
+    error = function(xhr, status){
+        myApp.alert("Failed to diconnect from user.", "ERR CONNECT FRIEND")
+        myApp.alert("XHR: "+JSON.stringify(xhr));
+        myApp.alert("STATUS: "+status);
+    }
+
+    $$.post(USER_SERVICE, {CONNECT_REQ: true, UID:USER.id, PROF_ID : profid}, success, error)    
+}
+
+function clearSearch(){
+    $$("#userSearchLB").html("")
+    mySearchbar.clear()
+}
+
+function profileStart(page) {
+    // console.log(page)
+    uid = null
+    nickname = null
+    if(page.query.id == USER.id){
+        uid = USER.id
+        nickname = USER.nickname
+        $$("#editProfBtn").attr("style", "display:flex")
+    }
+    else{
+        uid = page.query.id
+        nickname = page.query.nickname
+        $$("#editProfBtn").hide()
+    }
+
+    getProfile(nickname, uid)
+
+    loadImage(
+        USER_SERVICE+"?PROF_PIC=true&uid="+uid,
+        function (img) {
+            if (img.type === "error") {
+                myApp.alert("Error loading image!","ERR PROF PIC");
+            } else {
+                img = loadImage.scale(
+                    img, {
+                        maxWidth: 200,
+                        maxHeight: 200,
+                        downsamplingRatio: 0.4,
+                        contain: true,
+                        crop: true,
+                        canvas: true,
+                        cover: true,
+                    }
+                )
+                $$("#profilePic").html("")
+                img.setAttribute("style", "border-radius: 50%;")
+                $$("#profilePic").prepend(img);
+            }
+        }, {
+            aspectRatio: 1,
+        }
+    );
+}
+
+function getProfile(nickname, uid){
+    myApp.showPreloader("Loading profile");
+    var success = function (data, status, xhr) {
+        myApp.hidePreloader();
+        try {
+            var JResp = JSON.parse(data);
+        } catch (error) {
+            myApp.alert("Did not recieve json response.","ERR GET PROFILE");
+            console.log(error)
+            console.log(data)
+        }
+        if (JResp.err == false) {
+            // console.log(JResp)
+            $$("#profCB").html(
+                Template7.templates.profTmplt({
+                    name: nickname,
+                    memDate: getMemDate(JResp.joined),
+                    netstat: JResp.netstat,
+                    id: uid
+                })
+            )
+
+        } else {
+            myApp.alert("Error message: " + JResp.msg, "ERR PROFILE");
+        }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR PROFILE")
+    }
+    $$.post(USER_SERVICE, {GET_PROF: true, UID:USER.id, PROF_ID:uid}, success, err)
+}
+
+function loadFriends(page){
+    myApp.showPreloader("Loading friends")
+    $$("#friendReqs-list-block").html("")
+    $$("#friends-list-block").html("")
+    var success = function (data, status, xhr) {
+        myApp.hidePreloader();
+        try {
+            var JResp = JSON.parse(data);
+            // console.log(JResp)
+        } catch (error) {
+            myApp.alert("Did not recieve json response.","ERR FRIENDS");
+            console.log(error)
+            console.log(data)
+        }
+
+        if (JResp.err == false) {
+            // console.log(friendReqList)
+            // console.log(JResp)
+            // JResp.result.forEach(function(elem){
+            //     console.log(elem.id['$oid'])
+            // })
+            $$("#friendReqs-list-block").html(
+                Template7.templates.friendReqTmplt({
+                    friendReqs: JResp.friendReqs
+                })
+            )
+            $$("#friends-list-block").html(
+                Template7.templates.friendListTmplt({
+                    friends: JResp.friends
+                })
+            )
+        } else {
+            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
+        }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR FRIENDS")
+    }
+    $$.post(USER_SERVICE, {LOAD_FRNDS: true, UID:USER.id}, success, err)
+}
+
+function acceptReq(id){
+    myApp.showPreloader("Accepting friendship");
+    var success = function (data, status, xhr) {
+        myApp.hidePreloader();
+        try {
+            var JResp = JSON.parse(data);
+        } catch (error) {
+            myApp.alert("Did not recieve json response.","ERR FRIENDS");
+            console.log(error)
+            console.log(data)
+        }
+        if (JResp.err == false) {
+            mainView.router.load({
+                pageName: 'friends'
+            });
+        } else {
+            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
+        }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR FRIENDS")
+    }
+    $$.post(USER_SERVICE, {ACPT_REQ: true, UID:USER.id, FRND_ID:id}, success, err)
+}
+
+function declineReq(id){
+    myApp.showPreloader("Declining friendship");
+    var success = function (data, status, xhr) {
+        myApp.hidePreloader();
+        try {
+            var JResp = JSON.parse(data);
+        } catch (error) {
+            myApp.alert("Did not recieve json response.","ERR FRIENDS");
+            console.log(error)
+            console.log(data)
+        }
+        if (JResp.err == false) {
+            mainView.router.load({
+                pageName: 'friends'
+            });
+        } else {
+            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
+        }
+    }
+    var err = function (xhr, status){
+        myApp.hidePreloader();
+        myApp.alert("Failed to get user profile.", "ERR FRIENDS")
+    }
+    $$.post(USER_SERVICE, {DEC_REQ: true, UID:USER.id, FRND_ID:id}, success, err)
 }

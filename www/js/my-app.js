@@ -1,4 +1,4 @@
-var test = false;
+var test = true;
 // Initialize app
 var myApp = new Framework7({
     material: true, //enable Material theme
@@ -103,58 +103,15 @@ myApp.onPageInit('edit-profile', function(page) {
         var errors = validate(formData, signup_const)
         if(!errors){
             console.log(formData)
+            updtUserProf(formData)
             // updateProfile()
         }
         else{
             myApp.hidePreloader();
-            myApp.alert(JSON.stringify(errors), "Login errors");
+            myApp.alert(JSON.stringify(errors), "Update errors");
         }
     });
 })
-
-function profileStart(page) {
-    // console.log(page)
-    url = USER_SERVICE+"?PROF_PIC=true"
-    if(page.url.indexOf("nickname") === -1){
-        $$("#usernameSlot").html("<b>"+USER.nickname+"</b>")
-        $$("#editProfBtn").attr("style", "display:flex")
-        url = url+"&uid="+USER.id
-    }
-    else{
-        nickname = page.query.nickname
-        $$("#usernameSlot").html("<b>"+nickname+"</b>")
-        $$("#memberSince").html("Member since <b>"+page.query.joined+"</b>")
-        $$("#editProfBtn").hide()
-        url = url + "&nickname="+nickname
-    }
-    
-    console.log("URl: "+url)
-    loadImage(
-        url,
-        function (img) {
-            if (img.type === "error") {
-                myApp.alert("Error loading image!","ERR PROF PIC");
-            } else {
-                img = loadImage.scale(
-                    img, {
-                        maxWidth: 200,
-                        maxHeight: 200,
-                        downsamplingRatio: 0.4,
-                        contain: true,
-                        crop: true,
-                        canvas: true,
-                        cover: true,
-                    }
-                )
-                $$("#profilePic").html("")
-                img.setAttribute("style", "border-radius: 50%;")
-                $$("#profilePic").prepend(img);
-            }
-        }, {
-            aspectRatio: 1,
-        }
-    );
-}
 
 myApp.onPageReinit('user-profile', profileStart)
 myApp.onPageInit('user-profile', profileStart)
@@ -166,10 +123,13 @@ var mySearchbar = myApp.searchbar('.searchbar', {
     }
 });
 
-function clearSearch(){
-    $$(".searchbar-found").html("")
-    mySearchbar.clear()
-}
+var friendSearchBar = myApp.searchbar('#friend-searchbar', {
+    searchList: '#friends-list-block',
+    searchIn: '.friend-name'
+});
+
+myApp.onPageInit('friends', loadFriends)
+myApp.onPageReinit('friends', loadFriends)
 
 // Option 2. Using one 'pageInit' event handler for all pages:
 $$(document).on('pageInit', function (e) {

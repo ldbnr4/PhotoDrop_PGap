@@ -218,7 +218,8 @@
                         <div class="popover-inner">
                         <div class="list-block">
                             <ul>
-                            <li><a href="#user-profile" class="list-button item-link close-popover">Profile</a></li>
+                            <li><a href="#" class="list-button item-link close-popover" onclick="goToProfPg()">Profile</a></li>
+                            <li><a href="#friends" class="list-button item-link close-popover">Friends</a></li>
                             <li><a href="#user-search" class="list-button item-link close-popover">User Search</a></li>
                             <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
                             </ul>
@@ -345,12 +346,8 @@
                     </a>
                     <!-- Scrollable page content -->
                     <div class="page-content list-block hide-navbar-on-scroll">
-                        <!--<div class="content-block-title" id="album_name_ttl">YOUR PROFILE</div>-->
-                        <div class="content-block list-block inset" style="text-align: center;">
-                            <div id="usernameSlot" style="font-size:25px"></div>
-                            <div id="profilePic"></div>
-                            <div id="memberSince"></div>
-                            <div id="albumsSlot"></div>
+                        <div id="profCB" class="content-block list-block inset" style="text-align: center;">
+            
                         </div>
                     </div>
                 </div>
@@ -410,7 +407,7 @@
                     <!-- Search Bar -->
                     <form class="searchbar">
                         <div class="searchbar-input">
-                            <input type="search" placeholder="Search">
+                            <input type="search" placeholder="Search by username">
                             <a href="#" class="searchbar-clear"></a>
                         </div>
                         <a href="#" class="searchbar-cancel">Cancel</a>
@@ -424,7 +421,7 @@
                         </div>
                     
                         <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
-                        <div class="list-block list-block-search searchbar-found">
+                        <div class="list-block list-block-search searchbar-found" id="userSearchLB">
                         <ul>
                         </ul>
                         </div>
@@ -435,6 +432,47 @@
                         <a href="#home" id="back_link" class="link back" style="float:left">Back</a>
                     </div>
                 </div>
+
+                <div class="page cached" data-page="friends">
+                    <!-- Search Bar -->
+                    <form id="friend-searchbar" class="searchbar">
+                        <div class="search-input">
+                            <input type="search" placeholder="Search friends">
+                            <a href="#" class="searchbar-clear"></a>
+                        </div>
+                        <a href="#" class="searchbar-cancel">Cancel</a>
+                    </form>
+
+                     <!-- Search Bar overlay -->
+                    <div class="searchbar-overlay"></div>
+                    
+                    <div class="page-content">
+                        <!--<div style="display:none"></div>-->
+                        <!-- This block will be displayed if nothing found -->
+                        <div class="content-block searchbar-not-found">
+                            <div class="content-block-inner">No users found</div>
+                        </div>
+                        
+                        <div class="content-block-title">Requests</div>
+                        <div class="list-block">
+                            <ul id="friendReqs-list-block">
+                            </ul>
+                        </div>
+                    
+                        <div class="content-block-title">Friends</div>
+                        <div class="list-block list-block-search searchbar-found">
+                            <ul id="friends-list-block">
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Toolbar has additional "toolbar-bottom" class -->
+                    <div class="toolbar toolbar-bottom">
+                        <a href="#" id="clear_link" class="link" onclick="clearSearch()" style="float:right">Clear</a>
+                        <a href="#" id="back_link" class="link back" style="float:left">Back</a>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -467,11 +505,66 @@
     </script>
 
     <script type="text/template7" id="userListTmplt">
-        <a href="#user-profile?nickname={{name}}&joined={{joined}}" class="item-link item-content">
+        <a href="#user-profile?nickname={{name}}&id={{id}}" class="item-link item-content">
             <div class="item-inner">
                 <div class="item-title" style="width: 100%;">{{name}}</div>
             </div>
         </a>
+    </script>
+
+    <script type="text/template7" id="profTmplt">
+        <div style="font-size:25px">{{name}}</div>
+        <div id="profilePic"></div>
+        <div>Member since <b>{{memDate}}</b></div>
+        {{#js_compare "this.netstat != 'OWN'"}} 
+                {{#js_compare "this.netstat == 'PEN'"}} <a href="#" class="button button-fill button-raised color-orange" disabled>Pending Request</a>
+                    {{else}}
+                        {{#js_compare "this.netstat == 'CON'"}} <a href="#" class="button button-fill button-raised color-green" onclick="connect('{{id}}')">Connect</a>
+                            {{else}} <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a>
+                        {{/js_compare}}
+                {{/js_compare}}
+            {{else}}
+        {{/js_compare}}
+    </script>
+
+    <script type="text/template7" id="friendListTmplt">
+        {{#each friends}}
+        <a href="#user-profile?nickname={{name}}&id={{id.$oid}}" class="item-link item-content">
+            <div class="item-inner bg-grey">
+                <div class="item-title friend-name" style="width: 100%;">{{name}}</div>
+            </div>
+        </a>
+        {{else}} 
+            <li class="item-content">
+                <div class="item-inner">
+                    <div class="item-title" style="width: 100%;">No friends</div>
+                </div>
+            </li>
+        {{/each}}
+    </script>
+
+    <script type="text/template7" id="friendReqTmplt">
+        {{#each friendReqs}}
+        <li class="swipeout">
+            <a href="#user-profile?nickname={{name}}&id={{id.$oid}}" class=" swipeout-content item-content">
+                <div class="item-inner">
+                    <div class="item-title friend-name" style="width: 100%;">{{name}}</div>
+                </div>
+            </a>
+            <div class="swipeout-actions-left">
+                <a href="#" onclick="acceptReq('{{id.$oid}}')" class="swipeout-delete bg-green">Accept</a>
+            </div>
+            <div class="swipeout-actions-right">
+                <a href="#" onclick="declineReq('{{id.$oid}}')" class="swipeout-delete bg-red">Decline</a>
+            </div>
+        </li>
+        {{else}} 
+            <li class="item-content">
+                <div class="item-inner">
+                    <div class="item-title" style="width: 100%;">No friend requests</div>
+                </div>
+            </li>
+        {{/each}}
     </script>
 
 
