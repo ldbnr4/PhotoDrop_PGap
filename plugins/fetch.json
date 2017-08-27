@@ -15,14 +15,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-statusbar": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-statusbar@~1.0.1"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-camera": {
         "source": {
             "type": "registry",
@@ -82,7 +74,7 @@
     "cordova-plugin-http": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-http"
+            "id": "cordova-plugin-http@~1.2.0"
         },
         "is_top_level": true,
         "variables": {}

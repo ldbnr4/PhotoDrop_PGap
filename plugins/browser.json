@@ -16,9 +16,6 @@
         "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
