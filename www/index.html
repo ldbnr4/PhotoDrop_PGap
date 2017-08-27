@@ -19,7 +19,7 @@
         frame-src * 
              http://staticxx.facebook.com/connect/
              https://www.facebook.com/ 'unsafe-inline' 'unsafe-eval';
-        connect-src 'self' http://localhost:8000/ ws: http://zotime.ddns.net/ 'unsafe-inline' 'unsafe-eval' ">
+        connect-src 'self' http://www.localhost:8000/ ws: http://zotime.ddns.net/ 'unsafe-inline' 'unsafe-eval'">
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -216,14 +216,14 @@
                     <div class="popover popover-menu">
                         <div class="popover-angle"></div>
                         <div class="popover-inner">
-                        <div class="list-block">
-                            <ul>
-                            <li><a href="#" class="list-button item-link close-popover" onclick="goToProfPg()">Profile</a></li>
-                            <li><a href="#friends" class="list-button item-link close-popover">Friends</a></li>
-                            <li><a href="#user-search" class="list-button item-link close-popover">User Search</a></li>
-                            <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
-                            </ul>
-                        </div>
+                            <div class="list-block">
+                                <ul>
+                                    <li><a href="#" class="list-button item-link close-popover" onclick="goToProfPg()">Profile</a></li>
+                                    <li><a href="#friends" class="list-button item-link close-popover">Friends</a></li>
+                                    <li><a href="#user-search" class="list-button item-link close-popover">User Search</a></li>
+                                    <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -264,7 +264,7 @@
                 </div>
 
                 <!-- Album page -->
-                <div class="page cached" data-page="album">
+                <div data-page="album" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
                         <div class="navbar-inner navbar-fixed">
@@ -310,7 +310,7 @@
                             </div>
 
                             <div class="content-block-title" id="album_name_ttl" style="margin:0">YOUR ALBUM NAME</div>
-                            <div class="item-content" style="display:none;" id="cont_file_input">
+                            <div id="cont_file_input" class="item-content" style="display:none;">
                                 <div class="item-inner">
                                     <div class="item-input left">
                                         <input type="file" id="inputfile" multiple/>
@@ -330,7 +330,7 @@
                 </div>
 
                 <!-- User Profile page -->
-                <div class="page cached" data-page="user-profile">
+                <div data-page="user-profile" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
                         <div class="navbar-inner navbar-fixed">
@@ -347,7 +347,7 @@
                     <!-- Scrollable page content -->
                     <div class="page-content list-block hide-navbar-on-scroll">
                         <div id="profCB" class="content-block list-block inset" style="text-align: center;">
-            
+
                         </div>
                     </div>
                 </div>
@@ -402,28 +402,29 @@
                         <a href="#" id="update_link" class="link" style="float:right">Update</a>
                     </div>
                 </div>
-                
-                <div class="page cached" data-page="user-search">
+
+                <!--User Search Page-->
+                <div data-page="user-search" class="page cached">
                     <!-- Search Bar -->
-                    <form class="searchbar">
+                    <form id="user-search-bar" class="searchbar">
                         <div class="searchbar-input">
                             <input type="search" placeholder="Search by username">
                             <a href="#" class="searchbar-clear"></a>
                         </div>
                         <a href="#" class="searchbar-cancel">Cancel</a>
                     </form>
-                    
+
                     <div class="page-content">
                         <!--<div style="display:none"></div>-->
                         <!-- This block will be displayed if nothing found -->
                         <div class="content-block searchbar-not-found">
                             <div class="content-block-inner">No users found</div>
                         </div>
-                    
+
                         <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
                         <div class="list-block list-block-search searchbar-found" id="userSearchLB">
-                        <ul>
-                        </ul>
+                            <ul>
+                            </ul>
                         </div>
                     </div>
                     <!-- Toolbar has additional "toolbar-bottom" class -->
@@ -433,32 +434,33 @@
                     </div>
                 </div>
 
-                <div class="page cached" data-page="friends">
+                <!--Friends Page-->
+                <div data-page="friends" class="page cached">
                     <!-- Search Bar -->
-                    <form id="friend-searchbar" class="searchbar">
+                    <!-- <form id="friend-searchbar" class="searchbar">
                         <div class="search-input">
                             <input type="search" placeholder="Search friends">
                             <a href="#" class="searchbar-clear"></a>
                         </div>
                         <a href="#" class="searchbar-cancel">Cancel</a>
-                    </form>
+                    </form> -->
 
-                     <!-- Search Bar overlay -->
-                    <div class="searchbar-overlay"></div>
-                    
+                    <!-- Search Bar overlay -->
+                    <!-- <div class="searchbar-overlay"></div> -->
+
                     <div class="page-content">
                         <!--<div style="display:none"></div>-->
                         <!-- This block will be displayed if nothing found -->
                         <div class="content-block searchbar-not-found">
                             <div class="content-block-inner">No users found</div>
                         </div>
-                        
+
                         <div class="content-block-title">Requests</div>
                         <div class="list-block">
                             <ul id="friendReqs-list-block">
                             </ul>
                         </div>
-                    
+
                         <div class="content-block-title">Friends</div>
                         <div class="list-block list-block-search searchbar-found">
                             <ul id="friends-list-block">
@@ -478,7 +480,6 @@
     </div>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
-    <!--<script type="text/javascript" src="lib/date.js"></script>-->
 
     <!--TEMPLATES-->
     <script type="text/template7" id="albumListTmplt">
@@ -516,15 +517,9 @@
         <div style="font-size:25px">{{name}}</div>
         <div id="profilePic"></div>
         <div>Member since <b>{{memDate}}</b></div>
-        {{#js_compare "this.netstat != 'OWN'"}} 
-                {{#js_compare "this.netstat == 'PEN'"}} <a href="#" class="button button-fill button-raised color-orange" disabled>Pending Request</a>
-                    {{else}}
-                        {{#js_compare "this.netstat == 'CON'"}} <a href="#" class="button button-fill button-raised color-green" onclick="connect('{{id}}')">Connect</a>
-                            {{else}} <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a>
-                        {{/js_compare}}
-                {{/js_compare}}
-            {{else}}
-        {{/js_compare}}
+        {{#js_compare "this.netstat != 'OWN'"}} {{#js_compare "this.netstat == 'PEN'"}} <a href="#" class="button button-fill button-raised color-orange"
+            disabled>Pending Request</a> {{else}} {{#js_compare "this.netstat == 'CON'"}} <a href="#" class="button button-fill button-raised color-green"
+            onclick="connect('{{id}}')">Connect</a> {{else}} <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a>        {{/js_compare}} {{/js_compare}} {{else}} {{/js_compare}}
     </script>
 
     <script type="text/template7" id="friendListTmplt">
@@ -534,12 +529,12 @@
                 <div class="item-title friend-name" style="width: 100%;">{{name}}</div>
             </div>
         </a>
-        {{else}} 
-            <li class="item-content">
-                <div class="item-inner">
-                    <div class="item-title" style="width: 100%;">No friends</div>
-                </div>
-            </li>
+        {{else}}
+        <li class="item-content">
+            <div class="item-inner">
+                <div class="item-title" style="width: 100%;">No friends</div>
+            </div>
+        </li>
         {{/each}}
     </script>
 
@@ -558,12 +553,12 @@
                 <a href="#" onclick="declineReq('{{id.$oid}}')" class="swipeout-delete bg-red">Decline</a>
             </div>
         </li>
-        {{else}} 
-            <li class="item-content">
-                <div class="item-inner">
-                    <div class="item-title" style="width: 100%;">No friend requests</div>
-                </div>
-            </li>
+        {{else}}
+        <li class="item-content">
+            <div class="item-inner">
+                <div class="item-title" style="width: 100%;">No friend requests</div>
+            </div>
+        </li>
         {{/each}}
     </script>
 
@@ -574,12 +569,7 @@
     <script type="text/javascript" src="lib/md5.js"></script>
     <script type="text/javascript" src="lib/validate.min.js"></script>
 
-    <script type="text/javascript" src="js/UTL-media.js"></script>
-    <script type="text/javascript" src="js/UTL-network.js"></script>
-    <script type="text/javascript" src="js/UTL-ui.js"></script>
-    <script type="text/javascript" src="js/user.js"></script>
-
-    <script type="text/javascript" src="js/my-app.js"></script>
+    <script type="text/javascript" src="js/load-scripts.js"></script>
 
 </body>
 

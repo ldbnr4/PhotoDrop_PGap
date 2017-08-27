@@ -1,33 +1,3 @@
-function delete_album(albumId) {
-    myApp.hidePreloader();
-    myApp.showPreloader("Deleting album");
-    var success = function (data, status, xhr) {
-        try{
-            myApp.hidePreloader();
-            var resp = JSON.parse(data);
-            if(resp.err){
-                myApp.alert("Response error message: "+resp.msg,"ERR DEL_ALBUM");
-            }
-            else {
-                console.log("Deleted album")    
-            }
-        }catch(err){
-            myApp.alert("Did not recieve json response. Resp: "+err,"ERR DEL_ALBUM");
-            console.log("Data: "+data)
-            console.log("Status: "+status)
-            console.log("XHR: "+xhr)
-        }
-    }
-    var error = function (xhr, status){
-        myApp.hidePreloader();
-        myApp.alert("Failed to delete album.", "ERR DEL_ALBUM")
-        console.log("XHR: "+xhr);
-        console.log("STATUS: "+status);
-    }
-    $$.post(USER_SERVICE, {DEL_ALBUM: true, USER_ID: USER.id, ALBUM_ID: albumId}, success, error)
-    return
-}
-
 //Add a new album
 function addNewAlbum(ttl) {
     myApp.hidePreloader();
@@ -159,4 +129,29 @@ function DEV_uploadPics() {
         clrNfillPhotoGrid();
     }, 500);
     //console.log("Done loading images!")
+}
+
+function getReq(url, params, callback, actionName){
+    var error = function (xhr, status) {
+        myApp.hidePreloader();
+        myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
+        console.log("XHR: " + xhr);
+        console.log("STATUS: " + status);
+    }
+    // console.log(url)
+
+    $$.get(url, params, callback, error)
+}
+
+function postReq(url, params, callback, actionName){
+    var error = function (xhr, status) {
+        myApp.hidePreloader();
+        myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
+        console.log("XHR:");
+        console.log(xhr)
+        console.log("STATUS: " + status);
+    }
+
+    // console.log(url)
+    $$.post(url, params, callback, error)
 }
