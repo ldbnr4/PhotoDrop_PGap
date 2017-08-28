@@ -43,3 +43,11 @@ p{
 .popover {
     width: 200px;
 }
+
+#albumPgCntnt{
+    padding-top: 40px;
+}
+
+#albumContentBlk{
+    margin-top: 0px;
+}

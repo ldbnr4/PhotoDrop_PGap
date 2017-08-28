@@ -53,7 +53,7 @@
         <div class="view view-main">
             <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
             <!--<div class="pages navbar-through toolbar-through">-->
-            <div class="pages">
+            <div class="pages navbar-fixed">
 
                 <!-- Page, "data-page" contains page name -->
                 <div data-page="index" class="page">
@@ -82,7 +82,7 @@
                 <div data-page="signup" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <div class="left">
                                 <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
@@ -138,7 +138,7 @@
                 <div data-page="login" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <div class="left">
                                 <a href="#index" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
@@ -179,9 +179,9 @@
                 <!--Home page-->
                 <div data-page="home" class="page cached">
                     <!-- Top Navbar-->
-                    <div class="navbar" style="height: 70px">
+                    <div class="navbar" style="height: 75px">
                         <!--<div id="profileBox" style="margin-right: 10px;float: right;margin-top: 10px;"> </div>-->
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                             <div class="center sliding">
                                 <!--<div>PhotoDrop</div>-->
@@ -230,12 +230,12 @@
                     <!-- Scrollable page content -->
                     <div class="page-content list-block pull-to-refresh-content" id="homePgCntnt">
                         <!-- Default pull to refresh layer-->
+                        <div class="pull-to-refresh-layer">
+                            <div class="preloader"></div>
+                            <div class="pull-to-refresh-arrow"></div>
+                        </div>
                         <div class="content-block">
-                            <div class="pull-to-refresh-layer">
-                                <div class="preloader"></div>
-                                <div class="pull-to-refresh-arrow"></div>
-                            </div>
-                            <div style="padding-bottom: 10px; padding-top: 40px">
+                            <div style="padding-bottom: 10px">
                                 <div class="content-block-title">YOUR ALBUMS</div>
                                 <div class="card">
                                     <div class="card-content">
@@ -267,12 +267,13 @@
                 <div data-page="album" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <div class="left">
                                 <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
                             </div>
                             <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                             <div class="center sliding">PhotoDrop</div>
+                            <div class="right"><i class="material-icons">more_vert</i></div>
                         </div>
                     </div>
                     <!-- Speed Dial Wrap -->
@@ -301,14 +302,12 @@
                         </div>
                     </div>
                     <!-- Scrollable page content -->
-                    <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt" data-ptr-distance="50"
-                        style="user-select: none;">
-                        <div class="content-block">
-                            <div class="pull-to-refresh-layer">
-                                <div class="preloader"></div>
-                                <div class="pull-to-refresh-arrow"></div>
-                            </div>
-
+                    <div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt">
+                        <div class="pull-to-refresh-layer">
+                            <div class="preloader"></div>
+                            <div class="pull-to-refresh-arrow"></div>
+                        </div>
+                        <div id="albumContentBlk" class="content-block">
                             <div class="content-block-title" id="album_name_ttl" style="margin:0">YOUR ALBUM NAME</div>
                             <div id="cont_file_input" class="item-content" style="display:none;">
                                 <div class="item-inner">
@@ -318,8 +317,8 @@
                                 </div>
                                 <a href="#" onclick="DEV_uploadPics()" class="button button-raised button-fill color-yellow right">upload</a>
                             </div>
-                            <!--<p class="buttons-row">-->
-                            <!--<a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a>-->
+                            <!-- <p class="buttons-row"> -->
+                            <!-- <a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a> -->
                             <!--<a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>-->
                             <!--</p>-->
                         </div>
@@ -333,7 +332,7 @@
                 <div data-page="user-profile" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <div class="left">
                                 <a href="#" class="link icon-only back"><i class="icon icon-back"></i></a>
                             </div>
@@ -356,7 +355,7 @@
                 <div data-page="edit-profile" class="page cached">
                     <!-- Top Navbar-->
                     <div class="navbar">
-                        <div class="navbar-inner navbar-fixed">
+                        <div class="navbar-inner">
                             <div class="left">
                                 <a href="#" class="link icon-only back"><i class="icon icon-back"></i></a>
                             </div>
