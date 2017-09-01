@@ -1,4 +1,4 @@
-var test = fale;
+var test = false;
 // Initialize app
 const myApp = new Framework7({
     material: true, //enable Material theme
@@ -23,7 +23,6 @@ var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
-var ALBUM = {};
 var albumPhotos = [];
 var USER;
 

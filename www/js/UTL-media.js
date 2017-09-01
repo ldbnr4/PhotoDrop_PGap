@@ -1,4 +1,4 @@
-function sendFileToServ(fl) {
+function sendFileToServ(fl, albumId) {
     var fr = new FileReader()
     var bLoaded = 0
     var bytesTotal = fl.size;
@@ -16,7 +16,7 @@ function sendFileToServ(fl) {
             }, 10);
         } else if(bLoaded >= bytesTotal){
             console.log("Sending " + fl.name.split(".")[0] + "...")
-            var _data = {NEW_PHOTO:true, ALBUM_ID:ALBUM.id, USER_ID:USER.id, DATA:fr.result}
+            var _data = {NEW_PHOTO:true, ALBUM_ID:albumId, USER_ID:USER.id, DATA:fr.result}
             var success = function (data, status, xhr) {
                     try{
                         var resp = JSON.parse(data);
@@ -42,11 +42,11 @@ function sendFileToServ(fl) {
     readBlob(fl, fr, bLoaded);
 }
 
-function uploadPhoto(imageURI) {
+function uploadPhoto(imageURI, albumId) {
     myApp.hidePreloader();
     myApp.showPreloader("Uploading photo");
     if(devicePlatform == "browser"){
-        sendFileToServ(imageURI)
+        sendFileToServ(imageURI, albumId)
     }else{
         console.log("Sending photo...")
 
@@ -72,7 +72,7 @@ function uploadPhoto(imageURI) {
         options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
         options.mimeType = "image/jpeg";
         options.fileName = options.fileName.split("?")[0]
-        options.params = {NEW_PHOTO:true, ALBUM_ID:ALBUM.id, USER_ID:USER.id};
+        options.params = {NEW_PHOTO:true, ALBUM_ID:albumId, USER_ID:USER.id};
         options.chunkedMode = false;
 
         ft.upload(encodeURI(imageURI), PHOTO_SERVICE, function (result) {
@@ -83,9 +83,7 @@ function uploadPhoto(imageURI) {
                     myApp.alert("Error in response: "+resp.msg,"ERR Pic Upload Resp");
                 }
                 else {
-                    // imgLocation = encodeURI(APP_NEW_FILE_URL+"?album="+encryptStr(ALBUM)+"&image="+resp.image+"&id="+USER.id);                      
-                    // $$("#debugBox").html(imgLocation)
-                    clrNfillPhotoGrid();
+                    clrNfillPhotoGrid(albumId);
                 }
             }catch(err){
                 myApp.alert("Did not recieve json response.", "ERR Pic Upload");
@@ -99,8 +97,8 @@ function uploadPhoto(imageURI) {
     }
 }
 
-function takeImage() {
-    navigator.camera.getPicture(uploadPhoto, function (message) {
+function takeImage(albumId) {
+    navigator.camera.getPicture(function(imageData){uploadPhoto(imageData, albumId)}, function (message) {
         alert('get picture failed: ' + message);
         console.log(message)
     }, {

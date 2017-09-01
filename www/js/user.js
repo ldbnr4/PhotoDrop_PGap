@@ -1,5 +1,4 @@
 function _setUSER(_username, _password, _email) {
-    ALBUM = {};
     albumPhotos = [];
     USER = {
         nickname: _username,

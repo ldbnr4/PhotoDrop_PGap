@@ -7,19 +7,16 @@ function addNewAlbum(ttl) {
                 myApp.hidePreloader();
                 resp = JSON.parse(data)
                 if (!resp.err) {
+                    mainView.router.load({
+                        pageName: 'album',
+                        query: {title: resp.title, id: resp.id}
+                    })
+                    getAlbums()
                     if(resp.dup){
                         console.log("Duplicate album name.")
-                        ALBUM.title = resp.title
-                        ALBUM.id = resp.id
-                        goToAlbumPg()
-                        getAlbums()
                     }
                     else if (resp.mod_cnt == 1) {
                         console.log("Created a new album.")
-                        ALBUM.title = resp.title
-                        ALBUM.id = resp.id
-                        goToAlbumPg()
-                        getAlbums()
                     } else {
                         myApp.alert("Did not create a new album.", "ERR ADD_ALBUM");
                     }
@@ -30,14 +27,8 @@ function addNewAlbum(ttl) {
                     myApp.alert("Did not recieve json response. Resp: "+data,"ERR ADD_ALBUM");
                 }
     }
-    var err = function (xhr, status){
-        myApp.hidePreloader();
-        myApp.alert("Failed to add a new album.", "ERR ADD_ALBUM")
-        console.log("XHR: "+xhr);
-        console.log("STATUS: "+status);
-    }
     
-    $$.post(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, err);
+    postReq(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, "add a new album");
 }
 
 function _get_key_value_str(__set){

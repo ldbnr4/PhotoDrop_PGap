@@ -9,29 +9,40 @@ var COL_COUNT = 2
 // List of picture names in the photo grid layout
 var loadedPicNames = []
 
+myApp.onPageInit('album', initAlbumPg)
+myApp.onPageReinit('album', initAlbumPg)
+
+function initAlbumPg(page) {
+    albumId = page.query.id
+    clrNfillPhotoGrid(albumId)
+    $$("#album_name_ttl").html(page.query.title)
+    photoCapElement = $$("#phot_capture");
+    if(photoCapElement.attr("onclick") === undefined){
+        photoCapElement.attr("onclick", "takeImage('"+albumId+"')")
+    }
+    // onclick="takeImage()"
+}
+
 $$('#albumPgCntnt').on('ptr:refresh', function (e) {
     clrNfillPhotoGrid()
     // When loading done, we need to reset it
     myApp.pullToRefreshDone()
 })
 
-myApp.onPageInit('album', function (page) {
-
-
-})
-
-function clrNfillPhotoGrid() {
+function clrNfillPhotoGrid(album_id) {
+    if(album_id === undefined){
+        myApp.alert("The variable album_id is undefined","CLEAR-N-FILL")
+        return
+    }
     myApp.hidePreloader()
     myApp.showPreloader("Gathering media")
     rowCount = -1
     count = 0
     loadedPicNames = []
     $$("#inner-body").html("")
-    // console.log("ALBUM before clear and fill: ")
-    // console.log(ALBUM)
     var pars = {
         GET_ALBUM_PHOTOS: true,
-        albumId: ALBUM.id,
+        albumId: album_id,
         userId: USER.id
     }
     var success = function (data, status, xhr) {
@@ -48,7 +59,7 @@ function clrNfillPhotoGrid() {
                 albumPhotos = []
                 for (var i = 0, len = resp.photoIds.length; i < len; i++) {
                     pid = resp.photoIds[i].$oid
-                    imgLocation = encodeURI(APP_NEW_FILE_URL + "?albumId=" + ALBUM.id + "&imageId=" + pid + "&userId=" + USER.id)
+                    imgLocation = encodeURI(APP_NEW_FILE_URL + "?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
                     placeImage(imgLocation, pid)
                     albumPhotos.push(imgLocation)
                 }
@@ -58,11 +69,13 @@ function clrNfillPhotoGrid() {
                 })
             }
         } catch (err) {
-            myApp.alert("Did not recieve json response. Resp: " + err, "ERR GET_ALBUM_PHOTOS")
+            myApp.alert("Did not recieve json response.", "ERR GET_ALBUM_PHOTOS")
+            console.log("Error:",err)
+            console.log("Data:",data)
         }
     }
 
-    getReq(PHOTO_SERVICE, pars, success, "send photo")
+    getReq(PHOTO_SERVICE, pars, success, "retrieve album")
 }
 
 function placeImage(url, pid = null) {
@@ -184,4 +197,12 @@ function deletePic (pid, c){
 
     postReq(PHOTO_SERVICE,
         {DEL_PHOTO:true, USER_ID:USER.id, PID:pid}, success, "delete photo")
+}
+
+function addAlbum () {
+    myApp.prompt('', 'Create a new album', function (value) {
+        if (value.length != 0 && USER.albums.indexOf(value) == -1) {
+            addNewAlbum(value)
+        }
+    })
 }

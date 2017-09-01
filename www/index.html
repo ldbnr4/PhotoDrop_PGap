@@ -292,7 +292,7 @@
                                 <i class="material-icons">collections</i>
                             </a>
                             <!-- Second Speed Dial button -->
-                            <a href="#" class="close-speed-dial color-amber" onclick="takeImage()">
+                            <a id="photo_capture" class="close-speed-dial color-amber" href="#">
                                 <i class="material-icons">photo_camera</i>
                             </a>
                             <!-- Third Speed Dial button -->
@@ -485,7 +485,7 @@
         {{#each album}}
         <li class="swipeout">
             <input type="hidden" value="{{_id.$oid}}">
-            <a href="#" class="item-link item-content" onClick="goToAlbumPg('{{title}}', '{{_id.$oid}}')">
+            <a href="#album?title={{title}}&id={{_id.$oid}}" class="item-link item-content">
                 <div class="item-inner">
                     <div class="item-title">{{title}}
                         <!--<div class="time-stamp">{{creation.date}}</div>-->
