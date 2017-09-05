@@ -1,0 +1,27 @@
+<!-- Search Bar -->
+<form id="user-search-bar" class="searchbar">
+    <div class="searchbar-input">
+        <input type="search" placeholder="Search by username">
+        <a href="#" class="searchbar-clear"></a>
+    </div>
+    <a href="#" class="searchbar-cancel">Cancel</a>
+</form>
+
+<div class="page-content">
+    <!--<div style="display:none"></div>-->
+    <!-- This block will be displayed if nothing found -->
+    <div class="content-block searchbar-not-found">
+        <div class="content-block-inner">No users found</div>
+    </div>
+
+    <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
+    <div class="list-block list-block-search searchbar-found" id="userSearchLB">
+        <ul>
+        </ul>
+    </div>
+</div>
+<!-- Toolbar has additional "toolbar-bottom" class -->
+<div class="toolbar toolbar-bottom">
+    <a href="#" id="clear_link" class="link" onclick="clearSearch()" style="float:right">Clear</a>
+    <a href="#home" id="back_link" class="link back" style="float:left">Back</a>
+</div>

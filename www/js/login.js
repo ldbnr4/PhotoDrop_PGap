@@ -21,7 +21,8 @@ function login(_username, _password) {
             resp = JSON.parse(data)
             respU = JSON.parse(resp.user)
         } catch (error) {
-            myApp.alert("Got an unexpected response: " + data, "RESP LOGIN")
+            myApp.alert("Got an unexpected response", "RESP LOGIN")
+            console.log(data)
         }
         if (!resp.err) {
             // console.log(respU)
@@ -33,7 +34,7 @@ function login(_username, _password) {
                 pageName: 'home',
             });
         } else {
-            console.log("LOGIN error: " + resp.msg);
+            console.log("LOGIN error:", resp);
         }
     }
     postReq(

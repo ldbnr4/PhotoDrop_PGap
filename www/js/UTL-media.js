@@ -1,4 +1,10 @@
-function sendFileToServ(fl, albumId) {
+function browserFileTransfer(fl, albumId) {
+    if(albumId === undefined){
+        myApp.hidePreloader();
+        myApp.alert("The variable album_id is undefined","CLEAR-N-FILL")
+        return
+    }
+    
     var fr = new FileReader()
     var bLoaded = 0
     var bytesTotal = fl.size;
@@ -12,6 +18,7 @@ function sendFileToServ(fl, albumId) {
         if (bLoaded < bytesTotal) {
             setTimeout(function () {
                 //reader.readAsText(fl);
+                console.log("I fell in here!")
                 readBlob(fl, fr, bLoaded);
             }, 10);
         } else if(bLoaded >= bytesTotal){
@@ -27,26 +34,24 @@ function sendFileToServ(fl, albumId) {
                             imgLocation = encodeURI(APP_NEW_FILE_URL+"?albumId="+resp.id+"&imageId="+resp.image+"&userId="+USER.id);                      
                         }
                     }catch(err){
-                        myApp.alert("Did not recieve json response. Resp: "+err,"ERR NEW_PHOTO");
+                        myApp.hidePreloader();
+                        myApp.alert("Uh Oh! Check the logs", "ERR NEW_PHOTO");
+                        console.log(err)
+                        console.log("Response from the server",data)
                     }
             }
-            var error = function (xhr, status){
-                myApp.alert("Failed to send photo.", "ERR NEW_PHOTO")
-                console.log("XHR: "+xhr);
-                console.log("STATUS: "+status);
-            }
 
-            $$.post(PHOTO_SERVICE, _data, success, error)
+            postReq(PHOTO_SERVICE, _data, success, "send photo")
         }
-    };
+    }
     readBlob(fl, fr, bLoaded);
 }
 
 function uploadPhoto(imageURI, albumId) {
     myApp.hidePreloader();
     myApp.showPreloader("Uploading photo");
-    if(devicePlatform == "browser"){
-        sendFileToServ(imageURI, albumId)
+    if(devicePlatform === "browser"){
+        browserFileTransfer(imageURI, albumId)
     }else{
         console.log("Sending photo...")
 
@@ -111,20 +116,7 @@ function takeImage(albumId) {
 }
 
 function getImage() {
-    if (devicePlatform == "browser") {
-        $$("#cont_file_input").show()
-    } else {
-        navigator.camera.getPicture(uploadPhoto, function (message) {
-            alert('get picture failed: ' + message);
-            console.log(message)
-        }, {
-            quality: 100,
-            destinationType: navigator.camera.DestinationType.FILE_URI,
-            sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
-            correctOrientation: true,
-            saveToPhotoAlbum: false
-        });
-    }
+    
 }
 
 function readBlob(f, read, bload) {

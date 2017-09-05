@@ -8,32 +8,74 @@ var ROW_ID
 var COL_COUNT = 2
 // List of picture names in the photo grid layout
 var loadedPicNames = []
+// element argument can be a selector string
+//   for an individual element
+var msnry = new Masonry( '.grid', {
+  // options
+  itemSelector: '.grid-item'
+});
+
 
 myApp.onPageInit('album', initAlbumPg)
 myApp.onPageReinit('album', initAlbumPg)
+
+$$("#image_lib_sdb").click(openImageLib)
 
 function initAlbumPg(page) {
     albumId = page.query.id
     clrNfillPhotoGrid(albumId)
     $$("#album_name_ttl").html(page.query.title)
-    photoCapElement = $$("#phot_capture");
-    if(photoCapElement.attr("onclick") === undefined){
-        photoCapElement.attr("onclick", "takeImage('"+albumId+"')")
-    }
-    // onclick="takeImage()"
+    
+    albumCntnr = $$('#albumPgCntnt');
+    photoCapElement = $$("#photo_capture");
+    devUploadBtn = $$("#dev_upload_btn");
+
+    photoCapElement.off('click', null);
+    photoCapElement.click(function(){
+        takeImage(albumId)
+    });
+
+    devUploadBtn.off('click', null);
+    devUploadBtn.click(function(){
+        DEV_uploadPics(albumId)
+    });
+
+    albumCntnr.off('ptr:refresh', null)
+    albumCntnr.on('ptr:refresh', function(e){
+        ptrAlbumPics(albumId)
+    })
 }
 
-$$('#albumPgCntnt').on('ptr:refresh', function (e) {
-    clrNfillPhotoGrid()
-    // When loading done, we need to reset it
+function openImageLib(e){
+    console.log(e)
+    if (devicePlatform === "browser") {
+        $$("#cont_file_input").show()
+    } else {
+        navigator.camera.getPicture(uploadPhoto, function (message) {
+            alert('get picture failed: ' + message);
+            console.log(message)
+        }, {
+            quality: 100,
+            destinationType: navigator.camera.DestinationType.FILE_URI,
+            sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
+            correctOrientation: true,
+            saveToPhotoAlbum: false
+        });
+    }
+}
+
+function ptrAlbumPics(albumId) {
+    clrNfillPhotoGrid(albumId)
     myApp.pullToRefreshDone()
-})
+}
 
 function clrNfillPhotoGrid(album_id) {
+    // return
     if(album_id === undefined){
         myApp.alert("The variable album_id is undefined","CLEAR-N-FILL")
         return
     }
+    console.log("Clearing and filling album pics")
     myApp.hidePreloader()
     myApp.showPreloader("Gathering media")
     rowCount = -1
@@ -60,7 +102,7 @@ function clrNfillPhotoGrid(album_id) {
                 for (var i = 0, len = resp.photoIds.length; i < len; i++) {
                     pid = resp.photoIds[i].$oid
                     imgLocation = encodeURI(APP_NEW_FILE_URL + "?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
-                    placeImage(imgLocation, pid)
+                    placeImage(imgLocation, pid, album_id)
                     albumPhotos.push(imgLocation)
                 }
                 myPhotoBrowser = myApp.photoBrowser({
@@ -78,7 +120,7 @@ function clrNfillPhotoGrid(album_id) {
     getReq(PHOTO_SERVICE, pars, success, "retrieve album")
 }
 
-function placeImage(url, pid = null) {
+function placeImage(url, pid = null, album_id) {
     picName = url.substr(url.lastIndexOf('/') + 1)
     // console.log(url)
     if (loadedPicNames.indexOf(picName) != -1) return
@@ -94,7 +136,7 @@ function placeImage(url, pid = null) {
     $$("#div" + count).append(loader)
     // imgDIV = $$("#div" + count)
 
-    startLoadingImg(url, count, pid)
+    startLoadingImg(url, count, pid, album_id)
 
     count++
 }
@@ -117,15 +159,15 @@ function createNewRow (c) {
     }
 }
 
-function startLoadingImg(url, c, pid) {
+function startLoadingImg(url, c, pid, album_id) {
+    const container = $$("#div" + c);
     //console.log(url)
     loadImage(
         url,
         function (img) {
             if (img.type === "error") {
                 console.log("Error loading image id:" + pid + " from source:" + url)
-                $$("#div" + c).html("ERROR delete:(")
-                // console.log(img);
+                container.html("ERROR. You should delete me :(")
             } else {
                 img = loadImage.scale(
                     img, {
@@ -138,46 +180,39 @@ function startLoadingImg(url, c, pid) {
                         cover: true,
                     }
                 )
-                //console.log(img)
-                if (!($$("#div" + c).children()[0] == $$("#loader" + c)[0])) {
+                if (!(container.children()[0] == $$("#loader" + c)[0])) {
                     myApp.alert("attempt to double load image slot")
                     return
                 }
-                $$("#div" + c).append(img)
+                container.append(img)
             }
-            $$("#div" + c).attr("val", pid)
-            $$("#div" + c).on("click", function (e) {
+            // container.attr("val", pid)
+            container.on("click", function (e) {
                 myPhotoBrowser.activeIndex = c
                 myPhotoBrowser.open()
             })
-            var popoverHTML = "\
-                <div class=\"popover popover-links\" style=\"width:125px\">\
-                    <div class=\"popover-inner\">\
-                        <div class=\"list-block\">\
-                            <ul>\
-                            <li>\
-                                <a href=\"#\" onClick=\"deletePic('" + pid + "'," + c + ")\" class=\"list-button item-link close-popover\">Delete</a>\
-                            </li>\
-                            </ul>\
-                        </div>\
-                    </div>\
-                </div>\
-            "
 
-            $$("#div" + c).on('taphold', function () {
-                myApp.popover(popoverHTML, "#div" + c)
+            container.on('taphold', function () {
+                var buttons = [
+                    {
+                        text: "Delete",
+                        color: "red",
+                        onClick: function() {
+                            deletePic(pid, album_id)
+                        }
+                    }
+                ]
+                myApp.actions(this, buttons)
             })
 
             $$("#loader" + c).remove()
         }, {
             aspectRatio: 1,
-            // sourceWidth: window.screen.width / 2.2,
-            // sourceHeight: window.screen.height / 3.2,
         }
     )
 }
 
-function deletePic (pid, c){
+function deletePic (pid, album_id){
     myApp.hidePreloader()
     myApp.showPreloader("Deleting photo")
     var success = function (data, status, xhr) {
@@ -188,7 +223,7 @@ function deletePic (pid, c){
                 myApp.alert("Error in response: "+resp.msg,"ERR DEL_PHOTO")
             }
             else {
-                clrNfillPhotoGrid()
+                clrNfillPhotoGrid(album_id)
             }
         }catch(err){
             myApp.alert("Did not recieve json response. Resp: "+data,"ERR DEL_PHOTO")
@@ -196,7 +231,11 @@ function deletePic (pid, c){
     }
 
     postReq(PHOTO_SERVICE,
-        {DEL_PHOTO:true, USER_ID:USER.id, PID:pid}, success, "delete photo")
+        {
+            DEL_PHOTO:true, 
+            USER_ID:USER.id, 
+            PID:pid
+        }, success, "delete photo")
 }
 
 function addAlbum () {

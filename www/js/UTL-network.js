@@ -111,13 +111,13 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-function DEV_uploadPics() {
+function DEV_uploadPics(albumId) {
     console.log('Sending images...');
     for (file of $$("#inputfile")[0].files) {
-        uploadPhoto(file)
+        uploadPhoto(file, albumId)
     }
     setTimeout(function () {
-        clrNfillPhotoGrid();
+        clrNfillPhotoGrid(albumId);
     }, 500);
     //console.log("Done loading images!")
 }
@@ -137,9 +137,10 @@ function getReq(url, params, callback, actionName){
 function postReq(url, params, callback, actionName){
     var error = function (xhr, status) {
         myApp.hidePreloader();
-        myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
-        console.log("XHR:");
-        console.log(xhr)
+        myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")
+        console.log("URL:",url)
+        console.log("PARAMS:",params)
+        console.log("XHR:", xhr);
         console.log("STATUS: " + status);
     }
 
