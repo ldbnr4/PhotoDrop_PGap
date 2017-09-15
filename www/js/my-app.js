@@ -23,7 +23,6 @@ var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
-var albumPhotos = [];
 var USER;
 
 USER_SERVICE = APP_BASE_URL+"UserService.php"

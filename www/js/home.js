@@ -1,6 +1,11 @@
 myApp.onPageInit('home', homePgSetup)
 myApp.onPageReinit('home', homePgSetup)
 
+$$('#homePgCntnt').on('ptr:refresh', function (e) {
+    getAlbums()
+    myApp.pullToRefreshDone()
+})
+
 function homePgSetup() {
     $$("#TFuserName").html(USER.nickname)
     getAlbums();

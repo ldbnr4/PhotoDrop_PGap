@@ -1,0 +1,83 @@
+<!-- Top Navbar-->
+<div class="navbar" style="height: 75px">
+    <!--<div id="profileBox" style="margin-right: 10px;float: right;margin-top: 10px;"> </div>-->
+    <div class="navbar-inner">
+        <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+        <div class="center sliding">
+            <!--<div>PhotoDrop</div>-->
+        </div>
+
+        <div class="right">
+            <div id="profileBox" data-panel="right" data-popover=".popover-menu" class="open-popover" style="margin-right:5px;margin-top: 8px;">
+                <div id="profPicThumb" style="float:right"></div>
+                <div id="TFuserName" style="padding-right: 8px; float:left; padding-top:5px"></div>
+            </div>
+
+            <!-- Search Bar -->
+            <!--<form class="searchbar">
+                                    <div class="searchbar-input">
+                                        <input type="search">
+                                        <a href="#" class="searchbar-clear"></a>
+                                    </div>
+                                    <a href="#" class="searchbar-cancel">Cancel</a>
+                                </form>-->
+            <!-- Search Bar overlay-->
+            <!--<div class="searchbar-overlay"></div>-->
+
+        </div>
+    </div>
+</div>
+<!-- Floating Action Button -->
+<a href="#" class="floating-button color-amber mainPG-fab" onclick="addAlbum()">
+                        <i class="material-icons">add_to_photos</i>
+                    </a>
+
+<!-- User Menu popover -->
+<div class="popover popover-menu">
+    <div class="popover-angle"></div>
+    <div class="popover-inner">
+        <div class="list-block">
+            <ul>
+                <li><a href="#" class="list-button item-link close-popover" onclick="goToProfPg()">Profile</a></li>
+                <li><a href="#friends" class="list-button item-link close-popover">Friends</a></li>
+                <li><a href="#user-search" class="list-button item-link close-popover">User Search</a></li>
+                <li><a href="#index" class="list-button item-link close-popover">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Scrollable page content -->
+<div class="page-content list-block pull-to-refresh-content" id="homePgCntnt">
+    <!-- Default pull to refresh layer-->
+    <div class="pull-to-refresh-layer">
+        <div class="preloader"></div>
+        <div class="pull-to-refresh-arrow"></div>
+    </div>
+    <div class="content-block">
+        <div style="padding-bottom: 10px">
+            <div class="content-block-title">YOUR ALBUMS</div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="list-block">
+                        <ul id="albumListContain">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-block-title">ALBUMS YOU ARE IN</div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="list-block">
+                        <ul id="URN_albumListContain">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="debugBox">
+                <!--DEBUG-->
+            </div>
+        </div>
+    </div>
+</div>

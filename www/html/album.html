@@ -1,0 +1,71 @@
+<!-- Top Navbar-->
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#home" class="link icon-only"><i class="icon icon-back back"></i></a>
+        </div>
+        <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+        <div id="album_name_ttl" class="center sliding">PhotoDrop</div>
+        <div class="right open-popover" data-popover=".album-popover-links"><i class="material-icons">more_vert</i></div>
+    </div>
+</div>
+<!-- Speed Dial Wrap -->
+<div class="speed-dial">
+    <!-- FAB inside will open Speed Dial actions -->
+    <a href="#" class="floating-button color-amber">
+        <!-- First icon is visible when Speed Dial actions are closed -->
+        <i class="icon icon-plus"></i>
+        <!-- Second icon is visible when Speed Dial actions are opened -->
+        <i class="icon icon-close"></i>
+    </a>
+    <!-- Speed Dial Actions -->
+    <div class="speed-dial-buttons">
+        <!-- First Speed Dial button -->
+        <a id="image_lib_sdb" href="#" class="close-speed-dial color-amber">
+                                <i class="material-icons">collections</i>
+                            </a>
+        <!-- Second Speed Dial button -->
+        <a id="photo_capture" class="close-speed-dial color-amber" href="#">
+                                <i class="material-icons">photo_camera</i>
+                            </a>
+        <!-- Third Speed Dial button -->
+        <a href="#" class="close-speed-dial color-amber" onclick="">
+                                <i class="material-icons">videocam</i>
+                            </a>
+    </div>
+</div>
+<!-- Scrollable page content -->
+<div class="page-content list-block hide-navbar-on-scroll pull-to-refresh-content" id="albumPgCntnt">
+    <div class="pull-to-refresh-layer">
+        <div class="preloader"></div>
+        <div class="pull-to-refresh-arrow"></div>
+    </div>
+    <div id="albumContentBlk" class="content-block">
+        <div id="cont_file_input" class="item-content" style="display:none;">
+            <div class="item-inner">
+                <div class="item-input left">
+                    <input type="file" id="inputfile" multiple/>
+                </div>
+            </div>
+            <a id="dev_upload_btn" href="#" class="button button-raised button-fill color-yellow right">upload</a>
+        </div>
+        <!-- <p class="buttons-row"> -->
+        <!-- <a href="#" onclick="iGotTheSauce()" class="button button-raised button-fill color-red">More Sauce!</a> -->
+        <!-- <a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>-->
+        <!-- </p>-->
+    </div>
+    <div class="list-block grid" id="inner-body">
+        <!--Rows of photos are placed here by the code-->
+    </div>
+</div>
+<!-- Links popover -->
+<div class="popover album-popover-links">
+    <div class="popover-angle"></div>
+    <div class="popover-inner">
+        <div class="list-block">
+            <ul>
+                <li><a href="#guest-list" class="list-button item-link close-popover">Guest list</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

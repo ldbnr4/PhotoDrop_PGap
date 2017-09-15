@@ -1,5 +1,4 @@
 function _setUSER(_username, _password, _email) {
-    albumPhotos = [];
     USER = {
         nickname: _username,
         username: encryptStr(_username),
@@ -12,7 +11,7 @@ function _setUSER(_username, _password, _email) {
     // console.log(USER)
 }
 
-function createNewUser(_url, _username, _password, _email) {
+function createNewUser(_username, _password, _email) {
     _setUSER(_username, _password, _email)
     myApp.hidePreloader()
     myApp.showPreloader("Creating a new user...")
