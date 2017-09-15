@@ -48,7 +48,8 @@ function browserFileTransfer(fl, albumId) {
             
             console.log(byteLength(fr.result))
 
-            postReq(PHOTO_SERVICE, _data, success, "send photo")
+            //postReq(PHOTO_SERVICE, _data, success, "send photo")
+            postReq("http://zotime.ddns.net:8081/photo", _data, success, "send photo to go backend")
         }
     }
     readBlob(fl, fr, bLoaded);
