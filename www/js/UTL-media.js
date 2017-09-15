@@ -50,9 +50,9 @@ function browserFileTransfer(fl, albumId) {
 
             //postReq(PHOTO_SERVICE, _data, success, "send photo")
             postReq("http://zotime.ddns.net:2500/photo", {
-              Album:albumId,
-              Owner:USER.id,
-              Data:fr.result
+              "Album":albumId,
+              "Owner":USER.id,
+              "Data":fr.result
             }, success, "send photo to go backend")
         }
     }
