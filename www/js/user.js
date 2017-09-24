@@ -20,6 +20,7 @@ function createNewUser(_username, _password, _email) {
         try {
             myApp.hidePreloader();
             var JResp = JSON.parse(data);
+            console.log(JResp)
             if (JResp.err == false) {
                 console.log("Successfully created a new user!")
                 USER.id = JResp.id;
@@ -36,13 +37,34 @@ function createNewUser(_username, _password, _email) {
             console.log("XHR: " + xhr)
         }
     }
-    postReq(USER_SERVICE, {
-        ADD_USER: true,
-        USERNAME: USER.username,
-        PASSWORD: USER.password,
-        EMAIL: USER.email,
-        NICKNAME: USER.nickname
-    }, success, "create a new user")
+
+    var goSuccess = function (data, status, xhr) {
+        try {
+            myApp.hidePreloader();
+            var JResp = JSON.parse(data);
+            USER.id = JResp.Id
+        } catch (error) {
+            myApp.alert("Did not recieve json response. Resp: " + error, "ERR ADD USER");
+            console.log("Data: " + data)
+            console.log("Status: " + status)
+            console.log("XHR: " + xhr)
+        }
+        console.log("Successfully created a new user!")
+    }
+    // postReq(USER_SERVICE, {
+    //     ADD_USER: true,
+    //     USERNAME: USER.username,
+    //     PASSWORD: USER.password,
+    //     EMAIL: USER.email,
+    //     NICKNAME: USER.nickname
+    // }, success, "create a new user")
+
+    postReq("http://zotime.ddns.net:2500/user", {
+        Username: USER.username,
+        Password: USER.password,
+        Email: USER.email,
+        Nickname: USER.nickname
+    }, goSuccess, "create a new user")
 }
 
 function updtUserProf(formData) {

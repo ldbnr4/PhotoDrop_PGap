@@ -19,7 +19,7 @@ function browserFileTransfer(fl, albumId) {
             setTimeout(function () {
                 //reader.readAsText(fl);
                 console.log("I fell in here!")
-                readBlob(fl, fr, bLoaded);
+                readBlob(fl, fr, 0);
             }, 10);
         } else if(bLoaded >= bytesTotal){
             console.log("Sending " + fl.name.split(".")[0] + "...")
