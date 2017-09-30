@@ -2,6 +2,17 @@
 function addNewAlbum(ttl) {
     myApp.hidePreloader();
     myApp.showPreloader("Adding a new album");
+
+    var goSuccess = function (data, status, xhr) {
+        myApp.hidePreloader();
+        resp = JSON.parse(data);
+        console.log("Add album response:",resp)
+        mainView.router.load({
+            pageName: 'album',
+            query: {title: resp.Title, id: resp.ID}
+        })
+        getAlbums()
+    } 
     var success = function (data, status, xhr) {
             try {
                 myApp.hidePreloader();
@@ -28,7 +39,8 @@ function addNewAlbum(ttl) {
                 }
     }
     
-    postReq(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, "add a new album");
+    // postReq(USER_SERVICE, {ADD_ALBUM:true, USER_ID:USER.id, TITLE:ttl},success, "add a new album");
+    postReq("http://zotime.ddns.net:2500/album", {UserId:USER.id, TITLE:ttl}, goSuccess, "add a new album");
 }
 
 function _get_key_value_str(__set){

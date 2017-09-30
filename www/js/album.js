@@ -23,6 +23,9 @@ $$("#image_lib_sdb").click(openImageLib)
 
 function initAlbumPg(page) {
     albumId = page.query.id
+    if(!albumId){
+        myApp.alert("Empty albumId","BAD PAGE INIT")
+    }
     clrNfillPhotoGrid(albumId)
     $$("#album_name_ttl").html(page.query.title)
     
@@ -87,6 +90,32 @@ function clrNfillPhotoGrid(album_id) {
         albumId: album_id,
         userId: USER.id
     }
+    // console.log("Data going to server for photos:",pars)
+    var goSuccess = function (data, status, xhr){
+        myApp.hidePreloader()
+        var resp = JSON.parse(data)
+        if (!resp.PhotoIDs || resp.PhotoIDs.length == 0) {
+            console.log("This album has no photos :(")
+            return
+        }
+        console.log("Get album response:",resp.PhotoIDs)
+        albumPhotos = []
+        resp.PhotoIDs.forEach(function(pid) {
+            imgLocation = encodeURI("http://zotime.ddns.net:2500/photo?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
+            placeImage(imgLocation, pid, album_id)
+            albumPhotos.push(imgLocation)
+        })
+        // for (var i = 0, len = resp.length; i < len; i++) {
+        //     pid = resp.photoIds[i].$oid
+        //     imgLocation = encodeURI("http://zotime.ddns.net:2500/album?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
+        //     placeImage(imgLocation, pid, album_id)
+        //     albumPhotos.push(imgLocation)
+        // }
+        myPhotoBrowser = myApp.photoBrowser({
+            theme: 'dark',
+            photos: albumPhotos
+        })
+    }
     var success = function (data, status, xhr) {
         try {
             myApp.hidePreloader()
@@ -117,7 +146,10 @@ function clrNfillPhotoGrid(album_id) {
         }
     }
 
-    getReq(PHOTO_SERVICE, pars, success, "retrieve album")
+    // getReq(PHOTO_SERVICE, pars, success, "retrieve album")
+    params = {UserId:USER.id, AlbumId:album_id}
+    console.log("Get album msg:",params)
+    getReq("http://zotime.ddns.net:2500/album", params, goSuccess, "retrieve album")
 }
 
 function placeImage(url, pid = null, album_id) {

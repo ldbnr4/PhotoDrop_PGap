@@ -18,8 +18,8 @@ function browserFileTransfer(fl, albumId) {
         if (bLoaded < bytesTotal) {
             setTimeout(function () {
                 //reader.readAsText(fl);
-                console.log("I fell in here!")
-                readBlob(fl, fr, 0);
+                // console.log("I fell in here!")
+                readBlob(fl, fr, bLoaded);
             }, 10);
         } else if(bLoaded >= bytesTotal){
             console.log("Sending " + fl.name.split(".")[0] + "...")
@@ -31,7 +31,7 @@ function browserFileTransfer(fl, albumId) {
                             myApp.alert("Error in response: "+resp.msg,"ERR NEW_PHOTO");
                         }
                         else {
-                            imgLocation = encodeURI(APP_NEW_FILE_URL+"?albumId="+resp.id+"&imageId="+resp.image+"&userId="+USER.id);                      
+                            imgLocation = encodeURI("http://zotime.ddns.net:2500/photo?albumId="+resp.id+"&imageId="+resp.image+"&userId="+USER.id);                      
                         }
                     }catch(err){
                         myApp.hidePreloader();
@@ -41,12 +41,13 @@ function browserFileTransfer(fl, albumId) {
                     }
             }
             var error = function (xhr, status){
+                myApp.hidePreloader()
                 myApp.alert("Failed to send photo.", "ERR NEW_PHOTO")
                 console.log("XHR: "+xhr);
                 console.log("STATUS: "+status);
             }
             
-            console.log(byteLength(fr.result))
+            // console.log("Data length:",fr.result.length)
 
             //postReq(PHOTO_SERVICE, _data, success, "send photo")
             postReq("http://zotime.ddns.net:2500/photo", {

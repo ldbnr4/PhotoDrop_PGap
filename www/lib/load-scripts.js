@@ -7,6 +7,7 @@
     
     "lib/helper_funcs.js",
     "lib/md5.js",
+    "lib/dropzone.js",
 
     "js/my-app.js",
 
