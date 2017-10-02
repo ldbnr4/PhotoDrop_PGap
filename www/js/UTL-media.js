@@ -12,18 +12,18 @@ function browserFileTransfer(fl, albumId) {
         if (evt.lengthComputable) bLoaded += evt.loaded;
     };
     fr.onloadend = function (e) {
-        if (e.target.readyState != FileReader.DONE) {
-            return;
-        }
-        if (bLoaded < bytesTotal) {
-            setTimeout(function () {
-                //reader.readAsText(fl);
-                // console.log("I fell in here!")
-                readBlob(fl, fr, bLoaded);
-            }, 10);
-        } else if(bLoaded >= bytesTotal){
+        // if (e.target.readyState != FileReader.DONE) {
+        //     return;
+        // }
+        // if (bLoaded < bytesTotal) {
+        //     setTimeout(function () {
+        //         //reader.readAsText(fl);
+        //         // console.log("I fell in here!")
+        //         readBlob(fl, fr, bLoaded);
+        //     }, 10);
+        // } else if(bLoaded >= bytesTotal){
             console.log("Sending " + fl.name.split(".")[0] + "...")
-            var _data = {NEW_PHOTO:true, ALBUM_ID:albumId, USER_ID:USER.id, DATA:fr.result}
+            // var _data = {NEW_PHOTO:true, ALBUM_ID:albumId, USER_ID:USER.id, DATA:fr.result}
             var success = function (data, status, xhr) {
                     try{
                         var resp = JSON.parse(data);
@@ -55,7 +55,7 @@ function browserFileTransfer(fl, albumId) {
               "Owner":USER.id,
               "Data":fr.result
             }, success, "send photo to go backend")
-        }
+        // }
     }
     readBlob(fl, fr, bLoaded);
 }
@@ -86,8 +86,8 @@ function uploadPhoto(imageURI, albumId) {
         ft = new FileTransfer();
         ft.onprogress = function (progressEvent) {
             if (progressEvent.lengthComputable) {
-                if (progressEvent.loaded < 1) {
-                    myApp.setProgressbar(IMG_CONTAIN_ID, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
+                if (done(progressEvent) < 1) {
+                    myApp.setProgressbar(IMG_CONTAIN_ID, done(progressEvent) * 100); //keep "loading"
                 } else {
                     console.log("Photo sent! " + progressEvent.loaded)
                     myApp.hideProgressbar(IMG_CONTAIN_ID); //hide
@@ -99,13 +99,15 @@ function uploadPhoto(imageURI, albumId) {
 
         options = new FileUploadOptions();
         options.fileKey = "file";
-        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpeg";
-        options.fileName = options.fileName.split("?")[0]
-        options.params = {NEW_PHOTO:true, ALBUM_ID:albumId, USER_ID:USER.id};
+        // console.log(imageURI)
+        // options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+        options.mimeType = imageURI.tpye;
+        options.fileName = imageURI.name
+        console.log("albumId:",albumId)
+        options.params = {"Album":albumId,"Owner":USER.id};
         options.chunkedMode = false;
 
-        ft.upload(encodeURI(imageURI), PHOTO_SERVICE, function (result) {
+        ft.upload(encodeURI(imageURI), "http://zotime.ddns.net:2500/photo", function (result) {
             try{
                 myApp.hidePreloader();
                 var resp = JSON.parse(result.response);
@@ -124,6 +126,10 @@ function uploadPhoto(imageURI, albumId) {
             myApp.hidePreloader();
             myApp.alert("Uplaod error!")
         }, options);
+    }
+
+    function done(progressEvent) {
+        return (progressEvent.loaded / progressEvent.total);
     }
 }
 

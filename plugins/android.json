@@ -13,13 +13,13 @@
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.cachemoney.photodrop"
+        },
         "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-device": {
+        "cordova-plugin-http": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
         "cordova-plugin-image-picker": {
@@ -28,7 +28,7 @@
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         },
-        "cordova-plugin-http": {
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.cachemoney.photodrop"
         }
     },

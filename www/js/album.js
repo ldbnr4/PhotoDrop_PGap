@@ -19,8 +19,6 @@ var msnry = new Masonry( '.grid', {
 myApp.onPageInit('album', initAlbumPg)
 myApp.onPageReinit('album', initAlbumPg)
 
-$$("#image_lib_sdb").click(openImageLib)
-
 function initAlbumPg(page) {
     albumId = page.query.id
     if(!albumId){
@@ -32,6 +30,7 @@ function initAlbumPg(page) {
     albumCntnr = $$('#albumPgCntnt');
     photoCapElement = $$("#photo_capture");
     devUploadBtn = $$("#dev_upload_btn");
+    libUploadBtn = $$("#image_lib_sdb");
 
     photoCapElement.off('click', null);
     photoCapElement.click(function(){
@@ -43,18 +42,28 @@ function initAlbumPg(page) {
         DEV_uploadPics(albumId)
     });
 
+    libUploadBtn.off('click', null);
+    libUploadBtn.click(function(){
+        openImageLib(albumId)
+    })
+
     albumCntnr.off('ptr:refresh', null)
     albumCntnr.on('ptr:refresh', function(e){
         ptrAlbumPics(albumId)
     })
+
+    .click()
 }
 
-function openImageLib(e){
-    console.log(e)
+function openImageLib(albumId){
+    // console.log(e)
     if (devicePlatform === "browser") {
         $$("#cont_file_input").show()
     } else {
-        navigator.camera.getPicture(uploadPhoto, function (message) {
+        navigator.camera.getPicture(
+        function(imageData){
+            uploadPhoto(imageData, albumId)
+        }, function (message) {
             alert('get picture failed: ' + message);
             console.log(message)
         }, {
