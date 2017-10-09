@@ -20,7 +20,6 @@ function createNewUser(_username, _password, _email) {
         try {
             myApp.hidePreloader();
             var JResp = JSON.parse(data);
-            console.log(JResp)
             if (JResp.err == false) {
                 console.log("Successfully created a new user!")
                 USER.id = JResp.id;
@@ -49,7 +48,9 @@ function createNewUser(_username, _password, _email) {
             console.log("Status: " + status)
             console.log("XHR: " + xhr)
         }
-        console.log("Successfully created a new user!")
+        mainView.router.load({
+            pageName: 'home',
+        });
     }
     // postReq(USER_SERVICE, {
     //     ADD_USER: true,

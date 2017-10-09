@@ -4,10 +4,11 @@
     "lib/validate.min.js",
     "lib/masonry.pkgd.min.js",
     "lib/load-image.all.min.js",
+    "lib/imagesloaded.pkgd.min.js",
+    "lib/PhotoFactory.js",
     
     "lib/helper_funcs.js",
     "lib/md5.js",
-    "lib/dropzone.js",
 
     "js/my-app.js",
 

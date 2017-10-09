@@ -43,10 +43,10 @@
     <div id="albumContentBlk" class="content-block">
         <div id="cont_file_input" class="item-content" style="display:none;">
             <div class="item-inner">
-                <!-- <form action="http://www.zotime.ddns.net:2500/photo" class="dropzone dz-clickable">
-                </form> -->
+                <form id="inputFileForm">
+                    <input type="file" id="inputfile" multiple/>
+                </form>
                 <!-- <input class="dz-hidden" name="file" type="file" multiple /> -->
-                <input type="file" id="inputfile" multiple/>
             </div>
             <a id="dev_upload_btn" href="#" class="button button-raised button-fill color-yellow right">upload</a>
         </div>
@@ -55,7 +55,7 @@
         <!-- <a href="#" class="button button-raised button-fill color-indigo" onclick="photoSwiper()">Swipe media</a>-->
         <!-- </p>-->
     </div>
-    <div class="list-block grid" id="inner-body">
+    <div class="grid" id="inner-body">
         <!--Rows of photos are placed here by the code-->
     </div>
 </div>

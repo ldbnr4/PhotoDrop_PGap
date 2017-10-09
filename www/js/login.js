@@ -15,6 +15,22 @@ function login(_username, _password) {
     _setUSER(_username, _password)
     myApp.hidePreloader();
     myApp.showPreloader("Signing in");
+    var goSuccess = function (data, status, xhr){
+        myApp.hidePreloader();
+        try {
+            resp = JSON.parse(data)
+        } catch (error) {
+            myApp.alert("Got an unexpected response", "RESP LOGIN")
+            console.log("Login data:",data)
+        }
+        console.log("Login response:", resp)
+        USER = resp;
+        USER.id = resp._id
+        mainView.router.load({
+            pageName: 'home',
+        });
+
+    }
     var success = function (data, status, xhr) {
         myApp.hidePreloader();
         try {
@@ -38,12 +54,21 @@ function login(_username, _password) {
         }
     }
     postReq(
-        USER_SERVICE, {
-            LOGIN: true,
+        "http://zotime.ddns.net:2500/login", {
             username: USER.username,
             password: USER.password
         },
-        success,
+        goSuccess,
         "login"
     )
+    
+    // postReq(
+    //     USER_SERVICE, {
+    //         LOGIN: true,
+    //         username: USER.username,
+    //         password: USER.password
+    //     },
+    //     success,
+    //     "login"
+    // )
 }
