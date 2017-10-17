@@ -1,38 +1,11 @@
 class PhotoFactory {
-    constructor(album_id) {
-        this.album_id = album_id
-    }
-
-    loadNPlace(pid, i) {
-        const imgLocation = encodeURI("http://zotime.ddns.net:2500/photo?albumId=" + this.album_id + "&imageId=" + pid + "&userId=" + USER.id)
+    loadNPlace(pid, album_id) {
+        const imgLocation = encodeURI("http://zotime.ddns.net:2500/photo?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
+        var loadCompRef = this.loadImageComplete
         loadImage(
             imgLocation,
-            function (img) {
-                // console.log("PID:",pid)
-                if (img.type === "error") {
-                    // console.log("Error loading image id:" + pid + " from source:" + url)
-                    docContainer.html(`PID: ${pid}`)
-                } else {
-                    const docContainer = document.createElement("div")
-                    docContainer.setAttribute("class", "grid-item")
-                    docContainer.setAttribute("id", `imageContainer_${i}`)
-                    photoGrid.append(docContainer)
-                    // console.log(img.width)
-                    img = loadImage.scale(
-                        img, {
-                            maxWidth: docContainer.offsetWidth,
-                            maxHeight: docContainer.offsetHeight,
-                            downsamplingRatio: 0.4,
-                            contain: true,
-                            crop: true,
-                            canvas: true,
-                            cover: true,
-                        }
-                    )
-                    docContainer.append(img)
-                    // docContainer.innerHTML = img
-                    PhotoFactory._setUpImageContainer(i, pid)
-                }
+            function(img){
+                loadCompRef(img, pid)
             }, {
                 // canvas: true,
                 // pixelRatio: window.devicePixelRatio,
@@ -42,8 +15,36 @@ class PhotoFactory {
         return imgLocation
     }
 
-    static _setUpImageContainer(i, pid) {
-        const container = $$(`#imageContainer_${i}`)
+    loadImageComplete(img, pid) {
+        // console.log("PID:",pid)
+        const docContainer = document.createElement("div")
+        if (img.type === "error") {
+            // console.log("Error loading image id:" + pid + " from source:" + url)
+            docContainer.html(`PID: ${pid}`)
+        } else {
+            docContainer.setAttribute("class", "grid-item")
+            // console.log(img.width)
+            // img = loadImage.scale(
+            //     img, {
+            //         // maxWidth: docContainer.offsetWidth,
+            //         // maxHeight: docContainer.offsetHeight,
+            //         // downsamplingRatio: 0.4,
+            //         // contain: true,
+            //         // crop: true,
+            //         canvas: true,
+            //         // cover: true,
+            //     }
+            // )
+            // img.setAttribute("class", "imageItem")
+            docContainer.append(img)
+            // docContainer.innerHTML = img
+            photoGrid.append(docContainer)
+            msnry.appended(docContainer)
+            // this.setUpImageContainer(docContainer)
+        }
+    }
+
+    setUpImageContainer(container) {
         container.click(function (e) {
             myPhotoBrowser.activeIndex = i;
             myPhotoBrowser.open();

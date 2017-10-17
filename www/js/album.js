@@ -1,30 +1,33 @@
-// element argument can be a selector string
-//   for an individual element
-var elem = document.querySelector('.grid');
-var msnry = new Masonry(elem, {
-    // options
-    itemSelector: '.grid-item',
-    columnWidth: '.grid-sizer',
-    percentPosition: true,
-    // horizontalOrder: true,
-    fitWidth: true
-});
-
 myApp.onPageInit('album', initAlbumPg)
 myApp.onPageReinit('album', initAlbumPg)
 
-imagesLoaded(elem).on('progress', function () {
-    console.log(elem)
-    // layout Masonry after each image loads
-    msnry.layout();
-});
+var msnry
 
 function initAlbumPg(page) {
     albumId = page.query.id
     if (!albumId) {
         myApp.alert("Empty albumId", "BAD PAGE INIT")
     }
+
+
     clrNfillPhotoGrid(albumId)
+
+    msnry = new Masonry('.grid', {
+        // options
+        itemSelector: '.grid-item',
+        columnWidth: '.grid-sizer',
+        percentPosition: true,
+        horizontalOrder: true,
+        fitWidth: true
+    });
+
+    function onLayout(){
+        console.log('layout done');
+    }
+
+    // bind event listener
+    // msnry.on( 'layoutComplete',  onLayout);
+
     $$("#album_name_ttl").html(page.query.title)
 
     albumCntnr = $$('#albumPgCntnt');
@@ -106,14 +109,17 @@ function clrNfillPhotoGrid(album_id) {
             console.log("This album has no photos :(")
             return
         }
-        var photoFact = new PhotoFactory(album_id);
-        albumPhotos = []
-        i = 0;
-        resp.PhotoIDs.forEach(function (pid) {
-            imageLocation = photoFact.loadNPlace(pid, i)
-            albumPhotos.push(imageLocation)
-            i++;
-        })
+
+        var photoFact = new PhotoFactory();
+
+        albumPhotos = resp.PhotoIDs.map(function(pid){
+            return photoFact.loadNPlace(pid, album_id)
+        });
+
+        // msnry.addItems( $$(".imageItem") )
+        // msnry.prepended( $$(".imageItem") )
+        // msnry.layout();
+
 
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',
