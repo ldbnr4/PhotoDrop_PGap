@@ -9,7 +9,10 @@ class PhotoFactory {
             }, {
                 // canvas: true,
                 // pixelRatio: window.devicePixelRatio,
-                // aspectRatio: 1,
+
+                // maxWidth: window.screen.width / 2.15,
+                // maxHeight: window.screen.height / 3.2,
+                aspectRatio: 1,
             }
         )
         return imgLocation

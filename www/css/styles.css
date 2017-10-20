@@ -68,8 +68,8 @@ p{
 
 
 /* ---- .grid-item ---- */
-
-.grid-sizer,
+/*
+ .grid-sizer,
 .grid-item {
     width: 30%;
 }
@@ -82,7 +82,7 @@ p{
 .grid-item img {
     display: block;
     max-width: 100%
-}
+} */
 
 
 /* fluid 5 columns */
@@ -92,7 +92,7 @@ p{
     width: 30%;
     margin-bottom: 10px;
     margin-left: 10px
-} */
+} 
 
 
 .grid-item--width2 {
@@ -101,4 +101,4 @@ p{
 
 .grid {
     margin: 0 auto;
-}
+}*/
