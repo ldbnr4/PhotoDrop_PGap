@@ -112,8 +112,8 @@ function clrNfillPhotoGrid(album_id) {
 
         var photoFact = new PhotoFactory();
 
-        albumPhotos = resp.PhotoIDs.map(function(pid){
-            return photoFact.loadNPlace(pid, album_id)
+        albumPhotos = resp.PhotoIDs.map(function(pid, i){
+            return photoFact.loadNPlace(pid, album_id, i)
         });
 
         // msnry.addItems( $$(".imageItem") )

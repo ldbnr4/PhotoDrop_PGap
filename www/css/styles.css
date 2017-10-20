@@ -68,7 +68,7 @@ p{
 
 
 /* ---- .grid-item ---- */
-/*
+
  .grid-sizer,
 .grid-item {
     width: 30%;
@@ -76,13 +76,13 @@ p{
 
 .grid-item {
     float: left;
-    margin: 1.5%;
+    margin: 1.6%;
 }
 
-.grid-item img {
+.grid-item canvas {
     display: block;
     max-width: 100%
-} */
+}
 
 
 /* fluid 5 columns */
