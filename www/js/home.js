@@ -10,7 +10,7 @@ function homePgSetup() {
     $$("#TFuserName").html(USER.nickname)
     getAlbums();
     loadImage(
-        USER_SERVICE + "?PROF_PIC=true&uid=" + USER.id,
+        APP_BASE_URL + "/user/" + USER.id,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -48,50 +48,55 @@ function homePgSetup() {
 function getAlbums() {
     myApp.hidePreloader()
     myApp.showPreloader("Gathering albums...")
+    $$("#albumListContain").html("")
     var success = function (data, status, xhr) {
         myApp.hidePreloader()
+        var resp
         try {
-            var resp = JSON.parse(data)
-            if (resp.err) {
-                myApp.alert("Error in response: " + resp.msg, "ERR GET_ALBUMS")
-            } else {
-                USER.albums = resp.albums
-                //console.log(USER.albums)
-                // USER.urn_albums = resp.urn_albums;
-
-                $$("#albumListContain").html(
-                    Template7.templates.albumListTmplt({
-                        flag: true,
-                        album: USER.albums
-                    })
-                )
-
-                // $$("#URN_albumListContain").html(
-                //     Template7.templates.albumListTmplt({
-                //         flag: false,
-                //         album: USER.urn_albums
-                //     })
-                // );
-
-                // console.log(USER.albums)
-
-                // TODO: Change swipeout to be more specific 
-                $$(".swipeout").on('swipeout:deleted', function () {
-                    for (var i = 0; i < this.children.length; i++) {
-                        if (this.children[i].tagName == "INPUT") {
-                            delete_album(this.children[i].getAttribute("value"))
-                        }
-                    }
-                })
-            }
+            resp = JSON.parse(data)
         } catch (err) {
             myApp.alert("Did not recieve json response. Resp: " + data, "ERR GET_ALBUMS")
         }
+        if (hasError(resp.Error)) {
+            myApp.alert("Error in response: " + resp.msg, "ERR GET_ALBUMS")
+        } else {
+            USER.albums = resp.Created
+            // console.log(USER.albums)
+            // USER.urn_albums = resp.urn_albums;
+            USER.albums.forEach(function(element) {
+                var template = Template7.templates.albumListTmplt({
+                    title: element.Title,
+                    flag: true,
+                    id: element.ID
+                })
+                // console.log(template)
+                $$("#albumListContain").append(template)
+                $$(`#album_${element.ID}`).click(function(){
+                    mainView.router.load({
+                        pageName: 'album',
+                        query: {
+                            title: element.Title,
+                            id: element.ID
+                        }
+                    })
+                })
+                $$(`#swipeout_${element.ID}`).on('swipeout:deleted', function () {
+                    console.log("Deleting album")
+                    delete_album(element.ID)
+                })
+            });
+            
+
+            // $$("#URN_albumListContain").html(
+            //     Template7.templates.albumListTmplt({
+            //         flag: false,
+            //         album: USER.urn_albums
+            //     })
+            // );
+            
+        }
     }
-    getReq(USER_SERVICE, {
-        GET_ALBUMS: true,
-        USER_ID: USER.id
-    }, success, "to get albums")
+    getReq(APP_BASE_URL+"/albums/"+USER.id, {}, success, "to get albums")
 }
 
 function delete_album(albumId) {
@@ -114,9 +119,8 @@ function delete_album(albumId) {
         }
     }
     postReq(
-        USER_SERVICE, {
-            DEL_ALBUM: true,
-            USER_ID: USER.id,
-            ALBUM_ID: albumId
+        APP_BASE_URL+"/del/album", {
+            UID: USER.id,
+            AID: albumId
         }, success, "to delete album")
 }

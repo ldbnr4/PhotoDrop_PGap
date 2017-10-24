@@ -19,7 +19,7 @@
         frame-src * 
              http://staticxx.facebook.com/connect/
              https://www.facebook.com/ 'unsafe-inline' 'unsafe-eval';
-        connect-src 'self' http://www.localhost:8000/ ws: http://zotime.ddns.net/ http://zotime.ddns.net:2500/ 'unsafe-inline' 'unsafe-eval'">
+        connect-src 'self' http://www.localhost:2500/ ws: http://zotime.ddns.net/ http://zotime.ddns.net:2500/ 'unsafe-inline' 'unsafe-eval'">
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -71,7 +71,7 @@
                         <a href="#login" class="button button-big button-raised" style="margin: auto;width: 90%;font-size: 30px;">Login</a>
                         <!--</div>
                         <div>-->
-                        <a href="#signup" class="button button-big button-fill button-raised color-teal" style="width: 90%;margin: auto; margin-top:5px;font-size: 30px;">Signup</a>
+                        <a href="#signup" class="button button-big button-fill button-raised color-teal" style="width: 90%;margin: auto; margin-top:5px;font-size: 30px;">Sign Up</a>
                         <!--</div>-->
                     </div>
 
@@ -83,13 +83,11 @@
 
     <!--TEMPLATES-->
     <script type="text/template7" id="albumListTmplt">
-        {{#each album}}
-        <li class="swipeout">
-            <input type="hidden" value="{{_id.$oid}}">
-            <a href="#album?title={{title}}&id={{_id.$oid}}" class="item-link item-content">
+        <li id="swipeout_{{id}}" class="swipeout">
+            <a id="album_{{id}}" class="item-link item-content swipeout-content">
                 <div class="item-inner">
                     <div class="item-title">{{title}}
-                        <!--<div class="time-stamp">{{creation.date}}</div>-->
+                        <!--<div class="time-stamp">{{creation}}</div>-->
                     </div>
                 </div>
             </a>
@@ -97,11 +95,10 @@
                 <!-- We add data-close-on-cancel attribute to close swipeout automatically -->
                 {{#if ../flag}}
                 <a href="#" class="swipeout-delete" data-confirm="Are you sure want to delete the album <b>{{title}}</b>?" data-confirm-title="Delete?"
-                    data-close-on-cancel="true">Delete</a> {{else}}
+                    data-close-on-cancel="true" style="color: white;">Delete</a> {{else}}
                 <a href="#" class="swipeout-delete" data-confirm="Are you sure want to remove yourself from the album <b>{{title}}</b>?"
                     data-confirm-title="Remove?" data-close-on-cancel="true">Remove</a> {{/if}}
             </div>
-            {{/each}}
         </li>
     </script>
 
@@ -116,10 +113,15 @@
     <script type="text/template7" id="profTmplt">
         <div style="font-size:25px">{{name}}</div>
         <div id="profilePic"></div>
-        <div>Member since <b>{{memDate}}</b></div>
-        {{#js_compare "this.netstat != 'OWN'"}} {{#js_compare "this.netstat == 'PEN'"}} <a href="#" class="button button-fill button-raised color-orange"
-            disabled>Pending Request</a> {{else}} {{#js_compare "this.netstat == 'CON'"}} <a href="#" class="button button-fill button-raised color-green"
-            onclick="connect('{{id}}')">Connect</a> {{else}} <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a>        {{/js_compare}} {{/js_compare}} {{else}} {{/js_compare}}
+        <div>Member since
+            <b>{{memDate}}</b>
+        </div>
+        {{#js_compare "this.netstat != 'OWN'"}} {{#js_compare "this.netstat == 'PEN'"}}
+        <a href="#" class="button button-fill button-raised color-orange"
+            disabled>Pending Request</a> {{else}} {{#js_compare "this.netstat == 'CON'"}}
+        <a href="#" class="button button-fill button-raised color-green"
+            onclick="connect('{{id}}')">Connect</a> {{else}}
+        <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a> {{/js_compare}} {{/js_compare}} {{else}} {{/js_compare}}
     </script>
 
     <script type="text/template7" id="friendListTmplt">

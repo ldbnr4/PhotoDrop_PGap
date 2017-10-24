@@ -16,16 +16,22 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-function DEV_uploadPics(albumId) {
-    console.log('Sending images...');
-    for (file of $$("#inputfile")[0].files) {
-        uploadPhoto(file, albumId)
+// Create the XHR object.
+function createCORSRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr) {
+      // XHR for Chrome/Firefox/Opera/Safari.
+      xhr.open(method, url, true);
+    } else if (typeof XDomainRequest != "undefined") {
+      // XDomainRequest for IE.
+      xhr = new XDomainRequest();
+      xhr.open(method, url);
+    } else {
+      // CORS not supported.
+      xhr = null;
     }
-    setTimeout(function () {
-        clrNfillPhotoGrid(albumId);
-    }, 500);
-    //console.log("Done loading images!")
-}
+    return xhr;
+  }
 
 function getReq(url, params, callback, actionName){
     var error = function (xhr, status) {
@@ -40,6 +46,11 @@ function getReq(url, params, callback, actionName){
 }
 
 function postReq(url, params, callback, actionName){
+    // var myXhr = createCORSRequest("POST", url)
+    // if (!myXhr) {
+    //     alert('CORS not supported');
+    //     return;
+    // }
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")

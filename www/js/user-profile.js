@@ -25,10 +25,17 @@ function profileStart(page) {
         $$("#editProfBtn").hide()
     }
 
-    getProfile(nickname, uid)
+    $$("#profCB").html(
+        Template7.templates.profTmplt({
+            name: nickname,
+            memDate: USER.joined,
+            netstat: JResp.netstat,
+            id: uid
+        })
+    )
 
     loadImage(
-        USER_SERVICE + "?PROF_PIC=true&uid=" + uid,
+        APP_BASE_URL + "/user/"+ uid,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -52,40 +59,6 @@ function profileStart(page) {
             aspectRatio: 1,
         }
     );
-}
-
-function getProfile(nickname, uid) {
-    myApp.showPreloader("Loading profile");
-    var success = function (data, status, xhr) {
-        myApp.hidePreloader();
-        try {
-            var JResp = JSON.parse(data);
-        } catch (error) {
-            myApp.alert("Did not recieve json response.", "ERR GET PROFILE");
-            console.log(error)
-            console.log(data)
-        }
-        if (JResp.err == false) {
-            // console.log(JResp)
-            $$("#profCB").html(
-                Template7.templates.profTmplt({
-                    name: nickname,
-                    memDate: getMemDate(JResp.joined),
-                    netstat: JResp.netstat,
-                    id: uid
-                })
-            )
-
-        } else {
-            myApp.alert("Error message: " + JResp.msg, "ERR PROFILE");
-        }
-    }
-
-    postReq(USER_SERVICE, {
-        GET_PROF: true,
-        UID: USER.id,
-        PROF_ID: uid
-    }, success, "to get user profile")
 }
 
 function connect(profid) {

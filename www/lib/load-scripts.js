@@ -2,9 +2,7 @@
     "cordova.js",
 
     "lib/validate.min.js",
-    "lib/masonry.pkgd.min.js",
     "lib/load-image.all.min.js",
-    "lib/imagesloaded.pkgd.min.js",
     "lib/PhotoFactory.js",
     
     "lib/helper_funcs.js",
@@ -12,8 +10,8 @@
 
     "js/my-app.js",
 
-    "js/UTL-media.js",
-    "js/UTL-network.js",
+    "lib/UTL-media.js",
+    "lib/UTL-network.js",
 
     "js/user.js",
     "js/home.js",

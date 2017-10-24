@@ -16,51 +16,35 @@ function createNewUser(_username, _password, _email) {
     myApp.hidePreloader()
     myApp.showPreloader("Creating a new user...")
     // Create A User
-    var success = function (data, status, xhr) {
+    var goSuccess = function (data, status, xhr) {
+        myApp.hidePreloader();
+        var JResp;
         try {
-            myApp.hidePreloader();
-            var JResp = JSON.parse(data);
-            if (JResp.err == false) {
-                console.log("Successfully created a new user!")
-                USER.id = JResp.id;
-                mainView.router.load({
-                    pageName: 'home',
-                });
-            } else {
-                myApp.alert("Error message: " + JResp.msg, "ERR ADD USER");
-            }
+            JResp = JSON.parse(data);
         } catch (error) {
             myApp.alert("Did not recieve json response. Resp: " + data, "ERR ADD USER");
-            console.log("Data: " + data)
-            console.log("Status: " + status)
-            console.log("XHR: " + xhr)
+            console.log("Error:", error)
+            console.log("Data: ",data)
+            console.log("Status: ", status)
+            console.log("XHR: ", xhr)
+        }
+        if(hasError(JResp.Error)){
+            if(JResp.Error.Username) myApp.alert("That username already exists", "Sorry")
+            else if(JResp.Error.Email) myApp.alert("That email already has an account", "Sorry")
+            else{
+                myApp.alert("Unable to sign up", "Sorry")
+                console.log(JResp.Error)
+            }
+        }
+        else{
+            USER.id = JResp.ID
+            mainView.router.load({
+                pageName: 'home',
+            });
         }
     }
 
-    var goSuccess = function (data, status, xhr) {
-        try {
-            myApp.hidePreloader();
-            var JResp = JSON.parse(data);
-            USER.id = JResp.Id
-        } catch (error) {
-            myApp.alert("Did not recieve json response. Resp: " + error, "ERR ADD USER");
-            console.log("Data: " + data)
-            console.log("Status: " + status)
-            console.log("XHR: " + xhr)
-        }
-        mainView.router.load({
-            pageName: 'home',
-        });
-    }
-    // postReq(USER_SERVICE, {
-    //     ADD_USER: true,
-    //     USERNAME: USER.username,
-    //     PASSWORD: USER.password,
-    //     EMAIL: USER.email,
-    //     NICKNAME: USER.nickname
-    // }, success, "create a new user")
-
-    postReq("http://zotime.ddns.net:2500/user", {
+    postReq(APP_BASE_URL+"/user", {
         Username: USER.username,
         Password: USER.password,
         Email: USER.email,

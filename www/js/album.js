@@ -1,8 +1,6 @@
 myApp.onPageInit('album', initAlbumPg)
 myApp.onPageReinit('album', initAlbumPg)
 
-var msnry
-
 function initAlbumPg(page) {
     albumId = page.query.id
     if (!albumId) {
@@ -12,21 +10,9 @@ function initAlbumPg(page) {
 
     clrNfillPhotoGrid(albumId)
 
-    msnry = new Masonry('.grid', {
-        // options
-        itemSelector: '.grid-item',
-        columnWidth: '.grid-sizer',
-        percentPosition: true,
-        horizontalOrder: true,
-        fitWidth: true
-    });
-
     function onLayout(){
         console.log('layout done');
     }
-
-    // bind event listener
-    // msnry.on( 'layoutComplete',  onLayout);
 
     $$("#album_name_ttl").html(page.query.title)
 
@@ -41,9 +27,7 @@ function initAlbumPg(page) {
     });
 
     devUploadBtn.off('click', null);
-    devUploadBtn.click(function () {
-        DEV_uploadPics(albumId)
-    });
+    devUploadBtn.click(devPhotoFactory);
 
     libUploadBtn.off('click', null);
     libUploadBtn.click(function () {
@@ -110,27 +94,18 @@ function clrNfillPhotoGrid(album_id) {
             return
         }
 
-        var photoFact = new PhotoFactory();
-
-        albumPhotos = resp.PhotoIDs.map(function(pid, i){
-            return photoFact.loadNPlace(pid, album_id, i)
-        });
-
-        // msnry.addItems( $$(".imageItem") )
-        // msnry.prepended( $$(".imageItem") )
-        // msnry.layout();
-
+        var photoFact = new PhotoFactory(resp.PhotoIDs, album_id);
 
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',
-            photos: albumPhotos
+            photos: photoFact.run()
         })
     }
     params = {
         UserId: USER.id,
         AlbumId: album_id
     }
-    getReq("http://zotime.ddns.net:2500/album", params, goSuccess, "retrieve album")
+    getReq(APP_BASE_URL+"/album", params, goSuccess, "retrieve album")
 }
 
 function deletePic(pid, album_id) {
@@ -150,7 +125,7 @@ function deletePic(pid, album_id) {
         }
     }
 
-    postReq("http://zotime.ddns.net:2500/del/photo", {
+    postReq(APP_BASE_URL+"/del/photo", {
         UID: USER.id,
         PID: pid
     }, success, "delete photo")
@@ -209,7 +184,7 @@ function addNewAlbum(ttl) {
         }
     }
 
-    postReq("http://zotime.ddns.net:2500/album", {
+    postReq(APP_BASE_URL+"/album", {
         UserId: USER.id,
         TITLE: ttl
     }, goSuccess, "add a new album");

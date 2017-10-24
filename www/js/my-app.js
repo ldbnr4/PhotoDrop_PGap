@@ -1,4 +1,4 @@
-var test = false;
+var test = true;
 // Initialize app
 const myApp = new Framework7({
     material: true, //enable Material theme
@@ -17,16 +17,11 @@ const mainView = myApp.addView('.view-main', {
 
 var devicePlatform;
 // var GATES_IMG_URL = "http://zotime.ddns.net/ProfPic.php"
-var APP_BASE_URL = test?"http://www.localhost:8000/":"http://zotime.ddns.net/_PD/";
-var APP_BASE_FILE_URL = APP_BASE_URL+"photoUpload.php";
-var APP_NEW_FILE_URL = APP_BASE_URL+"photoUploadNEW.php";
+var APP_BASE_URL = test?"http://www.localhost:2500":"http://zotime.ddns.net:2500";
 var myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark'
 });
 var USER;
-
-USER_SERVICE = APP_BASE_URL+"UserService.php"
-PHOTO_SERVICE = APP_BASE_URL+"PhotoService.php"
 
 var login_const = {
     username: {

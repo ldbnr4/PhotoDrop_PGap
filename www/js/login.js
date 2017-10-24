@@ -23,52 +23,28 @@ function login(_username, _password) {
             myApp.alert("Got an unexpected response", "RESP LOGIN")
             console.log("Login data:",data)
         }
-        console.log("Login response:", resp)
-        USER = resp;
-        USER.id = resp._id
-        mainView.router.load({
-            pageName: 'home',
-        });
-
-    }
-    var success = function (data, status, xhr) {
-        myApp.hidePreloader();
-        try {
-            resp = JSON.parse(data)
-            respU = JSON.parse(resp.user)
-        } catch (error) {
-            myApp.alert("Got an unexpected response", "RESP LOGIN")
-            console.log(data)
+        if (resp == null){
+            myApp.confirm('Would you like to create and account?', 'User not found', function () {
+                mainView.router.load({
+                    pageName: 'signup',
+                });
+            });        
         }
-        if (!resp.err) {
-            // console.log(respU)
-            USER.id = resp.id;
-            USER.email = resp.email
-            USER.joined = getMemDate(resp.joined)
-            USER.friends = respU.friends
+        else{
+            // console.log(resp)
+            USER = resp;
+            USER.id = resp._id
             mainView.router.load({
                 pageName: 'home',
-            });
-        } else {
-            console.log("LOGIN error:", resp);
+            });    
         }
     }
     postReq(
-        "http://zotime.ddns.net:2500/login", {
+        APP_BASE_URL+"/login", {
             username: USER.username,
             password: USER.password
         },
         goSuccess,
         "login"
     )
-    
-    // postReq(
-    //     USER_SERVICE, {
-    //         LOGIN: true,
-    //         username: USER.username,
-    //         password: USER.password
-    //     },
-    //     success,
-    //     "login"
-    // )
 }

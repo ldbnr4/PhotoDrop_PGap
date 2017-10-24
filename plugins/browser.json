@@ -1,43 +1,43 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-camera": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
     },
-    "config_munge": {
-        "files": {}
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
     },
-    "installed_plugins": {
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-file-transfer": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-http": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-image-picker": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        }
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
     },
-    "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        },
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.cachemoney.photodrop"
-        }
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    },
+    "cordova-plugin-http": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    },
+    "cordova-plugin-image-picker": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
     }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.cachemoney.photodrop"
+    }
+  }
 }

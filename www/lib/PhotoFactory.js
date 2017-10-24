@@ -1,18 +1,26 @@
 class PhotoFactory {
-    loadNPlace(pid, album_id, i) {
-        const imgLocation = encodeURI("http://zotime.ddns.net:2500/photo?albumId=" + album_id + "&imageId=" + pid + "&userId=" + USER.id)
-        var loadCompRef = this.loadImageComplete
-        var setupRef = this.setUpImageContainer;
+
+    constructor(pidArray, album_id) {
+        if (album_id === "FAKE_ALBUM") {
+            this.FAKE = true
+        }
+        this.pidArray = pidArray
+        this.album_id = album_id
+    }
+
+    loadNPlace(pid, i) {
+        var self = this
+        const imgLocation = this.FAKE ? encodeURI(APP_BASE_URL + "/dev/photo") : encodeURI(APP_BASE_URL + "/photo?albumId=" + this.album_id + "&imageId=" + pid + "&userId=" + USER.id)
         const docContainer = document.createElement("div")
-        setupRef(pid, i)
-        docContainer.setAttribute("class", "grid-item")
         docContainer.id = `image_${i}`
         docContainer.innerHTML = '<div class="progressbar-infinite color-multi"></div>'
+        docContainer.className = "grid-item"
         photoGrid.append(docContainer)
+        this.setUpImageContainer(pid, i)
         loadImage(
             imgLocation,
-            function(img){
-                loadCompRef(img, pid, setupRef, i)
+            function (img) {
+                self.loadImageComplete(img, pid, $$(`#image_${i}`))
             }, {
                 // canvas: true,
                 // pixelRatio: window.devicePixelRatio,
@@ -22,8 +30,7 @@ class PhotoFactory {
         return imgLocation
     }
 
-    loadImageComplete(img, pid, setupRef, i) {
-        var docContainer = $$(`#image_${i}`) 
+    loadImageComplete(img, pid, docContainer) {
         // console.log("PID:",pid)
         if (img.type === "error") {
             // console.log("Error loading image id:" + pid + " from source:" + url)
@@ -45,12 +52,11 @@ class PhotoFactory {
             docContainer.html('')
             docContainer.append(img)
             // docContainer.innerHTML = img
-            // msnry.prepended(docContainer)
         }
     }
 
     setUpImageContainer(pid, i) {
-        var container = $$(`#image_${i}`) 
+        var container = $$(`#image_${i}`)
         container.click(function (e) {
             myPhotoBrowser.activeIndex = i;
             myPhotoBrowser.open();
@@ -60,10 +66,18 @@ class PhotoFactory {
                 text: "Delete",
                 color: "red",
                 onClick: function () {
-                    deletePic(pid, this.album_id)
+                    if (this.FAKE) container.hide()
+                    else deletePic(pid, this.album_id)
                 }
             }]
             myApp.actions(this, buttons)
         })
+    }
+
+    run() {
+        var self = this
+        return this.pidArray.map(function (pid, i) {
+            return self.loadNPlace(pid, i)
+        });
     }
 }
