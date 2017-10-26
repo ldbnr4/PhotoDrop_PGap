@@ -96,7 +96,7 @@ function getAlbums() {
             
         }
     }
-    getReq(APP_BASE_URL+"/albums/"+USER.id, {}, success, "to get albums")
+    getReq(`/albums/${USER.id}`, {}, success, "to get albums")
 }
 
 function delete_album(albumId) {

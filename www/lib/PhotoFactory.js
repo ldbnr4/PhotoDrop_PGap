@@ -3,6 +3,8 @@ class PhotoFactory {
     constructor(pidArray, album_id) {
         if (album_id === "FAKE_ALBUM") {
             this.FAKE = true
+            this.heros = ["ironMan.png", "thor.png", "hulk.png", "spiderMan.png"]
+            this.offset = $$(".grid-item").length
         }
         this.pidArray = pidArray
         this.album_id = album_id
@@ -10,7 +12,7 @@ class PhotoFactory {
 
     loadNPlace(pid, i) {
         var self = this
-        const imgLocation = this.FAKE ? encodeURI(APP_BASE_URL + "/dev/photo") : encodeURI(APP_BASE_URL + "/photo?albumId=" + this.album_id + "&imageId=" + pid + "&userId=" + USER.id)
+        const imgLocation = this.FAKE ? encodeURI(`${APP_BASE_URL}/dev/hero/${this.heros[getRandomInt(0,this.heros.length)]}`) : encodeURI(APP_BASE_URL + "/photo?albumId=" + this.album_id + "&imageId=" + pid + "&userId=" + USER.id)
         const docContainer = document.createElement("div")
         docContainer.id = `image_${i}`
         docContainer.innerHTML = '<div class="progressbar-infinite color-multi"></div>'
@@ -77,7 +79,7 @@ class PhotoFactory {
     run() {
         var self = this
         return this.pidArray.map(function (pid, i) {
-            return self.loadNPlace(pid, i)
+            return self.loadNPlace(pid, i+self.offset)
         });
     }
 }

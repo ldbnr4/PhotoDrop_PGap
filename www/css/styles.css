@@ -54,9 +54,9 @@ p{
 }
 
 .grid {
-    background: #DDD;
+    height:auto; overflow:hidden;
+    margin-bottom: 35px;
 }
-
 
 /* clear fix */
 
@@ -68,15 +68,11 @@ p{
 
 
 /* ---- .grid-item ---- */
-
- .grid-sizer,
 .grid-item {
     width: 30%;
-}
-
-.grid-item {
     float: left;
-    margin: 1.6%;
+    margin: 1.6% 1.6% 0%;
+    padding-bottom: 0.8%
 }
 
 .grid-item canvas {

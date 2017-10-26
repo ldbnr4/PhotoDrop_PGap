@@ -44,7 +44,7 @@ function createNewUser(_username, _password, _email) {
         }
     }
 
-    postReq(APP_BASE_URL+"/user", {
+    postReq("/user", {
         Username: USER.username,
         Password: USER.password,
         Email: USER.email,

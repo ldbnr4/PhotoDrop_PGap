@@ -22,30 +22,61 @@ function loadFriends(page) {
         }
 
         if (JResp.err == false) {
-            // console.log(friendReqList)
-            // console.log(JResp)
-            // JResp.result.forEach(function(elem){
-            //     console.log(elem.id['$oid'])
-            // })
-            $$("#friendReqs-list-block").html(
-                Template7.templates.friendReqTmplt({
-                    friendReqs: JResp.friendReqs
+            //  <li class="item-content">
+            //      <div class="item-inner">
+            //         <div class="item-title" style="width: 100%;">No friend requests</div>
+            //      </div>
+            //  </li>
+            JResp.FriendReqs.forEach(function (element, i) {
+                $$("#friendReqs-list-block").append(
+                    Template7.templates.friendReqTmplt({
+                        index: i,
+                        name: element.Name
+                    })
+                )
+                $$(`#frienReq_${i}`).click(function () {
+                    mainView.router.load({
+                        pageName: 'user-profile',
+                        query: {
+                            nickname: element.Name,
+                            id: element.ID
+                        }
+                    });
                 })
-            )
-            $$("#friends-list-block").html(
-                Template7.templates.friendListTmplt({
-                    friends: JResp.friends
+                $$(`#swipe_left_${i}`).click(function(){
+                    acceptReq(element.ID)
                 })
-            )
+                $$(`#swipe_right_${i}`).click(function(){
+                    declineReq(element.ID)
+                })
+            });
+            // <li class="item-content">
+            //     <div class="item-inner">
+            //         <div class="item-title" style="width: 100%;">No friends</div>
+            //     </div>
+            // </li>
+            JResp.Friends.forEach(function (element) {
+                $$("#friends-list-block").append(
+                    Template7.templates.friendListTmplt({
+                        name: element.Name
+                    })
+                )
+                $$(`#friend_${i}`).click(function () {
+                    mainView.router.load({
+                        pageName: 'user-profile',
+                        query: {
+                            nickname: element.Name,
+                            id: element.ID
+                        }
+                    });
+                })
+            })
         } else {
             myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
 
-    postReq(USER_SERVICE, {
-        LOAD_FRNDS: true,
-        UID: USER.id
-    }, success, "load friends")
+    getReq(`/friends/${USER.id}`, {}, success, "load friends")
 }
 
 function acceptReq(id) {
@@ -71,11 +102,7 @@ function acceptReq(id) {
         myApp.hidePreloader();
         myApp.alert("Failed to get user profile.", "ERR FRIENDS")
     }
-    $$.post(USER_SERVICE, {
-        ACPT_REQ: true,
-        UID: USER.id,
-        FRND_ID: id
-    }, success, err)
+    postReq(`/friends/acpt/${USER.id}/${id}`, {}, success, "accept friend request")
 }
 
 function declineReq(id) {
@@ -97,9 +124,5 @@ function declineReq(id) {
             myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
-    postReq(USER_SERVICE, {
-        DEC_REQ: true,
-        UID: USER.id,
-        FRND_ID: id
-    }, success, "decline friend request")
+    postReq(`/friends/decl/${USER.id}/${id}`, {}, success, "decline friend request")
 }

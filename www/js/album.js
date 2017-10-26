@@ -77,9 +77,6 @@ function clrNfillPhotoGrid(album_id) {
     myApp.showPreloader("Gathering media")
     photoGrid = $$("#inner-body")
     photoGrid.html("")
-    gridSizer = document.createElement("div")
-    gridSizer.setAttribute("class", "grid-sizer")
-    photoGrid.append(gridSizer)
     var pars = {
         GET_ALBUM_PHOTOS: true,
         albumId: album_id,
@@ -105,7 +102,7 @@ function clrNfillPhotoGrid(album_id) {
         UserId: USER.id,
         AlbumId: album_id
     }
-    getReq(APP_BASE_URL+"/album", params, goSuccess, "retrieve album")
+    getReq("/album", params, goSuccess, "retrieve album")
 }
 
 function deletePic(pid, album_id) {
@@ -125,7 +122,7 @@ function deletePic(pid, album_id) {
         }
     }
 
-    postReq(APP_BASE_URL+"/del/photo", {
+    postReq("/del/photo", {
         UID: USER.id,
         PID: pid
     }, success, "delete photo")
@@ -184,7 +181,7 @@ function addNewAlbum(ttl) {
         }
     }
 
-    postReq(APP_BASE_URL+"/album", {
+    postReq("/album", {
         UserId: USER.id,
         TITLE: ttl
     }, goSuccess, "add a new album");

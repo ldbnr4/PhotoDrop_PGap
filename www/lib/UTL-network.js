@@ -37,20 +37,16 @@ function getReq(url, params, callback, actionName){
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
+        console.log("URL:",url)
+        console.log("PARAMS:",params)
         console.log("XHR: " + xhr);
         console.log("STATUS: " + status);
     }
-    // console.log(url)
 
-    $$.get(url, params, callback, error)
+    $$.get(`${APP_BASE_URL}${url}`, params, callback, error)
 }
 
 function postReq(url, params, callback, actionName){
-    // var myXhr = createCORSRequest("POST", url)
-    // if (!myXhr) {
-    //     alert('CORS not supported');
-    //     return;
-    // }
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")
@@ -60,6 +56,5 @@ function postReq(url, params, callback, actionName){
         console.log("STATUS: " + status);
     }
 
-    // console.log(url)
-    $$.post(url, params, callback, error)
+    $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
 }

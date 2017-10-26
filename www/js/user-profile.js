@@ -29,7 +29,7 @@ function profileStart(page) {
         Template7.templates.profTmplt({
             name: nickname,
             memDate: USER.joined,
-            netstat: JResp.netstat,
+            netstat: null,
             id: uid
         })
     )

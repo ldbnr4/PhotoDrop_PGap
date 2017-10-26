@@ -125,43 +125,27 @@
     </script>
 
     <script type="text/template7" id="friendListTmplt">
-        {{#each friends}}
-        <a href="#user-profile?nickname={{name}}&id={{id.$oid}}" class="item-link item-content">
+        <a id="friend_{{index}}" href="#" class="item-link item-content">
             <div class="item-inner bg-grey">
                 <div class="item-title friend-name" style="width: 100%;">{{name}}</div>
             </div>
         </a>
-        {{else}}
-        <li class="item-content">
-            <div class="item-inner">
-                <div class="item-title" style="width: 100%;">No friends</div>
-            </div>
-        </li>
-        {{/each}}
     </script>
 
     <script type="text/template7" id="friendReqTmplt">
-        {{#each friendReqs}}
         <li class="swipeout">
-            <a href="#user-profile?nickname={{name}}&id={{id.$oid}}" class=" swipeout-content item-content">
+            <a href="#" id="frienReq_{{index}}" class="swipeout-content item-content">
                 <div class="item-inner">
                     <div class="item-title friend-name" style="width: 100%;">{{name}}</div>
                 </div>
             </a>
             <div class="swipeout-actions-left">
-                <a href="#" onclick="acceptReq('{{id.$oid}}')" class="swipeout-delete bg-green">Accept</a>
+                <a href="#" id="swipe_left_{{index}}" class="swipeout-delete bg-green">Accept</a>
             </div>
             <div class="swipeout-actions-right">
-                <a href="#" onclick="declineReq('{{id.$oid}}')" class="swipeout-delete bg-red">Decline</a>
+                <a href="#" id="swipe_right_{{index}}" class="swipeout-delete bg-red">Decline</a>
             </div>
         </li>
-        {{else}}
-        <li class="item-content">
-            <div class="item-inner">
-                <div class="item-title" style="width: 100%;">No friend requests</div>
-            </div>
-        </li>
-        {{/each}}
     </script>
 
     <script type="text/javascript">
