@@ -21,3 +21,15 @@ var hasError = function (someObject){
     }
     return false
 }
+
+// Make this the standard
+var parseJson = function (data, action) {
+    try {
+        var JResp = JSON.parse(data);
+    } catch (error) {
+        myApp.alert("Did not recieve json response. Resp: " + data, "ERROR "+action);
+        console.log(error)
+        console.log("Data: " + data)
+    }
+    return JResp
+}

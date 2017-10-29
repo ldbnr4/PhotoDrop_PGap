@@ -12,7 +12,7 @@ myApp.onPageReinit('user-profile', profileStart)
 myApp.onPageInit('user-profile', profileStart)
 
 function profileStart(page) {
-    // console.log(page)
+    //TODO: remove the need of uid
     uid = null
     nickname = null
     if (page.query.id == USER.id) {
@@ -28,7 +28,7 @@ function profileStart(page) {
     $$("#profCB").html(
         Template7.templates.profTmplt({
             name: nickname,
-            memDate: USER.joined,
+            memDate: page.query.joined,
             netstat: null,
             id: uid
         })

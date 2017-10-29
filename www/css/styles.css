@@ -53,6 +53,10 @@ p{
     margin-top: 0px;
 }
 
+#user-search-bar{
+    top:0
+}
+
 .grid {
     height:auto; overflow:hidden;
     margin-bottom: 35px;

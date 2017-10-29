@@ -18,16 +18,7 @@ function createNewUser(_username, _password, _email) {
     // Create A User
     var goSuccess = function (data, status, xhr) {
         myApp.hidePreloader();
-        var JResp;
-        try {
-            JResp = JSON.parse(data);
-        } catch (error) {
-            myApp.alert("Did not recieve json response. Resp: " + data, "ERR ADD USER");
-            console.log("Error:", error)
-            console.log("Data: ",data)
-            console.log("Status: ", status)
-            console.log("XHR: ", xhr)
-        }
+        var JResp = parseJson(data, "ADD USER")
         if(hasError(JResp.Error)){
             if(JResp.Error.Username) myApp.alert("That username already exists", "Sorry")
             else if(JResp.Error.Email) myApp.alert("That email already has an account", "Sorry")

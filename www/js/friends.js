@@ -21,12 +21,13 @@ function loadFriends(page) {
             console.log(data)
         }
 
-        if (JResp.err == false) {
-            //  <li class="item-content">
+        if (!JResp.FriendReqs) {
+            // <li class="item-content">
             //      <div class="item-inner">
             //         <div class="item-title" style="width: 100%;">No friend requests</div>
             //      </div>
-            //  </li>
+            // </li>   
+        } else {
             JResp.FriendReqs.forEach(function (element, i) {
                 $$("#friendReqs-list-block").append(
                     Template7.templates.friendReqTmplt({
@@ -43,18 +44,21 @@ function loadFriends(page) {
                         }
                     });
                 })
-                $$(`#swipe_left_${i}`).click(function(){
+                $$(`#swipe_left_${i}`).click(function () {
                     acceptReq(element.ID)
                 })
-                $$(`#swipe_right_${i}`).click(function(){
+                $$(`#swipe_right_${i}`).click(function () {
                     declineReq(element.ID)
                 })
             });
+        }
+        if (!JResp.Friends) {
             // <li class="item-content">
             //     <div class="item-inner">
             //         <div class="item-title" style="width: 100%;">No friends</div>
             //     </div>
             // </li>
+        } else {
             JResp.Friends.forEach(function (element) {
                 $$("#friends-list-block").append(
                     Template7.templates.friendListTmplt({
@@ -71,12 +75,10 @@ function loadFriends(page) {
                     });
                 })
             })
-        } else {
-            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
 
-    getReq(`/friends/${USER.id}`, {}, success, "load friends")
+getReq(`/friends/${USER.id}`, {}, success, "load friends")
 }
 
 function acceptReq(id) {

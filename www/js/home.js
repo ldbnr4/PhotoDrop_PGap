@@ -119,7 +119,7 @@ function delete_album(albumId) {
         }
     }
     postReq(
-        APP_BASE_URL+"/del/album", {
+        "/del/album", {
             UID: USER.id,
             AID: albumId
         }, success, "to delete album")
