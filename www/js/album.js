@@ -153,33 +153,6 @@ function addNewAlbum(ttl) {
         })
         getAlbums()
     }
-    var success = function (data, status, xhr) {
-        try {
-            myApp.hidePreloader();
-            resp = JSON.parse(data)
-            if (!resp.err) {
-                mainView.router.load({
-                    pageName: 'album',
-                    query: {
-                        title: resp.title,
-                        id: resp.id
-                    }
-                })
-                getAlbums()
-                if (resp.dup) {
-                    console.log("Duplicate album name.")
-                } else if (resp.mod_cnt == 1) {
-                    console.log("Created a new album.")
-                } else {
-                    myApp.alert("Did not create a new album.", "ERR ADD_ALBUM");
-                }
-            } else {
-                myApp.alert("Response error: " + resp.msg, "ERR ADD_ALBUM");
-            }
-        } catch (error) {
-            myApp.alert("Did not recieve json response. Resp: " + data, "ERR ADD_ALBUM");
-        }
-    }
 
     postReq("/album", {
         UserId: USER.id,

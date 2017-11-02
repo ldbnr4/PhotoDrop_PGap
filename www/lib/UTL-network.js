@@ -37,12 +37,8 @@ function getReq(url, params, callback, actionName){
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
-        console.log("URL:",url)
-        console.log("PARAMS:",params)
-        console.log("XHR: " + xhr);
-        console.log("STATUS: " + status);
+        console.log(`XHR: ${JSON.stringify(xhr)}`);
     }
-
     $$.get(`${APP_BASE_URL}${url}`, params, callback, error)
 }
 
@@ -50,10 +46,7 @@ function postReq(url, params, callback, actionName){
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")
-        console.log("URL:",url)
-        console.log("PARAMS:",params)
-        console.log("XHR:", xhr);
-        console.log("STATUS: " + status);
+        console.log(`XHR: ${JSON.stringify(xhr)}`);
     }
 
     $$.post(`${APP_BASE_URL}${url}`, params, callback, error)

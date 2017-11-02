@@ -24,6 +24,7 @@ function login(_username, _password) {
             console.log("Login data:", data)
         }
         if (resp == null) {
+            // TODO: send data to next page and fill fields
             myApp.confirm('Would you like to create and account?', 'User not found', function () {
                 mainView.router.load({
                     pageName: 'signup',
@@ -32,6 +33,11 @@ function login(_username, _password) {
         } else {
             // console.log(resp)
             USER = resp;
+            $$.ajaxSetup({
+                headers: {
+                    'UID': resp._id,
+                }
+            })
             USER.id = resp._id
             mainView.router.load({
                 pageName: 'home',

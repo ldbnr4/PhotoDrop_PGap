@@ -10,7 +10,7 @@ function homePgSetup() {
     $$("#TFuserName").html(USER.nickname)
     getAlbums();
     loadImage(
-        APP_BASE_URL + "/user/" + USER.id,
+        APP_BASE_URL + "/user/pic/" + USER.id,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -96,7 +96,7 @@ function getAlbums() {
             
         }
     }
-    getReq(`/albums/${USER.id}`, {}, success, "to get albums")
+    getReq(`/albums`, {}, success, "to get albums")
 }
 
 function delete_album(albumId) {

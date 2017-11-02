@@ -1,3 +1,4 @@
+// TODO: make all endpoints line up with server
 var test = true;
 // Initialize app
 const myApp = new Framework7({
