@@ -1,5 +1,11 @@
 // TODO: make all endpoints line up with server
 var test = true;
+$$.ajaxSetup({
+    headers: {
+        'ENV': test ? "DEV" : "PRDO",
+    }
+})
+
 // Initialize app
 const myApp = new Framework7({
     material: true, //enable Material theme

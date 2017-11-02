@@ -44,7 +44,7 @@ function login(_username, _password) {
             });
         }
     }
-    postReq("/login", {
+    getReq("/user", {
             username: USER.username,
             password: USER.password
         },
