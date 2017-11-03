@@ -35,7 +35,7 @@ function createNewUser(_username, _password, _email) {
         }
     }
 
-    postReq("/user", {
+    putReq("/user", {
         Username: USER.username,
         Password: USER.password,
         Email: USER.email,

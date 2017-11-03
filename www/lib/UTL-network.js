@@ -16,33 +16,19 @@ function checkConnection() {
     return networkState = !Connection.NONE
 }
 
-// Create the XHR object.
-function createCORSRequest(method, url) {
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr) {
-      // XHR for Chrome/Firefox/Opera/Safari.
-      xhr.open(method, url, true);
-    } else if (typeof XDomainRequest != "undefined") {
-      // XDomainRequest for IE.
-      xhr = new XDomainRequest();
-      xhr.open(method, url);
-    } else {
-      // CORS not supported.
-      xhr = null;
-    }
-    return xhr;
-  }
-
 function getReq(url, params, callback, actionName){
+    errorCheckParams(params)
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
         console.log(`XHR: ${JSON.stringify(xhr)}`);
     }
-    $$.get(`${APP_BASE_URL}${url}`, params, callback, error)
+    var some = $$.get(`${APP_BASE_URL}${url}`, params, callback, error)
+    console.log(some)
 }
 
 function postReq(url, params, callback, actionName){
+    errorCheckParams(params)
     var error = function (xhr, status) {
         myApp.hidePreloader();
         myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")
@@ -50,4 +36,33 @@ function postReq(url, params, callback, actionName){
     }
 
     $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
+}
+
+function putReq(url, params, callback, actionName){
+    errorCheckParams(params)
+    var error = function (xhr, status) {
+        myApp.hidePreloader();
+        myApp.alert("Failed to "+actionName, "ERROR PUT REQUEST")
+        console.log("XHR:");
+        console.log(xhr);
+    }
+
+    var parameters = {
+        url: APP_BASE_URL+url,
+        method: 'PUT',
+        data: params,
+        success: callback,
+        error: error
+    }
+    $$.ajax(parameters)
+
+    // $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
+}
+
+function errorCheckParams(params){
+    for(var propertyName in params) {
+        if(params[propertyName] == undefined || params[propertyName] == ""){
+            console.log(`Sent an empty property ${propertyName} in parameters ${params}`)
+        }
+     }
 }

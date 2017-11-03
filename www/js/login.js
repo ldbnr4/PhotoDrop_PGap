@@ -36,8 +36,10 @@ function login(_username, _password) {
             $$.ajaxSetup({
                 headers: {
                     'UID': resp._id,
+                    'ENV': test ? "DEV" : "PRDO",
                 }
             })
+            
             USER.id = resp._id
             mainView.router.load({
                 pageName: 'home',
