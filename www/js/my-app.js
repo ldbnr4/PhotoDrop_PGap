@@ -1,5 +1,8 @@
 // TODO: make all endpoints line up with server
-var test = true;
+// TODO: remove login and sign up from bottom toolbar
+// TODO: Add some loading indication for upload photos from mobile
+var test = false;
+var env = test ? "DEV" : "PROD"
 // Initialize app
 const myApp = new Framework7({
     material: true, //enable Material theme

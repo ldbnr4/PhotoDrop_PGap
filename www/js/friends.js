@@ -35,7 +35,7 @@ function loadFriends(page) {
                         name: element.Name
                     })
                 )
-                $$(`#frienReq_${i}`).click(function () {
+                $$("#frienReq_"+i).click(function () {
                     mainView.router.load({
                         pageName: 'user-profile',
                         query: {
@@ -44,10 +44,10 @@ function loadFriends(page) {
                         }
                     });
                 })
-                $$(`#swipe_left_${i}`).click(function () {
+                $$("#swipe_left_"+i).click(function () {
                     acceptReq(element.ID)
                 })
-                $$(`#swipe_right_${i}`).click(function () {
+                $$("#swipe_right_"+i).click(function () {
                     declineReq(element.ID)
                 })
             });
@@ -65,7 +65,7 @@ function loadFriends(page) {
                         name: element.Name
                     })
                 )
-                $$(`#friend_${i}`).click(function () {
+                $$("#friend_"+i).click(function () {
                     mainView.router.load({
                         pageName: 'user-profile',
                         query: {
@@ -78,7 +78,7 @@ function loadFriends(page) {
         }
     }
 
-getReq(`/friends/${USER.id}`, {}, success, "load friends")
+getReq("/friends/"+USER.id, {}, success, "load friends")
 }
 
 function acceptReq(id) {
@@ -104,7 +104,7 @@ function acceptReq(id) {
         myApp.hidePreloader();
         myApp.alert("Failed to get user profile.", "ERR FRIENDS")
     }
-    postReq(`/friends/acpt/${USER.id}/${id}`, {}, success, "accept friend request")
+    postReq("/friend/acpt/", {FUID: id}, success, "accept friend request")
 }
 
 function declineReq(id) {
@@ -126,5 +126,5 @@ function declineReq(id) {
             myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
-    postReq(`/friends/decl/${USER.id}/${id}`, {}, success, "decline friend request")
+    postReq("/friend/decl", {FUID:id}, success, "decline friend request")
 }

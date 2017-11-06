@@ -1,9 +1,8 @@
 var devPhotoFactory = function () {
-  var photoFact = new PhotoFactory(fillArray(),"FAKE_ALBUM");
-  console.log(myPhotoBrowser.photos)
+  // console.log(myPhotoBrowser.photos)
   myPhotoBrowser = myApp.photoBrowser({
     theme: 'dark',
-    photos: photoFact.run()
+    photos: PhotoFactory(fillArray(),"FAKE_ALBUM")
   })
 }
 

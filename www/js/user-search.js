@@ -20,7 +20,7 @@ function search4Handle(handle) {
                     })
                 )
 
-                $$(`#user_${i}`).click(function () {
+                $$("#user_"+i).click(function () {
                     mainView.router.load({
                         pageName: 'user-profile',
                         query: {
@@ -36,6 +36,6 @@ function search4Handle(handle) {
 
     // If the search is not empty check
     if (handle.query)
-        getReq(`/user/s/${handle.query}`, {}, success, "search for user")
+        getReq("/user/search/"+handle.query, {}, success, "search for user")
 
 }

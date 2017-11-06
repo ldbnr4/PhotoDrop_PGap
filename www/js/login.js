@@ -31,19 +31,10 @@ function login(_username, _password) {
                 });
             });
         } else {
-            // console.log(resp)
+            console.log("Get user returned")
+            console.log(resp)
             USER = resp;
-            $$.ajaxSetup({
-                headers: {
-                    'UID': resp._id,
-                    'ENV': test ? "DEV" : "PRDO",
-                }
-            })
-            
-            USER.id = resp._id
-            mainView.router.load({
-                pageName: 'home',
-            });
+            enterApplication(resp._id);
         }
     }
     getReq("/user", {
@@ -54,3 +45,14 @@ function login(_username, _password) {
         "login"
     )
 }
+function enterApplication(id) {
+    if(!id){
+        myApp.alert("Not allowed to enter the app without id", "Not Auth")
+        return
+    }
+    USER.id = id;
+    mainView.router.load({
+        pageName: 'home',
+    });
+}
+

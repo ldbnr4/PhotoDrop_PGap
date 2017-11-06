@@ -47,7 +47,48 @@ function openImageLib(albumId) {
     } else {
         navigator.camera.getPicture(
             function (imageData) {
-                uploadPhoto(imageData, albumId)
+                myApp.showPreloader("Uploading image...")
+                function win(r) {
+                    myApp.hidePreloader()
+                    console.log("Code = " + r.responseCode);
+                    console.log("Response = " + r.response);
+                    console.log("Sent = " + r.bytesSent);
+                }
+                
+                function fail(error) {
+                    myApp.hidePreloader()
+                    myApp.alert("An error has occurred: Code = " + error.code);
+                    console.log("upload error source " + error.source);
+                    console.log("upload error target " + error.target);
+                }
+                
+                var uri = encodeURI(APP_BASE_URL+"/photo");
+                
+                var options = new FileUploadOptions();
+                options.fileKey="file";
+                
+                var headers={'UID':USER.id, 'ENV':env};
+                
+                options.headers = headers;
+                options.params = {
+                    AID: albumId
+                }
+                
+                var ft = new FileTransfer();
+                // ft.onprogress = function (progressEvent) {
+                //     if (progressEvent.lengthComputable) {
+                //         if (progressEvent.loaded < 1) {
+                //             myApp.showProgressbar(IMG_CONTAIN, (progressEvent.loaded / progressEvent.total) * 100); //keep "loading"
+                //         } else {
+                //             myApp.hideProgressbar(IMG_CONTAIN); //hide
+                //             myApp.alert("Photo sent!")
+                //         }
+                //     } else {
+                //         alert("DONE")
+                //     }
+                // };
+                ft.upload(imageData, uri, win, fail, options);
+                // uploadPhoto(imageData, albumId)
             },
             function (message) {
                 alert('get picture failed: ' + message);
@@ -86,23 +127,19 @@ function clrNfillPhotoGrid(album_id) {
     const goSuccess = function (data, status, xhr) {
         myApp.hidePreloader()
         const resp = JSON.parse(data)
-        if (!resp.PhotoIDs || resp.PhotoIDs.length == 0) {
+        console.log("Get album response")
+        console.log(resp)
+        if (!resp || resp.length == 0) {
             console.log("This album has no photos :(")
             return
         }
 
-        var photoFact = new PhotoFactory(resp.PhotoIDs, album_id);
-
         myPhotoBrowser = myApp.photoBrowser({
             theme: 'dark',
-            photos: photoFact.run()
+            photos: PhotoFactory(resp, album_id)
         })
     }
-    params = {
-        UserId: USER.id,
-        AlbumId: album_id
-    }
-    getReq("/album", params, goSuccess, "retrieve album")
+    getReq("/album/photos/"+album_id, {}, goSuccess, "retrieve album")
 }
 
 function deletePic(pid, album_id) {
@@ -130,9 +167,10 @@ function deletePic(pid, album_id) {
 
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
-        if (value.length != 0 && USER.albums.indexOf(value) == -1) {
+        if (value.length != 0 && (!USER.albums || USER.albums.indexOf(value) == -1)) {
             addNewAlbum(value)
         }
+        else myApp.alert("Failed to create album", "Error add album")
     })
 }
 
@@ -151,11 +189,10 @@ function addNewAlbum(ttl) {
                 id: resp.ID
             }
         })
-        getAlbums()
+        //TODO: Update USER object?
     }
 
-    postReq("/album", {
-        UserId: USER.id,
-        TITLE: ttl
+    putReq("/album", {
+        Title: ttl
     }, goSuccess, "add a new album");
 }

@@ -28,10 +28,7 @@ function createNewUser(_username, _password, _email) {
             }
         }
         else{
-            USER.id = JResp.ID
-            mainView.router.load({
-                pageName: 'home',
-            });
+            enterApplication(JResp.ID)
         }
     }
 

@@ -17,52 +17,65 @@ function checkConnection() {
 }
 
 function getReq(url, params, callback, actionName){
-    errorCheckParams(params)
-    var error = function (xhr, status) {
-        myApp.hidePreloader();
-        myApp.alert("Failed to "+actionName, "ERROR GET REQUEST")
-        console.log(`XHR: ${JSON.stringify(xhr)}`);
-    }
-    var some = $$.get(`${APP_BASE_URL}${url}`, params, callback, error)
-    console.log(some)
+    var method = 'GET'
+    sendRequest(method, url, params, callback, actionName)
 }
 
 function postReq(url, params, callback, actionName){
-    errorCheckParams(params)
-    var error = function (xhr, status) {
-        myApp.hidePreloader();
-        myApp.alert("Failed to "+actionName, "ERROR POST REQUEST")
-        console.log(`XHR: ${JSON.stringify(xhr)}`);
-    }
+    var method = 'POST'
+    sendRequest(method, url, params, callback, actionName)
 
-    $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
+    // $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
 }
 
 function putReq(url, params, callback, actionName){
-    errorCheckParams(params)
+    var method = 'PUT'
+    sendRequest(method, url, params, callback, actionName)
+}
+
+
+function goodParams(params){
+    for(var propertyName in params) {
+        if(params[propertyName] == undefined || params[propertyName] == ""){
+            console.log("Tried to send an empty property "+propertyName+" in parameters "+params)
+            return false
+        }
+     }
+     return true
+}
+
+function sendRequest(method, url, params, success, actionName){
+    if(!goodParams(params)){
+        console.log("Route was "+url)
+        return
+    }
     var error = function (xhr, status) {
         myApp.hidePreloader();
-        myApp.alert("Failed to "+actionName, "ERROR PUT REQUEST")
+        myApp.alert("Failed to "+actionName, "ERROR "+method+"REQUEST")
         console.log("XHR:");
         console.log(xhr);
     }
 
     var parameters = {
         url: APP_BASE_URL+url,
-        method: 'PUT',
+        method: method,
         data: params,
-        success: callback,
-        error: error
+        success: success,
+        error: error,
+        beforeSend : function(xhr){
+            setUpHeaders(xhr, url, method)
+        }
     }
     $$.ajax(parameters)
-
-    // $$.post(`${APP_BASE_URL}${url}`, params, callback, error)
 }
 
-function errorCheckParams(params){
-    for(var propertyName in params) {
-        if(params[propertyName] == undefined || params[propertyName] == ""){
-            console.log(`Sent an empty property ${propertyName} in parameters ${params}`)
-        }
-     }
+//TODO: make "/user" a constant
+// TODO: ...Make User a f$#^@ class or something already
+function setUpHeaders(xhr, url, method){
+    var loginEx = (url === "/user" && method === "GET")
+    var signUpEx = (url === "/user" && method === "PUT")
+    xhr.setRequestHeader("ENV", env)
+    if (!(loginEx || signUpEx)){
+        xhr.setRequestHeader("UID", USER.id)
+    }
 }
