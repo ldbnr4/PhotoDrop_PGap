@@ -34,7 +34,7 @@ function login(_username, _password) {
             console.log("Get user returned")
             console.log(resp)
             USER = resp;
-            enterApplication(resp._id);
+            enterApplication(USER.ObjectID);
         }
     }
     getReq("/user", {
@@ -50,7 +50,7 @@ function enterApplication(id) {
         myApp.alert("Not allowed to enter the app without id", "Not Auth")
         return
     }
-    USER.id = id;
+    USER.ObjectID = id;
     mainView.router.load({
         pageName: 'home',
     });

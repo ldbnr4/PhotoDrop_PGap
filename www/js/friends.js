@@ -78,7 +78,7 @@ function loadFriends(page) {
         }
     }
 
-getReq("/friends/"+USER.id, {}, success, "load friends")
+getReq("/friends/"+USER.ObjectID, {}, success, "load friends")
 }
 
 function acceptReq(id) {

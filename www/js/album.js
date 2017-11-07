@@ -7,12 +7,8 @@ function initAlbumPg(page) {
         myApp.alert("Empty albumId", "BAD PAGE INIT")
     }
 
-
-    clrNfillPhotoGrid(albumId)
-
-    function onLayout(){
-        console.log('layout done');
-    }
+    //TODO: check if this is a tagged album
+    clrNFill(USER.CreatedAlbums[albumId].PhotoList)
 
     $$("#album_name_ttl").html(page.query.title)
 
@@ -67,7 +63,7 @@ function openImageLib(albumId) {
                 var options = new FileUploadOptions();
                 options.fileKey="file";
                 
-                var headers={'UID':USER.id, 'ENV':env};
+                var headers={'UID':USER.ObjectID, 'ENV':env};
                 
                 options.headers = headers;
                 options.params = {
@@ -104,25 +100,33 @@ function openImageLib(albumId) {
 }
 
 function ptrAlbumPics(albumId) {
-    clrNfillPhotoGrid(albumId)
+    fetchPids(albumId)
     myApp.pullToRefreshDone()
 }
 
-function clrNfillPhotoGrid(album_id) {
+function clearPhotoGrid(){
+    photoGrid = $$("#inner-body").html("")
+}
+
+function fillPhotoGrid(albumPids){
+    myPhotoBrowser = myApp.photoBrowser({
+        theme: 'dark',
+        photos: PhotoFactory(albumPids, albumId)
+    })
+}
+
+function clrNFill(albumPids){
+    clearPhotoGrid()
+    fillPhotoGrid(albumPids)
+}
+
+function fetchPids(album_id) {
     if (album_id === undefined) {
         myApp.alert("The variable album_id is undefined", "CLEAR-N-FILL")
         return
     }
-    console.log("Clearing and filling album pics")
     myApp.hidePreloader()
     myApp.showPreloader("Gathering media")
-    photoGrid = $$("#inner-body")
-    photoGrid.html("")
-    var pars = {
-        GET_ALBUM_PHOTOS: true,
-        albumId: album_id,
-        userId: USER.id
-    }
     // console.log("Data going to server for photos:",pars)
     const goSuccess = function (data, status, xhr) {
         myApp.hidePreloader()
@@ -133,11 +137,13 @@ function clrNfillPhotoGrid(album_id) {
             console.log("This album has no photos :(")
             return
         }
-
-        myPhotoBrowser = myApp.photoBrowser({
-            theme: 'dark',
-            photos: PhotoFactory(resp, album_id)
-        })
+        clrNFill(resp)
+        // TODO Update user albums
+    }
+    var pars = {
+        GET_ALBUM_PHOTOS: true,
+        albumId: album_id,
+        userId: USER.ObjectID
     }
     getReq("/album/photos/"+album_id, {}, goSuccess, "retrieve album")
 }
@@ -152,7 +158,7 @@ function deletePic(pid, album_id) {
             if (resp.err) {
                 myApp.alert("Error in response: " + resp.msg, "ERR DEL_PHOTO")
             } else {
-                clrNfillPhotoGrid(album_id)
+                clrNFill(album_id)
             }
         } catch (err) {
             myApp.alert("Did not recieve json response. Resp: " + data, "ERR DEL_PHOTO")
@@ -160,14 +166,14 @@ function deletePic(pid, album_id) {
     }
 
     postReq("/del/photo", {
-        UID: USER.id,
+        UID: USER.ObjectID,
         PID: pid
     }, success, "delete photo")
 }
 
 function addAlbum() {
     myApp.prompt('', 'Create a new album', function (value) {
-        if (value.length != 0 && (!USER.albums || USER.albums.indexOf(value) == -1)) {
+        if (value.length != 0 && (!USER.CreatedAlbums || USER.CreatedAlbums.indexOf(value) == -1)) {
             addNewAlbum(value)
         }
         else myApp.alert("Failed to create album", "Error add album")

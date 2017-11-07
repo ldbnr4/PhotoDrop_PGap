@@ -2,8 +2,8 @@ function goToProfPg() {
     mainView.router.load({
         pageName: 'user-profile',
         query: {
-            nickname: USER.nickname,
-            id: USER.id
+            nickname: USER.Nickname,
+            id: USER.ObjectID
         }
     });
 }
@@ -15,9 +15,9 @@ function profileStart(page) {
     //TODO: remove the need of uid
     uid = null
     nickname = null
-    if (page.query.id == USER.id) {
-        uid = USER.id
-        nickname = USER.nickname
+    if (page.query.id == USER.ObjectID) {
+        uid = USER.ObjectID
+        nickname = USER.Nickname
         $$("#editProfBtn").attr("style", "display:flex")
     } else {
         uid = page.query.id
@@ -77,7 +77,7 @@ function connect(profid) {
 
     postReq(USER_SERVICE, {
         CONNECT_REQ: true,
-        UID: USER.id,
+        UID: USER.ObjectID,
         PROF_ID: profid
     }, success, "send connect request to user")
 }
@@ -86,7 +86,7 @@ function disconnect(profName) {
     success = function (data, status, xhr) {
         try {
             var JResp = JSON.parse(data);
-            USER.friends = JSON.parse(JResp.friends)
+            USER.Friends = JSON.parse(JResp.friends)
             mainView.router.back()
         } catch (error) {
             myApp.alert("Did not recieve json response. Resp: " + data, "JSON_ERR DISCONNECT FRIEND");
@@ -96,7 +96,7 @@ function disconnect(profName) {
 
     postReq(USER_SERVICE, {
         DISCONNECT_FRIEND: true,
-        UID: USER.id,
+        UID: USER.ObjectID,
         FRIEND_NAME: profName
     }, success, "disconnect from user")
 }

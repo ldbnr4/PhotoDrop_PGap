@@ -1,12 +1,12 @@
 var PhotoFactory = function (pidArray, album_id) {
     var heros = ["ironMan.png", "thor.png", "hulk.png", "spiderMan.png"];
-    var offset = $$(".grid-item").length + 1;
+    var offset = $$(".grid-item").length;
     var fake = (album_id === "FAKE_ALBUM")
 
     return pidArray.map(function (pid, i) {
         i = i + offset
         var container = setUpImageContainer(pid, i, fake, album_id)
-        var imgLocation = encodeURI(APP_BASE_URL + "/photo/" + pid)
+        var imgLocation = encodeURI(APP_BASE_URL + "/photo/" + pid + "/" + USER.ObjectID + "/" + env)
         if (fake) {
             imgLocation = encodeURI(APP_BASE_URL + "/photo/hero/" + heros[getRandomInt(0, heros.length)])
         }

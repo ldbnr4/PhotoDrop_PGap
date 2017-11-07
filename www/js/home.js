@@ -7,10 +7,10 @@ $$('#homePgCntnt').on('ptr:refresh', function (e) {
 })
 
 function homePgSetup() {
-    $$("#TFuserName").html(USER.nickname)
-    getAlbums();
+    $$("#TFuserName").html(USER.Nickname)
+    fillAlbums()
     loadImage(
-        APP_BASE_URL + "/user/pic/" + USER.id,
+        APP_BASE_URL + "/user/pic/" + USER.ObjectID,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -45,6 +45,43 @@ function homePgSetup() {
     );
 }
 
+function fillAlbums(){
+    $$("#albumListContain").html("")
+    if(Object.keys(USER.CreatedAlbums).length === 0){
+        //TODO indicate they should add one :)
+        console.log("This user doesn't have any albums")
+    }
+    if(Object.keys(USER.TaggedAlbums).length === 0){
+        //TODO indicate they should be tagged one :)
+        console.log("This user isn't tagged in any albums")
+    }
+    for (var key in USER.CreatedAlbums){
+        var aid = key
+        var element = USER.CreatedAlbums[key]
+        var template = Template7.templates.albumListTmplt({
+            title: element.Title,
+            flag: true,
+            id: aid
+        })
+        $$("#albumListContain").append(template)
+        $$("#album_"+aid).click(function(){
+            mainView.router.load({
+                pageName: 'album',
+                query: {
+                    title: element.Title,
+                    id: aid
+                }
+            })
+        })
+        $$("#swipeout_"+aid).on('swipeout:deleted', function () {
+            console.log("Deleting album")
+            delete_album()
+        })
+    }
+    //TODO: create views for tagged albums
+    //TODO: look into suggesting friends to tag :)
+}
+
 function getAlbums() {
     myApp.hidePreloader()
     myApp.showPreloader("Gathering albums...")
@@ -60,43 +97,9 @@ function getAlbums() {
         if (hasError(resp.Error)) {
             myApp.alert("Error in response: " + resp.msg, "ERR GET_ALBUMS")
         } else {
-            USER.albums = resp.CreatedAlbums
-            USER.tagged = resp.TaggedAlbums
-            if(!USER.albums || !(USER.albums.length > 0)){
-                //TODO indicate they should add one :)
-                console.log("This user doesn't have any albums")
-                console.log("Resp")
-                console.log(resp)
-                console.log("User")
-                console.log(USER)
-                return
-            }
-            console.log("TODO: I need to use the full elements")
-            console.log(USER.albums)
-            USER.albums.forEach(function(element) {
-                var aid = element.AID
-                var template = Template7.templates.albumListTmplt({
-                    title: element.Title,
-                    flag: true,
-                    id: aid
-                })
-                $$("#albumListContain").append(template)
-                $$("#album_"+aid).click(function(){
-                    mainView.router.load({
-                        pageName: 'album',
-                        query: {
-                            title: element.Title,
-                            id: aid
-                        }
-                    })
-                })
-                $$("#swipeout_"+aid).on('swipeout:deleted', function () {
-                    console.log("Deleting album")
-                    delete_album()
-                })
-            });
-            //TODO: create views for tagged albums
-            //TODO: look into suggesting friends to tag :)
+            USER.CreatedAlbums = resp.CreatedAlbums
+            USER.TaggedAlbums = resp.TaggedAlbums
+            fillAlbums()
         }
     }
     getReq("/albums", {}, success, "to get albums")
@@ -123,7 +126,7 @@ function delete_album(albumId) {
     }
     postReq(
         "/del/album", {
-            UID: USER.id,
+            UID: USER.ObjectID,
             AID: albumId
         }, success, "to delete album")
 }
