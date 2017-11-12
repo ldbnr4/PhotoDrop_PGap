@@ -1,3 +1,4 @@
+// TODO setup page init and clear page
 var mySearchbar = myApp.searchbar('#user-search-bar', {
     customSearch: true,
     onSearch: function (s) {
@@ -12,6 +13,8 @@ function search4Handle(handle) {
         // $$(".searchbar-overlay").hide()
         $$("#userSearchLB").html("")
         if (JResp) {
+            // console.log("search response...")
+            // console.log(JResp)
             JResp.forEach(function (element, i) {
                 $$("#userSearchLB").append(
                     Template7.templates.userListTmplt({

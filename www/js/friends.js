@@ -20,7 +20,7 @@ function loadFriends(page) {
             console.log(error)
             console.log(data)
         }
-
+        //TODO update USER with response
         if (!JResp.FriendReqs) {
             // <li class="item-content">
             //      <div class="item-inner">
@@ -29,26 +29,28 @@ function loadFriends(page) {
             // </li>   
         } else {
             JResp.FriendReqs.forEach(function (element, i) {
+                // console.log(element)
                 $$("#friendReqs-list-block").append(
                     Template7.templates.friendReqTmplt({
-                        index: i,
-                        name: element.Name
+                        name: element.Nickname,
+                        index: i
                     })
                 )
                 $$("#frienReq_"+i).click(function () {
+                    console.log(element.Nickname)
                     mainView.router.load({
                         pageName: 'user-profile',
                         query: {
-                            nickname: element.Name,
-                            id: element.ID
+                            nickname: element.Nickname,
+                            joined: element.Joined
                         }
                     });
                 })
                 $$("#swipe_left_"+i).click(function () {
-                    acceptReq(element.ID)
+                    acceptReq(element.Nickname)
                 })
                 $$("#swipe_right_"+i).click(function () {
-                    declineReq(element.ID)
+                    declineReq(element.Nickname)
                 })
             });
         }
@@ -59,18 +61,20 @@ function loadFriends(page) {
             //     </div>
             // </li>
         } else {
-            JResp.Friends.forEach(function (element) {
+            JResp.Friends.forEach(function (element, i) {
+                // console.log(element)
                 $$("#friends-list-block").append(
                     Template7.templates.friendListTmplt({
-                        name: element.Name
+                        name: element.Nickname,
+                        index: i
                     })
                 )
                 $$("#friend_"+i).click(function () {
                     mainView.router.load({
                         pageName: 'user-profile',
                         query: {
-                            nickname: element.Name,
-                            id: element.ID
+                            nickname: element.Nickname,
+                            joined: element.Joined
                         }
                     });
                 })
@@ -81,7 +85,7 @@ function loadFriends(page) {
 getReq("/friends/"+USER.ObjectID, {}, success, "load friends")
 }
 
-function acceptReq(id) {
+function acceptReq(nickname) {
     myApp.showPreloader("Accepting friendship");
     var success = function (data, status, xhr) {
         myApp.hidePreloader();
@@ -92,22 +96,18 @@ function acceptReq(id) {
             console.log(error)
             console.log(data)
         }
-        if (JResp.err == false) {
+        if (JResp == "Completed") {
             mainView.router.load({
                 pageName: 'friends'
             });
-        } else {
-            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
-    var err = function (xhr, status) {
-        myApp.hidePreloader();
-        myApp.alert("Failed to get user profile.", "ERR FRIENDS")
-    }
-    postReq("/friend/acpt/", {FUID: id}, success, "accept friend request")
+    postReq("/friend/acpt",{
+        "FRIEND_NICKNAME":nickname
+    },success, "accept friend request")
 }
 
-function declineReq(id) {
+function declineReq(nickname) {
     myApp.showPreloader("Declining friendship");
     var success = function (data, status, xhr) {
         myApp.hidePreloader();
@@ -118,13 +118,13 @@ function declineReq(id) {
             console.log(error)
             console.log(data)
         }
-        if (JResp.err == false) {
+        if(JResp == "Completed"){
             mainView.router.load({
                 pageName: 'friends'
             });
-        } else {
-            myApp.alert("Error message: " + JResp.msg, "ERR FRIENDS");
         }
     }
-    postReq("/friend/decl", {FUID:id}, success, "decline friend request")
+    postReq("/friend/decl",{
+        "FRIEND_NICKNAME":nickname
+    },success, "decline friend request")
 }

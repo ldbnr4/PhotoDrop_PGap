@@ -54,10 +54,8 @@ function loadImageComplete(img, docContainer) {
                 cover: true,
             }
         )
-        // img.setAttribute("class", "imageItem")
         docContainer.html('')
         docContainer.append(img)
-        // docContainer.innerHTML = img
     }
 }
 

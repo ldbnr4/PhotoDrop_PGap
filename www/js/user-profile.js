@@ -11,31 +11,146 @@ function goToProfPg() {
 myApp.onPageReinit('user-profile', profileStart)
 myApp.onPageInit('user-profile', profileStart)
 
+function sendDisconnnect(nickname, joined){
+    //TODO: make this the standard for success parameters (data, status)
+    var success = function(data, status){
+        data = JSON.parse(data)
+        if (status == 200 && data == "Completed") {
+            $$("#profCB").html(
+                Template7.templates.profTmplt({
+                    name: nickname,
+                    memDate: joined,
+                    netstat: "ISO",
+                })
+            )
+        }
+    }
+    postReq("/friend/disconnect",{
+        "FRIEND_NICKNAME":nickname
+    },success, "send friend request")
+}
+
+function sendConnectRequest(nickname, joined){
+    //TODO: make this the standard for success parameters (data, status)
+    var success = function(data, status){
+        data = JSON.parse(data)
+        if (status == 200 && data == "Completed") {
+            $$("#profCB").html(
+                Template7.templates.profTmplt({
+                    name: nickname,
+                    memDate: joined,
+                    netstat: "PEND",
+                })
+            )
+        }
+    }
+    postReq("/friend/connect",{
+        "FRIEND_NICKNAME":nickname
+    },success, "send friend request")
+}
+
+function acceptConnectRequest(nickname, joined){
+    //TODO: make this the standard for success parameters (data, status)
+    var success = function(data, status){
+        data = JSON.parse(data)
+        if (status == 200 && data == "Completed") {
+            $$("#profCB").html(
+                Template7.templates.profTmplt({
+                    name: nickname,
+                    memDate: joined,
+                    netstat: "FRND",
+                })
+            )
+        }
+    }
+    postReq("/friend/acpt",{
+        "FRIEND_NICKNAME":nickname
+    },success, "accept friend request")
+}
+
+function declineConnectRequest(nickname, joined){
+    //TODO: make this the standard for success parameters (data, status)
+    var success = function(data, status){
+        data = JSON.parse(data)
+        if (status == 200 && data == "Completed") {
+            $$("#profCB").html(
+                Template7.templates.profTmplt({
+                    name: nickname,
+                    memDate: joined,
+                    netstat: "ISO",
+                })
+            )
+        }
+    }
+    postReq("/friend/decl",{
+        "FRIEND_NICKNAME":nickname
+    },success, "decline friend request")
+}
+
 function profileStart(page) {
     //TODO: remove the need of uid
-    uid = null
-    nickname = null
-    if (page.query.id == USER.ObjectID) {
-        uid = USER.ObjectID
-        nickname = USER.Nickname
-        $$("#editProfBtn").attr("style", "display:flex")
-    } else {
-        uid = page.query.id
-        nickname = page.query.nickname
-        $$("#editProfBtn").hide()
+    nickname = page.query.nickname
+    // console.log(nickname)
+
+    var success = function (data, status, xhr) {
+        console.log(data)
+        try {
+            resp = JSON.parse(data)
+        } catch (error) {
+            myApp.alert("Got an unexpected response", "ERR(Profile)")
+            console.log("Profile data:", data)
+        }
+        var joined = page.query.joined
+        $$("#profCB").html(
+            Template7.templates.profTmplt({
+                name: nickname,
+                memDate: joined,
+                netstat: resp,
+            })
+        )
+        if (resp == "OWN") {
+            $$("#editProfBtn").show()
+            $$("#editProfBtn").attr("style", "display:flex")
+            //TODO hide all other buttons
+        } else {
+            $$("#editProfBtn").hide()
+            if (resp == "ISO") {
+                click = function() {
+                    sendConnectRequest(nickname, joined)
+                }
+            }
+            else if (resp == "FRND") {
+                click = function() {
+                    sendDisconnnect(nickname, joined)
+                }
+            }
+            else if (resp == "PEND_ACTION"){
+                $$("#acceptBtn").click(function(){
+                    acceptConnectRequest(nickname, joined)
+                })
+                $$('#declineBtn').click(function(){
+                    declineConnectRequest(nickname, joined)
+                })
+                return
+            }
+            else {
+                // TODO what is this case?
+                // disable $$("#networkActionBtn")
+                return
+            }
+            $$("#networkActionBtn").click(click)
+        }
     }
 
-    $$("#profCB").html(
-        Template7.templates.profTmplt({
-            name: nickname,
-            memDate: page.query.joined,
-            netstat: null,
-            id: uid
-        })
-    )
+    // TODO: make a loader for server call
+    getReq("/friend/relation/" + nickname, {}, success, "load this profile")
 
+    if(!goodParams({Nickname:nickname, UID:USER.ObjectID, ENV:env})){
+        myApp.alert("Unable to display user profile")
+        return
+    }
     loadImage(
-        APP_BASE_URL + "/user/"+ uid,
+        APP_BASE_URL + "/photo/prof/" + nickname + "/" + USER.ObjectID + "/" + env,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -51,6 +166,7 @@ function profileStart(page) {
                         cover: true,
                     }
                 )
+                // console.log(img)
                 $$("#profilePic").html("")
                 img.setAttribute("style", "border-radius: 50%;")
                 $$("#profilePic").prepend(img);

@@ -1,11 +1,16 @@
+function encryptCredentials(_username, _password){
+    return {
+        username: encryptStr(_username),
+        password: encryptStr(_password),
+    }
+}
+
 function _setUSER(_username, _password, _email) {
     USER = {
         nickname: _username,
         username: encryptStr(_username),
         password: encryptStr(_password),
         pswrd_plain: _password,
-        albums: [],
-        urn_albums: [],
         email: _email
     }
     // console.log(USER)
@@ -28,7 +33,8 @@ function createNewUser(_username, _password, _email) {
             }
         }
         else{
-            enterApplication(JResp.ID)
+            USER = JResp.ClientUser
+            enterApplication(USER.ObjectID)
         }
     }
 

@@ -1,4 +1,5 @@
 myApp.onPageInit('login', function () {
+    //TODO clear form
     $$('#login_link').on('click', function () {
         var formData = myApp.formToData('#login_form')
         var errors = validate(formData, login_const)
@@ -12,7 +13,6 @@ myApp.onPageInit('login', function () {
 })
 
 function login(_username, _password) {
-    _setUSER(_username, _password)
     myApp.hidePreloader();
     myApp.showPreloader("Signing in");
     var goSuccess = function (data, status, xhr) {
@@ -37,9 +37,10 @@ function login(_username, _password) {
             enterApplication(USER.ObjectID);
         }
     }
+    var creditials = encryptCredentials(_username, _password)
     getReq("/user", {
-            username: USER.username,
-            password: USER.password
+            username: creditials.username,
+            password: creditials.password
         },
         goSuccess,
         "login"

@@ -37,7 +37,7 @@ function putReq(url, params, callback, actionName){
 function goodParams(params){
     for(var propertyName in params) {
         if(params[propertyName] == undefined || params[propertyName] == ""){
-            console.log("Tried to send an empty property "+propertyName+" in parameters "+params)
+            console.log("Tried to send an empty property "+propertyName+" in parameters "+JSON.stringify(params))
             return false
         }
      }
@@ -76,6 +76,6 @@ function setUpHeaders(xhr, url, method){
     var signUpEx = (url === "/user" && method === "PUT")
     xhr.setRequestHeader("ENV", env)
     if (!(loginEx || signUpEx)){
-        xhr.setRequestHeader("UID", USER.id)
+        xhr.setRequestHeader("UID", USER.ObjectID)
     }
 }

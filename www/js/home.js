@@ -9,8 +9,12 @@ $$('#homePgCntnt').on('ptr:refresh', function (e) {
 function homePgSetup() {
     $$("#TFuserName").html(USER.Nickname)
     fillAlbums()
+    if(!goodParams({Nickname:USER.Nickname, UID:USER.ObjectID, ENV: env})){
+        myApp.alert("Unable to display home page.")
+        return
+    }
     loadImage(
-        APP_BASE_URL + "/user/pic/" + USER.ObjectID,
+        APP_BASE_URL + "/photo/prof/" + USER.Nickname + "/" + USER.ObjectID + "/" + env,
         function (img) {
             if (img.type === "error") {
                 myApp.alert("Error loading image!", "ERR PROF PIC");
@@ -47,11 +51,11 @@ function homePgSetup() {
 
 function fillAlbums(){
     $$("#albumListContain").html("")
-    if(Object.keys(USER.CreatedAlbums).length === 0){
+    if(USER.CreatedAlbums && Object.keys(USER.CreatedAlbums).length === 0){
         //TODO indicate they should add one :)
         console.log("This user doesn't have any albums")
     }
-    if(Object.keys(USER.TaggedAlbums).length === 0){
+    if(USER.TaggedAlbums && Object.keys(USER.TaggedAlbums).length === 0){
         //TODO indicate they should be tagged one :)
         console.log("This user isn't tagged in any albums")
     }

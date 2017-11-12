@@ -1,7 +1,9 @@
 // TODO: make all endpoints line up with server
 // TODO: remove login and sign up from bottom toolbar
 // TODO: Add some loading indication for upload photos from mobile
-var test = false;
+// TODO: log network interaction
+// TODO: clear pages when loading them
+var test = true;
 var env = test ? "DEV" : "PROD"
 // Initialize app
 const myApp = new Framework7({

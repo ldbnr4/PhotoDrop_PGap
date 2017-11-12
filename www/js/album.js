@@ -8,7 +8,13 @@ function initAlbumPg(page) {
     }
 
     //TODO: check if this is a tagged album
+    // TODO set whether this is a owned or tagged album
     clrNFill(USER.CreatedAlbums[albumId].PhotoList)
+    if (!USER.CreatedAlbums[albumId]){
+        if (!USER.TaggedAlbums[albumId]){
+            myApp.alert
+        }
+    }
 
     $$("#album_name_ttl").html(page.query.title)
 
@@ -138,7 +144,7 @@ function fetchPids(album_id) {
             return
         }
         clrNFill(resp)
-        // TODO Update user albums
+        USER.CreatedAlbums[album_id].PhotoList = resp
     }
     var pars = {
         GET_ALBUM_PHOTOS: true,

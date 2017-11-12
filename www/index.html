@@ -112,16 +112,35 @@
 
     <script type="text/template7" id="profTmplt">
         <div style="font-size:25px">{{name}}</div>
-        <div id="profilePic"></div>
         <div>Member since
             <b>{{memDate}}</b>
         </div>
-        {{#js_compare "this.netstat != 'OWN'"}} {{#js_compare "this.netstat == 'PEN'"}}
-        <a href="#" class="button button-fill button-raised color-orange"
-            disabled>Pending Request</a> {{else}} {{#js_compare "this.netstat == 'CON'"}}
-        <a href="#" class="button button-fill button-raised color-green"
-            onclick="connect('{{id}}')">Connect</a> {{else}}
-        <a href="#" class="button button-fill button-raised color-red" onclick="disconnect('{{id}}')">Disconnect</a> {{/js_compare}} {{/js_compare}} {{else}} {{/js_compare}}
+        {{#js_compare "this.netstat != 'OWN'"}} 
+            {{#js_compare "this.netstat == 'PEND'"}}
+                <a id="networkActionBtn" href="#" class="button button-fill button-raised color-orange" disabled>
+                    Pending Request
+                </a>
+            {{else}} 
+                {{#js_compare "this.netstat == 'ISO'"}}
+                    <a id="networkActionBtn" href="#" class="button button-fill button-raised">
+                        Connect
+                    </a> 
+                {{else}}
+                    {{#js_compare "this.netstat == 'PEND_ACTION'"}}
+                    <a id="acceptBtn" href="#" class="button button-fill button-raised color-green" style="width:45%; float:left">
+                        Accept
+                    </a> 
+                    <a id="declineBtn" href="#" class="button button-fill button-raised color-red" style="width:45%; float:right">
+                        Decline
+                    </a> 
+                    {{else}}
+                        <a id="networkActionBtn" href="#" class="button button-fill button-raised">
+                            Disconnect
+                        </a> 
+                {{/js_compare}} 
+            {{/js_compare}} 
+        {{else}} 
+        {{/js_compare}}
     </script>
 
     <script type="text/template7" id="friendListTmplt">
